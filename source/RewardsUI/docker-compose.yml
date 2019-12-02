@@ -1,0 +1,20 @@
+version: '2'
+
+services:
+
+  web:
+    container_name: rewardsui
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    external_links:
+      - rewardsservice
+    networks:
+      - default
+      - rewardsservice_default
+networks:
+  rewardsservice_default:
+    external: true

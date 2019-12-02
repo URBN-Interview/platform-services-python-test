@@ -1,0 +1,63 @@
+<html>
+<head>
+</head>
+<body>
+    <h1>Welcome to the Rewards Dashboard</h1>
+    <div>
+        <h2>Reward Tiers</h2>
+        <table border="1">
+            <tr>
+                <th>Rewards Tier<th>
+                <th>Reward Points</th>
+                <th>Rewards Tier Name</th>
+            </tr>
+            {% for reward in rewards_data %}
+                <tr>
+                    <td>{{ reward.tier }}<td>
+                    <td>{{ reward.points }}</td>
+                    <td>{{ reward.rewardName }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <hr>
+    </div>
+    <div>
+        <h2>Add orders</h2>
+        <form>
+            <label>Enter email address: </label><input type="text"/><br>
+            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order"/>
+        </form>
+        <hr>
+    </div>
+    <div>
+        <h2>User Rewards</h2>
+        <form>
+            <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
+        </form>
+        <table border="1">
+            <thead>
+            <tr>
+                <th>Email Address</th>
+                <th>Reward Points</th>
+                <th>Reward Tier</th>
+                <th>Reward Tier Name</th>
+                <th>Next Reward Tier</th>
+                <th>Next Reward Tier Name</th>
+                <th>Next Reward Tier Progress</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>customer01@gmail.com</td>
+                    <td>100</td>
+                    <td>A</td>
+                    <td>5% off purchase</td>
+                    <td>B</td>
+                    <td>10% off purchase</td>
+                    <td>50%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
