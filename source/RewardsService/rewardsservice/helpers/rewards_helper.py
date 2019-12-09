@@ -4,9 +4,10 @@ from pymongo import MongoClient
 def _calculate_rewards_status(db, points):
     # rewards in descending order for easier search implementation
     rewards_desc = list(db.rewards.find({}, {"_id": 0}).sort("points", -1))
-    reward, reward_idx = next((reward, idx)
-                              for idx, reward in enumerate(rewards_desc)
-                              if reward["points"] < points)
+    # Add "no award" category
+    rewards_desc.append({"points": 0, "tier": "-", "rewardName": "-"})
+
+    reward, reward_idx = next((reward, idx) for idx, reward in enumerate(rewards_desc) if reward["points"] <= points)
 
     next_reward_idx = reward_idx - 1
 
@@ -19,9 +20,8 @@ def _calculate_rewards_status(db, points):
         next_reward = rewards_desc[next_reward_idx]
         reward_status["nextTier"] = next_reward["tier"]
         reward_status["nextRewardName"] = next_reward["rewardName"]
-        next_reward_points = next_reward["points"] - points
-        next_reward_progress = \
-            next_reward_points / (next_reward["points"] - reward["points"])
+        next_reward_points = points - reward["points"]
+        next_reward_progress = next_reward_points / (next_reward["points"] - reward["points"])
         reward_status["nextRewardProgress"] = next_reward_progress
 
     return reward_status
