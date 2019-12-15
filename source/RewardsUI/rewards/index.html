@@ -1,45 +1,104 @@
 <html>
 <head>
+    <style>
+        html,
+        body {
+            border: 0;
+            font-family: "Helvetica Neue", Helvetica, arial, sans-serif;
+            font-size: 100%;
+            font-weight: normal;
+            margin: 0;
+            outline: 0;
+            padding: 0;
+            vertical-align: baseline;
+        }
+        .container {
+            padding-top: 28px;
+            padding-bottom: 40px;
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        input,
+        textarea {
+            font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+        }
+        table{
+            width: 100%;
+            color: #444;
+            float: center;
+        }
+        th {
+            background: #333;
+            padding: 8px 12px;
+            font-size: 12px;
+            text-align: left;
+            font-weight: normal;
+            color: #fff;
+            white-space: nowrap;
+        }
+        td{
+            white-space: nowrap;
+            background-color: #fff;
+            font-size: 11px;
+            padding: 8px 12px;
+        }
+        tr.even td{
+            background-color: #f0f0f0;
+            border-color: #dfdfdf;
+        }
+        .alert-error{
+            color: #ce463f;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-shadow: none;
+            vertical-align: middle;
+        }
+        .alert-success{
+            color: #1f9964;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-shadow: none;
+            vertical-align: middle;
+        }
+    </style>
 </head>
-<body>
+<body class="container">
     <h1>Welcome to the Rewards Dashboard</h1>
-    <div>
         <h2>Reward Tiers</h2>
-        <table border="1">
+        <table cellspacing="0" cellpadding="0">
             <tr>
                 <th>Rewards Tier<th>
                 <th>Reward Points</th>
                 <th>Rewards Tier Name</th>
             </tr>
             {% for reward in rewards_data %}
-                <tr>
+                <tr class="{% cycle 'odd' 'even' %}">
                     <td>{{ reward.tier }}<td>
                     <td>{{ reward.points }}</td>
                     <td>{{ reward.rewardName }}</td>
                 </tr>
             {% endfor %}
         </table>
-        <hr>
     </div>
     <div>
         <h2>Add orders</h2>
-        {% if order_error %}<h3>{{ order_error }}</h3>{% endif %}
-        {% if order_success %}<h3>{{ order_success }}</h3>{% endif %}
+        {% if order_error %}<div class="alert-error">{{ order_error }}</div>{% endif %}
+        {% if order_success %}<div class="alert-success">{{ order_success }}</div>{% endif %}
         <form method="post" action="{{ request.path }}">
             <label>Enter email address: </label><input type="text" name="email_address"/><br>
             <label>Enter order total: </label><input type="text" name="order_total"/><input type="submit" value="Submit Order"/>
             {% csrf_token %}
         </form>
-        <hr>
     </div>
     <div>
         <h2>User Rewards</h2>
-        {% if search_error %}<h3>{{ search_error }}</h3>{% endif %}
+        {% if search_error %}<div class="alert-error">{{ search_error }}</div>{% endif %}
         <form method="post" action="{{ request.path }}">
             <label>Email address: </label><input type="text" name="email_search"/><input type="submit" value="Search"/>
             {% csrf_token %}
         </form>
-        <table border="1">
+        <table cellspacing="0" cellpadding="0">
             <thead>
             <tr>
                 <th>Email Address</th>
@@ -53,7 +112,7 @@
             </thead>
             <tbody>
                 {% for customer in customers_data %}
-                <tr>
+                <tr class="{% cycle 'odd' 'even' %}">
                     <td>{{ customer.email_address }}</td>
                     <td>{{ customer.reward_points }}</td>
                     <td>{{ customer.reward_tier }}</td>
