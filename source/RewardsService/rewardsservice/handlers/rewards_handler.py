@@ -73,6 +73,15 @@ class GetCustomer(tornado.web.RequestHandler):
         self.write(json.dumps(customer))
 
 
+class GetAllCustomers(tornado.web.RequestHandler):
+
+    def get(self):
+        client = MongoClient("mongodb", 27017)
+        dbc = client["Customers"]
+        customer = list(dbc.customers.find({}, {"_id": 0}))
+        self.write(json.dumps(customer))
+
+
 def get_reward_info(points):
 
     current_points = (points // 100) * 100
