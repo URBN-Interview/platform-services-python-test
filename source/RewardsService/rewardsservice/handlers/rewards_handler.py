@@ -28,16 +28,16 @@ class ManageCustomer(tornado.web.RequestHandler):
 
         # Check if email_address or order_total were not in the post data
         if not email_address or not order_total:
-            return(self.write("Error: Missing data"))
+            return(self.write(json.dumps({'order_error': "Missing data"})))
 
         # Check if email address is valid
         if not check_email(email_address):
-            return(self.write("Error: Invalid Email Address"))
+            return(self.write(json.dumps({'order_error': "Invalid Email Address"})))
 
         # Check if order_total is valid
         point_total = check_order_total(order_total)
         if not point_total:
-            return(self.write("Error: Invalid Order Total"))
+            return(self.write(json.dumps({'order_error': "Invalid Order Total"})))
 
         # Search DB for customer, add or update
         db = client["Customers"]
@@ -58,6 +58,8 @@ class ManageCustomer(tornado.web.RequestHandler):
             reward_info = get_reward_info(point_total)
             reward_info.update({'email_address': email_address})
             db.customers.insert(reward_info)
+
+        self.write(json.dumps({'order_success': "Order added successfully!"}))
 
 
 class GetCustomer(tornado.web.RequestHandler):
