@@ -34,8 +34,10 @@
     </div>
     <div>
         <h2>User Rewards</h2>
-        <form>
-            <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
+        {% if search_error %}<h3>{{ search_error }}</h3>{% endif %}
+        <form method="post" action="{{ request.path }}">
+            <label>Email address: </label><input type="text" name="email_search"/><input type="submit" value="Search"/>
+            {% csrf_token %}
         </form>
         <table border="1">
             <thead>
@@ -50,15 +52,17 @@
             </tr>
             </thead>
             <tbody>
+                {% for customer in customers_data %}
                 <tr>
-                    <td>customer01@gmail.com</td>
-                    <td>100</td>
-                    <td>A</td>
-                    <td>5% off purchase</td>
-                    <td>B</td>
-                    <td>10% off purchase</td>
-                    <td>50%</td>
+                    <td>{{ customer.email_address }}</td>
+                    <td>{{ customer.reward_points }}</td>
+                    <td>{{ customer.reward_tier }}</td>
+                    <td>{{ customer.reward_tier_name }}</td>
+                    <td>{{ customer.next_reward_tier }}</td>
+                    <td>{{ customer.next_reward_tier_name }}</td>
+                    <td>{{ customer.next_reward_tier_progress }}</td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
