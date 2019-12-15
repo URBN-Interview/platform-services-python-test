@@ -23,9 +23,12 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <form>
-            <label>Enter email address: </label><input type="text"/><br>
-            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order"/>
+        {% if order_error %}<h3>{{ order_error }}</h3>{% endif %}
+        {% if order_success %}<h3>{{ order_success }}</h3>{% endif %}
+        <form method="post" action="{{ request.path }}">
+            <label>Enter email address: </label><input type="text" name="email_address"/><br>
+            <label>Enter order total: </label><input type="text" name="order_total"/><input type="submit" value="Submit Order"/>
+            {% csrf_token %}
         </form>
         <hr>
     </div>
