@@ -4,6 +4,7 @@ from pymongo import MongoClient
 
 
 class SingleCustomerHandler(tornado.web.RequestHandler):
+    """Gets customer email from form and returns their rewards info"""
 
     email = None
 
