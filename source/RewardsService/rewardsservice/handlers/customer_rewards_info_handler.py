@@ -21,8 +21,8 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
     def post(self):
         """Gets customer field input"""
         try:
-            CustomerInfoHandler.email = self.get_arguement("email address")
-            tmp_points = self.get_arguement("order total")
+            CustomerInfoHandler.email = self.get_arguement("enter email address")
+            tmp_points = self.get_arguement("enter order total")
             CustomerInfoHandler.points = int(tmp_points) # round down change
 
             # Customer can't exceed 1000 points
