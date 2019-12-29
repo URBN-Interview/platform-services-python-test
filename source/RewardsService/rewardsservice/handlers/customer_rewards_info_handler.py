@@ -6,6 +6,8 @@ from tornado.gen import coroutine
 
 
 class CustomerInfoHandler(tornado.web.RequestHandler):
+    """Gets customer email and order total from a form entry,"""
+    """then calculates some other data points and adds them to DB"""
 
     email = None
     points = None
