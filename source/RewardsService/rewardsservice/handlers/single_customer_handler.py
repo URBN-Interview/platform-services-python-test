@@ -1,4 +1,3 @@
-import json
 import tornado.web
 
 from pymongo import MongoClient
