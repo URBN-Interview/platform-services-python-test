@@ -2,7 +2,6 @@ import tornado.web
 import math
 
 from pymongo import MongoClient
-from tornado.gen import coroutine
 
 
 class CustomerInfoHandler(tornado.web.RequestHandler):
@@ -22,8 +21,8 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
     def post(self):
         """Gets customer field input"""
         try:
-            CustomerInfoHandler.email = self.get_arguement("enter email address")
-            tmp_points = self.get_arguement("enter order total")
+            CustomerInfoHandler.email = self.get_arguement('order_email')
+            tmp_points = self.get_arguement('order_total')
             CustomerInfoHandler.points = int(tmp_points) # round down change
 
             # Customer can't exceed 1000 points
@@ -55,7 +54,7 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
                     elif found is True:
                         CustomerInfoHandler.next_tier = x
                         break
-                if found is True:
+                if found is True:       # Break outer loop if correct info found
                     break
         except TyperError:
             print("A TypeError occurred")
@@ -74,7 +73,7 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
 
             # If customers points are less than 1000:
             # for loop to get next reward name, next tier name, and next points
-            if points != 1000:
+            if CustomerInfoHandler.points != 1000:
                 for key, value in CustomerInfoHandler.next_tier:
                     if key == 'rewardName':
                         nextRewardName = value
@@ -89,16 +88,20 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
                 nextTierProgression = "N/A"
 
             # Create customer info DB entry
-            customer_info = self.create_dictionary(CustomerInfoHandler.email, CustomerInfoHandler.points, tier,
+            email = CustomerInfoHandler.email
+            points = CustomerInfoHandler.points
+            customer_info = self.create_dictionary(email, points, tier,
                                                    rewardName,nextTier, nextRewardName, nextTierProgression)
 
             # Insert customer info into Customer DB collection
             client = MongoClient("mongodb", 27017)
             db = client["Rewards"]
-            coll = db["Customers"]
+            coll = db["customers"]
+            myquery = self.create_dictionary(email)     # Find previous entry and delete it
+            coll.delete_one(myquery)
             coll.insert_one(customer_info)
 
         except TyperError:
             print("A TypeError occurred")
         except:
-            print("Error finding correct tier")
+            print("Error inserting customer info")
