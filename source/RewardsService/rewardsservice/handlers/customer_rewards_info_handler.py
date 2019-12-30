@@ -81,7 +81,7 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
                         nextTier = value
                     elif key == 'points':
                         nextPoints = value
-                    nextTierProgression = int((CustomerInfoHandler.points / nextPoints) * 100)
+                    nextTierProgression = str(int((CustomerInfoHandler.points / nextPoints) * 100)) + "%"
             else:                               # else the customer has reached the max tier
                 nextRewardName = "N/A"
                 nextTier = "N/A"
