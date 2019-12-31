@@ -40,21 +40,42 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
             client = MongoClient("mongodb", 27017)
             db = client["Rewards"]
             rewards = list(db.rewards.find({}, {"_id": 0}))
-            found = False
+            customers = list(db.customers.find({}, {"_id": 0}))
+            tier_found = False
+            next_tier_found = False
+            email_found = False
+
+            # Checks if customer already exists in Rewards DB and if so adds their points to this order total
+            # Once, customer email is found, it continues onto next inner loop (next key) and adds the pre-existing points
+            for y in customers:
+                for key, value in y.iteritems():
+                    if key == 'email' and value == CustomerInfoHandler.email:
+                        email_found = True
+                        continue
+                    if email_found is True:
+                        CustomerInfoHandler.points += value
+                        break
+                if email_found is True:
+                    break
 
             # Round points down to find appropriate rewards tier
             tmp_points = int(math.floor(CustomerInfoHandler.points / 100)) * 100
 
             # Find correct rewards tier via points
+            # Loops through tiers to find correct one, and breaks out of inner loop if found
+            # On next loop of tiers, it sets the next_tier value and breaks out of inner loop
+            # and with both found, the if statement breaks out of outer loop
             for x in rewards:
                 for key, value in x.iteritems():
                     if key == 'points' and value == tmp_points:
                         CustomerInfoHandler.rewards_tier = x
-                        found = True
-                    elif found is True:
-                        CustomerInfoHandler.next_tier = x
+                        tier_found = True
                         break
-                if found is True:       # Break outer loop if correct info found
+                    elif tier_found is True:
+                        CustomerInfoHandler.next_tier = x
+                        next_tier_found = True
+                        break
+                if tier_found is True and next_tier_found is True:       # Break outer loop if correct info found
                     break
         except TyperError:
             print("A TypeError occurred")
