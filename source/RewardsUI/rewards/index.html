@@ -23,16 +23,16 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <form action="../../RewardsService/rewardsservice/handlers/customer_rewards_info_handler.py" method="post">
+        <form method="post">
             <label>Enter email address: </label><input type="text" name="order_email" /><br>
-            <label>Enter order total: </label><input type="text"/><input type="submit" name="order_total" value="Submit Order"/>
+            <label>Enter order total: </label><input type="text" name="order_total"/><input type="submit" value="Submit Order" name="submit_order"/>
         </form>
         <hr>
     </div>
     <div>
         <h2>User Rewards</h2>
-        <form>
-            <label>Email address: </label><input type="text"/><input type="submit" value="Search"/>
+	    <form method="post">
+            <label>Email address: </label><input type="text" name="search_email" /><input type="submit" value="Search" name="submit_search"/>
         </form>
         <table border="1">
             <thead>
@@ -47,15 +47,17 @@
             </tr>
             </thead>
             <tbody>
+	        {% for customer in all_customers_data %}
                 <tr>
-                    <td>customer01@gmail.com</td>
-                    <td>100</td>
-                    <td>A</td>
-                    <td>5% off purchase</td>
-                    <td>B</td>
-                    <td>10% off purchase</td>
-                    <td>50%</td>
+                    <td>{{ customer.email }}</td>
+                    <td>{{ customer.points }}</td>
+                    <td>{{ customer.tier }}</td>
+                    <td>{{ customer.rewardName }}</td>
+                    <td>{{ customer.nextTier }}</td>
+                    <td>{{ customer.nextRewardName }}</td>
+                    <td>{{ customer.nextTierProgression }}</td>
                 </tr>
+	        {% endfor %}
             </tbody>
         </table>
     </div>
