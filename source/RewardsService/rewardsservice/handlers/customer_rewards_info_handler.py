@@ -59,6 +59,7 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
             db = client["Rewards"]
             customers = db["customers"]
 
+            # Get data for the reward name and tier
             x = json.loads(CustomerInfoHandler.rewards_tier)
             rewardName = x["rewardName"]
             tier = x["tier"]
