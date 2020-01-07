@@ -20,8 +20,7 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
         try:
             self.write("IN POST")
             CustomerInfoHandler.email = self.get_arguement('order_email')
-            tmp_points = self.get_arguement('order_total')
-            CustomerInfoHandler.points = int(tmp_points)  # round down change
+            CustomerInfoHandler.points = int(self.get_arguement('order_total'))
 
             # Customer can't exceed 1000 points
             if CustomerInfoHandler.points > 1000:
