@@ -9,7 +9,7 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
 
     email = None
     points = None
-    rewards_tier = None
+    customer_info = None
 
     @staticmethod
     def create_dictionary(*args):
@@ -43,31 +43,22 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
                 CustomerInfoHandler.points += x["points"]
                 if CustomerInfoHandler.points > 1000:
                     CustomerInfoHandler.points = 1000
+            else:
+                return None
 
             # Round points down to find appropriate rewards tier
             tmp_points = int(math.floor(CustomerInfoHandler.points / 100)) * 100
 
-            # find appropriate rewards tier in collection
-            CustomerInfoHandler.rewards_tier = rewards.find({"points": tmp_points}, {"_id": 0})
-        except:
-            print("Error finding correct tier")
-
-    def put(self):
-        """Use data gathered above to input customer reward data into DB"""
-        try:
-            client = MongoClient("mongodb", 27017)
-            db = client["Rewards"]
-            customers = db["customers"]
-
+            # find appropriate rewards tier in collection and
             # Get data for the reward name and tier
-            x = json.loads(CustomerInfoHandler.rewards_tier)
-            rewardName = x["rewardName"]
+            rewards_tier = json.loads(rewards.find({"points": tmp_points}, {"_id": 0}))
+            rewardName = rewards_tier["rewardsName"]
             tier = x["tier"]
 
             # Get next tier data
             if CustomerInfoHandler.points != 1000:
                 nextTier = chr(ord(tier) + 1)
-                y = json.loads(customers.find({"tier": nextTier}))
+                y = json.loads(customers.find({"tier": nextTier}, {"_id": 0}))
                 nextRewardName = y["rewardName"]
                 nextPoints = y["nextPoints"]
                 nextTierProgression = str(int((CustomerInfoHandler.points / nextPoints) * 100)) + "%"
@@ -79,13 +70,22 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
             # Create customer info DB entry
             email = CustomerInfoHandler.email
             points = CustomerInfoHandler.points
-            customer_info = self.create_dictionary(email, points, tier,
-                                                   rewardName, nextTier, nextRewardName, nextTierProgression)
+            CustomerInfoHandler.customer_info = self.create_dictionary(email, points, tier,
+                                                                       rewardName, nextTier, nextRewardName,
+                                                                       nextTierProgression)
+        except:
+            print("Error finding correct tier")
+
+    def put(self):
+        """Use data gathered above to input customer reward data into DB"""
+        try:
+            client = MongoClient("mongodb", 27017)
+            db = client["Rewards"]
+            customers = db["customers"]
 
             # Insert customer info into Customer DB collection
-            myQuery = self.create_dictionary(email)  # Find previous entry and delete it
-            coll.delete_one(myQuery)
-            coll.insert_one(customer_info)
-
+            myQuery = self.create_dictionary(CustomerInfoHandler.email)  # Find previous entry and delete it
+            customers.delete_one(myQuery)
+            customers.insert_one(CustomerInfoHandler.customer_info)
         except:
             print("Error inserting customer info")
