@@ -43,8 +43,6 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
                 CustomerInfoHandler.points += x["points"]
                 if CustomerInfoHandler.points > 1000:
                     CustomerInfoHandler.points = 1000
-            else:
-                return None
 
             # Round points down to find appropriate rewards tier
             tmp_points = int(math.floor(CustomerInfoHandler.points / 100)) * 100
@@ -53,7 +51,7 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
             # Get data for the reward name and tier
             rewards_tier = json.loads(rewards.find({"points": tmp_points}, {"_id": 0}))
             rewardName = rewards_tier["rewardsName"]
-            tier = x["tier"]
+            tier = rewards_tier["tier"]
 
             # Get next tier data
             if CustomerInfoHandler.points != 1000:
