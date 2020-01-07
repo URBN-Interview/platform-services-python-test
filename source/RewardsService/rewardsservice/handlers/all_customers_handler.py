@@ -17,6 +17,8 @@ class AllCustomersHandler(tornado.web.RequestHandler):
             customers = db["customers"]
             customers = list(customers.find({}, {"_id": 0}))
             self.write(json.dumps(customers))
+        except ValueError:
+            self.write("A value error occurred")
         except TypeError:
             self.write("A type error has occurred")
         except RuntimeError:
