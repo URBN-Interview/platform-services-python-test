@@ -18,6 +18,7 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
     def post(self):
         """Gets customer field input"""
         try:
+            self.write("IN POST")
             CustomerInfoHandler.email = self.get_arguement('order_email')
             tmp_points = self.get_arguement('order_total')
             CustomerInfoHandler.points = int(tmp_points)  # round down change
@@ -29,8 +30,9 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
             print("Error retrieving form data")
 
     def get(self):
-        """Get the list of reward tiers from DB and find/store appropriate one"""
+        """Get the list of reward tiers from DB, manipulates/calculates rest of data and stores it in db"""
         try:
+            self.write("IN GET")
             client = MongoClient("mongodb", 27017)
             db = client["Rewards"]
             customers = db["customers"]
@@ -68,22 +70,12 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
             # Create customer info DB entry
             email = CustomerInfoHandler.email
             points = CustomerInfoHandler.points
-            CustomerInfoHandler.customer_info = self.create_dictionary(email, points, tier,
-                                                                       rewardName, nextTier, nextRewardName,
-                                                                       nextTierProgression)
+            customer_info = self.create_dictionary(email, points, tier,
+                                                   rewardName, nextTier, nextRewardName,
+                                                   nextTierProgression)
+            # Insert customer info into Customer DB collection
+            myQuery = self.create_dictionary(email)  # Find previous entry and delete it
+            customers.delete_one(myQuery)
+            customers.insert_one(customer_info)
         except:
             print("Error finding correct tier")
-
-    def put(self):
-        """Use data gathered above to input customer reward data into DB"""
-        try:
-            client = MongoClient("mongodb", 27017)
-            db = client["Rewards"]
-            customers = db["customers"]
-
-            # Insert customer info into Customer DB collection
-            myQuery = self.create_dictionary(CustomerInfoHandler.email)  # Find previous entry and delete it
-            customers.delete_one(myQuery)
-            customers.insert_one(CustomerInfoHandler.customer_info)
-        except:
-            print("Error inserting customer info")
