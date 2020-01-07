@@ -1,5 +1,4 @@
 import tornado.web
-import math
 import json
 
 from pymongo import MongoClient
