@@ -14,7 +14,10 @@ class AllCustomersHandler(tornado.web.RequestHandler):
         try:
             client = MongoClient("mongodb", 27017)
             db = client["Rewards"]
-            customers = list(db.customers.find({}, {"_id": 0}))
+            customers = db["customers"]
+            customers = list(customers.find({}, {"_id": 0}))
             self.write(json.dumps(customers))
-        except:
-            print("Error finding all customers info")
+        except TypeError:
+            self.write("A type error has occurred")
+        except RuntimeError:
+            self.write("Error finding all customers info")
