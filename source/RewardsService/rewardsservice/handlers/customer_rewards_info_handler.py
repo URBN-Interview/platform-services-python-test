@@ -14,16 +14,18 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
     def post(self):
         """Gets customer field input"""
         try:
-            self.write("IN POST")
             global email
             global points
 
-            email = self.get_arguement('order_email')
-            points = int(self.get_arguement('order_total'))
+            email = self.get_argument('order_email')
+            points = float(self.get_argument('order_total'))
+            points = int(points)
 
             # Customer can't exceed 1000 points
             if points > 1000:
                 points = 1000
+
+            self.get()
         except ValueError:
             self.write("A value error occurred")
         except NameError:
@@ -38,7 +40,6 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
     def get(self):
         """Get the list of reward tiers from DB, manipulates/calculates rest of data and stores it in db"""
         try:
-            self.write("IN GET")
             global email
             global points
 
@@ -47,14 +48,10 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
             customers = db["customers"]
             rewards = db["rewards"]
 
-            # email = "catstevens@gmail.com"
-            # points = 910
-
             # find customer data if exists, add points if it does
             customer_found = customers.find_one({"email": email}, {"_id": 0})
             if customer_found is not None:
-                x = json.loads(customer_found)
-                points += x["points"]
+                points += customer_found["points"]
                 if int(points) > 1000:
                     points = 1000
 
@@ -83,11 +80,12 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
             customer_info = {"email": email, "points": points, "tier": tier, "rewardName": rewardName,
                              "nextTier": nextTier, "nextRewardName": nextRewardName,
                              "nextTierProgression": nextTierProgression}
-            self.write(json.dumps(customer_info))
             # Insert customer info into Customer DB collection
             myQuery = {"email": email}  # Find previous entry and delete it
             customers.delete_one(myQuery)
             customers.insert_one(customer_info)
+            # self.redirect('http://localhost:8000/rewards')
+            return
         except KeyError:
             self.write("A key error occurred")
         except ValueError:
