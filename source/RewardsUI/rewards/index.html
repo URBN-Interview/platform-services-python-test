@@ -23,7 +23,8 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <form method="post">
+        <form action="http://localhost:7050/addorder" onsubmit="setTimeout(function () { window.location.reload(); }, 10)" method="post" target="hiddenFrame" autocomplete="off">
+            {% csrf_token %}
             <label>Enter email address: </label><input type="text" name="order_email" /><br>
             <label>Enter order total: </label><input type="text" name="order_total"/><input type="submit" value="Submit Order" name="submit_order"/>
         </form>
@@ -31,7 +32,8 @@
     </div>
     <div>
         <h2>User Rewards</h2>
-	    <form method="post">
+	    <form action="http://localhost:7050/rewardssearch" onsubmit="setTimeout(function () { window.location.reload(); }, 10)" method="post" target="hiddenFrame" autocomplete="off">
+            {% csrf_token %}
             <label>Email address: </label><input type="text" name="search_email" /><input type="submit" value="Search" name="submit_search"/>
         </form>
         <table border="1">
@@ -47,19 +49,32 @@
             </tr>
             </thead>
             <tbody>
-	        {% for customer in all_customers_data %}
+            {% if single_customer_data %}
                 <tr>
-                    <td>{{ customer.email }}</td>
-                    <td>{{ customer.points }}</td>
-                    <td>{{ customer.tier }}</td>
-                    <td>{{ customer.rewardName }}</td>
-                    <td>{{ customer.nextTier }}</td>
-                    <td>{{ customer.nextRewardName }}</td>
-                    <td>{{ customer.nextTierProgression }}</td>
+                    <td>{{ single_customer_data.email }}</td>
+                    <td>{{ single_customer_data.points }}</td>
+                    <td>{{ single_customer_data.tier }}</td>
+                    <td>{{ single_customer_data.rewardName }}</td>
+                    <td>{{ single_customer_data.nextTier }}</td>
+                    <td>{{ single_customer_data.nextRewardName }}</td>
+                    <td>{{ single_customer_data.nextTierProgression }}</td>
                 </tr>
-	        {% endfor %}
+            {% else %}
+	            {% for customer in all_customers_data %}
+                    <tr>
+                        <td>{{ customer.email }}</td>
+                        <td>{{ customer.points }}</td>
+                        <td>{{ customer.tier }}</td>
+                        <td>{{ customer.rewardName }}</td>
+                        <td>{{ customer.nextTier }}</td>
+                        <td>{{ customer.nextRewardName }}</td>
+                        <td>{{ customer.nextTierProgression }}</td>
+                    </tr>
+	            {% endfor %}
+            {% endif %}
             </tbody>
         </table>
     </div>
+    <iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
 </body>
 </html>
