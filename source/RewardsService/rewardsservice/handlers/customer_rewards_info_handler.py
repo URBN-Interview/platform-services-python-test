@@ -84,7 +84,6 @@ class CustomerInfoHandler(tornado.web.RequestHandler):
             myQuery = {"email": email}  # Find previous entry and delete it
             customers.delete_one(myQuery)
             customers.insert_one(customer_info)
-            # self.redirect('http://localhost:8000/rewards')
             return
         except KeyError:
             self.write("A key error occurred")
