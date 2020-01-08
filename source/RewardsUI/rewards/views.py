@@ -1,9 +1,11 @@
 import logging
+import sys
 
 from django.template.response import TemplateResponse
 from django.views.generic.base import TemplateView
 
 from rewards.clients.rewards_service_client import RewardsServiceClient
+from django.http import HttpResponseRedirect
 
 
 class RewardsView(TemplateView):
@@ -21,6 +23,10 @@ class RewardsView(TemplateView):
 
         all_customers_data = self.rewards_service_client.get_all_customers()
         context['all_customers_data'] = all_customers_data
+
+        # if 'submit_search' in request.POST:
+        single_customer_data = self.rewards_service_client.get_single_customer()
+        context['single_customer_data'] = single_customer_data
 
         return TemplateResponse(
             request,
