@@ -1,19 +1,108 @@
 <html>
 <head>
+<style>
+/* Header/Logo Title */
+.header {
+  overflow = hidden;
+  padding: 40px;
+  text-align: center;
+  background: #F5F5F5;
+  color: #2F4F4F;
+  font-size: 23px;
+}
+
+/* Rewards table format*/
+#rewards {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 40%;
+}
+
+#rewards td, #rewards th {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+#rewards tr:nth-child(even){background-color: #f2f2f2;}
+
+#rewards tr:hover {background-color: #ddd;}
+
+#rewards th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: #FFD700;
+  color: white;
+}
+
+/* Customers table format*/
+#customers {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#customers td, #customers th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#customers tr:nth-child(even){background-color: #F8F8FF;}
+
+#customers tr:hover {background-color: #ddd;}
+
+#customers th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #FFD700;
+  color: white;
+}
+
+/* Text input format*/
+input[type=text], select {
+  width: 15%;
+  padding: 6px 14px;
+  margin: 0px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Submit input format*/
+input[type=submit] {
+  width: 8%;
+  background-color: #2F4F4F;
+  color: white;
+  padding: 8px 14px;
+  margin: 0px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+</style>
 </head>
 <body>
-    <h1>Welcome to the Rewards Dashboard</h1>
+    <div class="header">
+        <h1>Welcome to the Rewards Dashboard</h1>
+    </div>
     <div>
         <h2>Reward Tiers</h2>
-        <table border="1">
+        <table id="rewards">
             <tr>
-                <th>Rewards Tier<th>
+                <th>Rewards Tier</th>
                 <th>Reward Points</th>
                 <th>Rewards Tier Name</th>
             </tr>
             {% for reward in rewards_data %}
                 <tr>
-                    <td>{{ reward.tier }}<td>
+                    <td>{{ reward.tier }}</td>
                     <td>{{ reward.points }}</td>
                     <td>{{ reward.rewardName }}</td>
                 </tr>
@@ -26,7 +115,7 @@
         <form action="http://localhost:7050/addorder" onsubmit="setTimeout(function () { window.location.reload(); }, 10)" method="post" target="hiddenFrame" autocomplete="off">
             {% csrf_token %}
             <label>Enter email address: </label><input type="text" name="order_email" /><br>
-            <label>Enter order total: </label><input type="text" name="order_total"/><input type="submit" value="Submit Order" name="submit_order"/>
+            <label>Enter order total: </label><input type="text" name="order_total"/> <input type="submit" value="Submit Order" name="submit_order"/>
         </form>
         <hr>
     </div>
@@ -34,9 +123,9 @@
         <h2>User Rewards</h2>
 	    <form action="http://localhost:7050/rewardssearch" onsubmit="setTimeout(function () { window.location.reload(); }, 10)" method="post" target="hiddenFrame" autocomplete="off">
             {% csrf_token %}
-            <label>Email address: </label><input type="text" name="search_email" /><input type="submit" value="Search" name="submit_search"/>
+            <label>Email address: </label><input type="text" name="search_email" /> <input type="submit" value="Search" name="submit_search"/>
         </form>
-        <table border="1">
+        <table id="customers">
             <thead>
             <tr>
                 <th>Email Address</th>
