@@ -65,3 +65,7 @@ class FindRewardsDatatHandler(tornado.web.RequestHandler):
         db = client["Rewards"]
         # Using the argument method to accept customer email.
         email_address = self.get_argument("email_address")
+        # Find the supplied email_address in the rewards_data collection
+        rewards_data_match = list(db.rewards_data.find(
+            {"emailAddress": email_address}, {"_id": 0}))
+        self.write(json.dumps(rewards_data_match))
