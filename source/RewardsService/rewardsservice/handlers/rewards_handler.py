@@ -25,3 +25,5 @@ class OrderDatatHandler(tornado.web.RequestHandler):
         # Using the argument method to accept customer email & order total.
         email_address = self.get_argument("email_address")
         order_total = self.get_argument("order_total")
+        # For each dollar a customer spends, the customer will earn 1 reward point.
+        points = order_total * 1
