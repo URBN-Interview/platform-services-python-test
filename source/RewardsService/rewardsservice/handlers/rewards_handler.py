@@ -56,3 +56,12 @@ class OrderDatatHandler(tornado.web.RequestHandler):
                 break
         # Insert our rewards data collection into the rewards db
         db.rewards_data.insert_many(rewards_data)
+
+
+class FindRewardsDatatHandler(tornado.web.RequestHandler):
+    @coroutine
+    def get(self):
+        client = MongoClient("mongodb", 27017)
+        db = client["Rewards"]
+        # Using the argument method to accept customer email.
+        email_address = self.get_argument("email_address")
