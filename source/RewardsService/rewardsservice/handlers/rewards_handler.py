@@ -27,3 +27,7 @@ class OrderDatatHandler(tornado.web.RequestHandler):
         order_total = self.get_argument("order_total")
         # For each dollar a customer spends, the customer will earn 1 reward point.
         points = order_total * 1
+        # Set up a loop to iterate over rewards collection to start comparing customer points
+        for i in range(len(rewards)):
+            max = int(rewards[i]['points'])
+            min = int(rewards[i]['points']-100)
