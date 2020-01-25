@@ -36,3 +36,10 @@ class OrderDatatHandler(tornado.web.RequestHandler):
             the current collection's points minus 100, use that collectin for the next steps.
             """
             if int(customer_points) in range(min, max):
+                # Used the split and strip methods to isolate the percetage number from rewardName
+                current_reward = int(
+                    rewards[i]['rewardName'].split()[0].strip("%"))
+                next_reward = int(
+                    rewards[i+1]['rewardName'].split()[0].strip("%"))
+                # Next rewrd progress is the difference between the next reward and current reward
+                next_reward_progress = next_reward - current_reward
