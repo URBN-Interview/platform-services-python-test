@@ -16,8 +16,7 @@ class RewardsHandler(tornado.web.RequestHandler):
 
 class OrderDatatHandler(tornado.web.RequestHandler):
     """Endpoint which accepts a customers email adress, and order total, and stores
-    the their rewards data based on the amount of points they have. To explain this handler,
-    I will be using a customers order total/ points of 300"""
+    the their rewards data based on the amount of points they have."""
     @coroutine
     def get(self):
         client = MongoClient("mongodb", 27017)
