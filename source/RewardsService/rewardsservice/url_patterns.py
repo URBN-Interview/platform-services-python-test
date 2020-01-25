@@ -5,4 +5,5 @@ url_patterns = [
     (r'/rewards', RewardsHandler),
     (r'/order_data', OrderDatatHandler),
     (r'/find_rewards_data', FindRewardsDatatHandler),
+    (r'/all_rewards_data', AllRewardsDatatHandler),
 ]
