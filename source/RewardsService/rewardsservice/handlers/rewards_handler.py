@@ -69,3 +69,13 @@ class FindRewardsDatatHandler(tornado.web.RequestHandler):
         rewards_data_match = list(db.rewards_data.find(
             {"emailAddress": email_address}, {"_id": 0}))
         self.write(json.dumps(rewards_data_match))
+
+
+class AllRewardsDatatHandler(tornado.web.RequestHandler):
+    @coroutine
+    def get(self):
+        client = MongoClient("mongodb", 27017)
+        db = client["Rewards"]
+        # List every document in the rewards_data collection
+        rewards_data = list(db.rewards_data.find({}, {"_id": 0}))
+        self.write(json.dumps(rewards_data))
