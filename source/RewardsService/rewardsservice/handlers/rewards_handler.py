@@ -16,7 +16,8 @@ class RewardsHandler(tornado.web.RequestHandler):
 
 class OrderDatatHandler(tornado.web.RequestHandler):
     """Endpoint which accepts a customers email adress, and order total, and stores
-    the their rewards data based on the amount of points they have. """
+    the their rewards data based on the amount of points they have. To explain this handler,
+    I will be using a customers order total/ points of 300"""
     @coroutine
     def get(self):
         client = MongoClient("mongodb", 27017)
@@ -26,8 +27,12 @@ class OrderDatatHandler(tornado.web.RequestHandler):
         email_address = self.get_argument("email_address")
         order_total = self.get_argument("order_total")
         # For each dollar a customer spends, the customer will earn 1 reward point.
-        points = order_total * 1
+        customer_points = order_total * 1
         # Set up a loop to iterate over rewards collection to start comparing customer points
         for i in range(len(rewards)):
             max = int(rewards[i]['points'])
             min = int(rewards[i]['points']-100)
+            """If the customers_points is in the range of the current collection's points AND the
+            the current collection's points minus 100, use that collectin for the next steps.
+            """
+            if int(customer_points) in range(min, max):
