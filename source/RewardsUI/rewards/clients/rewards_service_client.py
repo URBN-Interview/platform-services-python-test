@@ -10,3 +10,7 @@ class RewardsServiceClient:
     def get_rewards(self):
         response = requests.get(self.rewards_url)
         return response.json()
+
+    def send_order_data(self, email, total):
+        response = requests.get(
+            self.send_order_data_url + email+"&&"+"order_total="+total)
