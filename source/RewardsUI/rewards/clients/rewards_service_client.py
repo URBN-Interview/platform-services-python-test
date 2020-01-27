@@ -15,3 +15,8 @@ class RewardsServiceClient:
     def send_order_data(self, email, total):
         response = requests.get(
             self.send_order_data_url + email+"&&"+"order_total="+total)
+
+    def search_rewards_data(self, email):
+        response = requests.get(
+            "http://rewardsservice:7050/find_rewards_data?email_address="+email)
+        return response.json()
