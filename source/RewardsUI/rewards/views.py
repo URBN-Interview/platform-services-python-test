@@ -12,40 +12,16 @@ class RewardsView(TemplateView):
                  rewards_service_client=RewardsServiceClient()):
         self.logger = logger
         self.rewards_service_client = rewards_service_client
+        """Storing these methods as class variables because I will be using them more than once."""
+        self.rewards_data = rewards_service_client.get_rewards()
+        self.all_rewards_data = rewards_service_client.get_all_rewards()
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        rewards_data = self.rewards_service_client.get_rewards()
-        all_rewards_data = self.rewards_service_client.get_all_rewards()
-        context['rewards_data'] = rewards_data
-        context['all_rewards_data'] = all_rewards_data
-
+        context['rewards_data'] = self.rewards_data
+        context['all_rewards_data'] = self.all_rewards_data
         return TemplateResponse(
             request,
             self.template_name,
             context
         )
-
-    # """Setting up a post method that uses the send_order_data url IF the form input value equals "Search", but otherwise
-    #     uses the search_rewards_data url.
-    # """
-    # def post(self, request, **kwargs):
-    #     if request.POST['action'] == 'Search':
-    #         context = self.get_context_data(**kwargs)
-    #         searchEmail = request.POST.get("searchEmailAddress")
-    #         searchRewards = self.rewards_service_client.search_rewards_data(
-    #             searchEmail)
-    #         context['searchRewards'] = searchRewards
-    #         return TemplateResponse(request, self.template_name, context)
-    #     else:
-    #         email = request.POST.get("emailAddress")
-    #         total = request.POST.get("orderTotal")
-    #         context = self.get_context_data(**kwargs)
-    #         rewards_data = self.rewards_service_client.get_rewards()
-    #         context['rewards_data'] = rewards_data
-    #         get_data = self.rewards_service_client.send_order_data(
-    #             email, total)
-    #         return TemplateResponse(
-    #             request,
-    #             self.template_name, context
-    #         )
