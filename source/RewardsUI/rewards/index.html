@@ -53,6 +53,21 @@
                     <th>Next Reward Tier Name</th>
                     <th>Next Reward Tier Progress</th>
                 </tr>
+                {% for rewards in all_rewards_data %}
+                <tr>
+                    <td>{{rewards.emailAddress}}</td>
+                    <td>{{rewards.rewardPoints}}</td>
+                    <td>{{rewards.rewardTier}}</td>
+                    <td>{{rewards.rewardTierName}}</td>
+                    <td>{{rewards.nextRewardTier}}</td>
+                    <td>{{rewards.nextRewardTierName}}</td>
+                    <td>{{rewards.nextRewardTierProgress}}</td>
+
+
+
+                </tr>
+                {% endfor %}
+
             </thead>
             <tbody>
             </tbody>
