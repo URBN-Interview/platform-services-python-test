@@ -1,0 +1,29 @@
+body {
+    font-family: 'Lato', sans-serif;
+
+}
+
+
+h1,
+h2,
+form {
+    width: 50%;
+    margin: 0 auto;
+    text-align: center;
+    padding-bottom: 10px;
+
+}
+
+table {
+    border-collapse: collapse;
+    border: none;
+    text-align: center;
+    margin: 0 auto;
+}
+
+th {
+    font-weight: bold;
+    background-color: #1C3144;
+    color: white;
+    padding: 5px;
+}
