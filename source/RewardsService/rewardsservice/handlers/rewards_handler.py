@@ -29,12 +29,19 @@ class OrderDatatHandler(tornado.web.RequestHandler):
         customer_points = order_total * 1
         # Set up a loop to iterate over rewards collection to start comparing customer points
         for i in range(len(rewards)):
-            max = int(rewards[i]['points'])
-            min = int(rewards[i]['points']-100)
+            max = int(rewards[i+1]['points'])
+            print('max')
+            print(max)
+            min = int(rewards[i]['points'])
+            print('min')
+
+            print(min)
             """If the customers_points is in the range of the current collection's points AND the
             the current collection's points minus 100, use that collectin for the next steps.
             """
             if int(customer_points) in range(min, max):
+                print(min, max)
+                print(rewards[i])
                 # Used the split and strip methods to isolate the percetage number from rewardName
                 current_reward = int(
                     rewards[i]['rewardName'].split()[0].strip("%"))
