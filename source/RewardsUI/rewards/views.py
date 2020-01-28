@@ -33,14 +33,18 @@ class RewardsView(TemplateView):
     def post(self, request, **kwargs):
         context = self.get_context_data(**kwargs)
         if request.POST['action'] == 'Search':
+            # Store the searchEmailAddress input value in the searchEmail variable
             searchEmail = request.POST.get("searchEmailAddress")
+            # Variable that will store the data returned from search_rewards_data
             all_rewards_data = self.rewards_service_client.search_rewards_data(
                 searchEmail)
             context['rewards_data'] = self.rewards_data
             context['all_rewards_data'] = all_rewards_data
             return TemplateResponse(request, self.template_name, context)
         else:
+            # Store the emailAddress value in the email variable
             email = request.POST.get("emailAddress")
+            # Store the orderTotal value in the total variable
             total = request.POST.get("orderTotal")
             get_data = self.rewards_service_client.send_order_data(
                 email, total)
