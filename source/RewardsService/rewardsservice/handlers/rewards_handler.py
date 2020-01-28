@@ -40,7 +40,6 @@ class OrderDatatHandler(tornado.web.RequestHandler):
             the current collection's points minus 100, use that collectin for the next steps.
             """
             if int(customer_points) in range(min, max):
-                print(min, max)
                 print(rewards[i])
                 # Used the split and strip methods to isolate the percetage number from rewardName
                 current_reward = int(
