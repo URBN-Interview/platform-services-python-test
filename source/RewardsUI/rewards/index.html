@@ -1,6 +1,13 @@
+{% load static %}
+
 <html>
 
 <head>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link href="{https://fonts.googleapis.com/css?family=Lato:400,700&display=swap}" rel="stylesheet">
+
+
+
 </head>
 
 <body>
@@ -10,14 +17,12 @@
         <table border="1">
             <tr>
                 <th>Rewards Tier
-                <th>
                 <th>Reward Points</th>
                 <th>Rewards Tier Name</th>
             </tr>
             {% for reward in rewards_data %}
             <tr>
                 <td>{{ reward.tier }}
-                <td>
                 <td>{{ reward.points }}</td>
                 <td>{{ reward.rewardName }}</td>
             </tr>
