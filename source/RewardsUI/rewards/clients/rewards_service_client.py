@@ -21,3 +21,7 @@ class RewardsServiceClient:
         response = requests.get(
             "http://rewardsservice:7050/find_rewards_data?email_address="+email)
         return response.json()
+
+    def get_all_rewards(self):
+        response = requests.get(self.all_rewards_data)
+        return response.json()
