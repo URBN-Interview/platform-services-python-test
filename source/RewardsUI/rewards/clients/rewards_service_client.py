@@ -7,6 +7,7 @@ class RewardsServiceClient:
         self.rewards_url = "http://rewardsservice:7050/rewards"
         self.send_order_data_url = "http://rewardsservice:7050/order_data?email_address="
         self.search_rewards_data_url = "http://rewardsservice:7050/find_rewards_data?email_address="
+        self.all_rewards_data = "http://rewardsservice:7050/all_rewards_data"
 
     def get_rewards(self):
         response = requests.get(self.rewards_url)
