@@ -35,8 +35,8 @@
         <form method="POST" action=".">
             {% csrf_token %}
             <label>Enter email address: </label><input type="text" name="emailAddress" /><br>
-            <label>Enter order total: </label><input type="text" name="orderTotal" /><input type="submit" name="action"
-                value="Submit Order" />
+            <label>Enter order total: </label><input type="text" name="orderTotal" /><br><input type="submit"
+                name="action" value="Submit Order" />
         </form>
         <hr>
     </div>
@@ -44,7 +44,7 @@
         <h2>User Rewards</h2>
         <form method="POST">
             {% csrf_token %}
-            <label>Email address: </label><input type="text" name="searchEmailAddress" /><input type="submit"
+            <label>Email address: </label><input type="text" name="searchEmailAddress" /><br><input type="submit"
                 name="action" value="Search" />
         </form>
         <table border="1">
