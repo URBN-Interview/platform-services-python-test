@@ -5,9 +5,10 @@ from pymongo import MongoClient
 from tornado.gen import coroutine
 
 # This class handles **Endpoint 3:** and returns all customer information
-# No parameters are needed.
+# url: /allcustomers
 class AllCustomersHandler(tornado.web.RequestHandler):
 
+    # GET endpoint
     @coroutine
     def get(self):
         client = MongoClient("mongodb", 27017)
