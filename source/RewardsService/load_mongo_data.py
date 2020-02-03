@@ -20,5 +20,21 @@ def main():
     db.rewards.insert({"points": 1000, "rewardName": "50% off purchase", "tier": "J"})
     print("Rewards loaded in mongo")
 
+    # Load test case for GET routes
+    print("Removing and loading Customers in mongo")
+    db = db.client["Customers"]
+    db.customers.remove()
+    db.customers.insert({
+        "emailAddress": "a@abc.com",
+        "rewardPoints": 100.0,
+        "rewardTier": "A",
+        "rewardTierName": "5% off purchase",
+        "nextRewardTierName": "10% off purchase",
+        "nextRewardTier": "B",
+        "nextRewardTierProgress": 100.0
+    })
+    print("Customer loaded in mongo")
+
+
 if __name__ == "__main__":
     main()
