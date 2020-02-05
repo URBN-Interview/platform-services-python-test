@@ -31,7 +31,7 @@
     </div>
     <div>
         <h2>User Rewards</h2>
-        <form action="/rewards/search" method="GET">
+        <form action="." method="GET">
             <label>Email address: </label><input id="email_address" name="email_address" type="text" value="{{ email_address }}"/>
             <input type="submit" value="Search">
         </form>
@@ -48,7 +48,7 @@
             </tr>
             </thead>
             <tbody>
-            {% for user in user_data %}
+            {% for user in users_data %}
                 <tr>
                     <td>{{ user.emailAddress }}</td>
                     <td>{{ user.rewardPoints }}</td>
