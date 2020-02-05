@@ -92,7 +92,7 @@ class CustomersHandler(tornado.web.RequestHandler):
 
     @staticmethod
     def no_rewards(points):
-        return {"points": points, "rewardName": "", "tier": ""}
+        return {"points": points, "rewardName": "N/A", "tier": "N/A"}
 
     @staticmethod
     def calculate_progress(current_points, goal):
@@ -104,7 +104,7 @@ class CustomersHandler(tornado.web.RequestHandler):
 
     @staticmethod
     def round_down(reward_points):
-        return int(math.floor(reward_points / 100.0)) * 100
+        return min(int(math.floor(reward_points / 100.0)) * 100, 1000)
 
     @staticmethod
     def round_up(reward_points):
