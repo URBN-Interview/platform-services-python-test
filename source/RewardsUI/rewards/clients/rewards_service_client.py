@@ -19,3 +19,7 @@ class RewardsServiceClient:
     def get_users(self):
         response = requests.get(self.users_url)
         return response.json()
+
+    def add_order(self, email_address, order_total):
+        response = requests.post(url=self.order_url, data={"email-address": email_address, "order-total": order_total})
+        # return response.json()
