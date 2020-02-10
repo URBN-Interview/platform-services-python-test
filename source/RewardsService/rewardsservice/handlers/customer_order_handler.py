@@ -17,6 +17,8 @@ class CustomerOrderHandler(tornado.web.RequestHandler):
             email = str(self.get_argument('email'))
             order_total = int(self.get_argument('total'))
 
+            # grab customer info if email exist, update the record,
+            # other wise insert a new record for the email
             current_customer_reward = db.customer_rewards.find_one({"email":email},{"_id":0})
             if current_customer_reward:
                 total_points = order_total + current_customer_reward["points"]
@@ -49,25 +51,35 @@ class CustomerOrderHandler(tornado.web.RequestHandler):
         except SystemError as e:
             logger.info('SystemError: {0}'.format(e))
             self.write("A error occured with the System.")
-        
+
+    # get the customer tier base on the point
     def get_customer_reward_data(self,email,points,rewards):
+        # if point is higher than 1000,set point to 1000
         if points > 1000:
             points = 1000
 
+        # perform calculating to round the number, ex: 290 would give 200
+        # this helps us determine the bottom tier range a customer belong to.
+        # if a customer has 290 point then, we know that they belong at the 200 points group
         rounded_points = int(points/100) * 100
         reward_tier = rewards.find_one({"points":rounded_points},{"_id":0})
 
+        # if the customer has point fewer than 100, then they belong at no tier
+        # set up a temperary tier, so that we can use that info later
         if not reward_tier:
             reward_tier = {'points': 0, 'rewardName': 'No off for purchase', 'tier': 'no tier'}
         tier = reward_tier["tier"]
         reward_name = reward_tier["rewardName"]
 
+        # if the customer reached the highest tier, then their next tier info are set to None
         if points == 1000:
             next_reward_points = 'None'
             next_reward_name = 'None'
             next_reward_tier_progress = 'None'
             next_reward_tier = 'None'
         else:
+            # use alphabet to get the next tier, 
+            # if there is no current tier, then we know the next tier would be A
             if tier == 'no tier':
                 next_reward_tier = 'A'
             else:
@@ -76,6 +88,8 @@ class CustomerOrderHandler(tornado.web.RequestHandler):
             next_rewards_info = rewards.find_one({"tier":next_reward_tier},{"_id": 0})
             next_reward_points = next_rewards_info["points"]
             next_reward_name = next_rewards_info["rewardName"]
+
+            #calculate the progression bease on current point and next reward points
             next_reward_tier_progress = str(int((points / next_reward_points) * 100)) + '%'
 
         customer_reward_data = {"email": email, "points": points, "rewardTier":tier,
