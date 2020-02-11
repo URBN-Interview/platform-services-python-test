@@ -3,6 +3,7 @@ import tornado.web
 
 from pymongo import MongoClient
 from tornado.gen import coroutine
+from utils import is_email_valid
 
 import logging
 logger = logging.getLogger(__name__)
@@ -11,12 +12,15 @@ class CustomerOrderHandler(tornado.web.RequestHandler):
     def get(self):
         try:
             client = MongoClient("mongodb", 27017)
-
+            logger.info('check email valid')
+            logger.info(is_email_valid('test1@gmail.com'))
             db = client["Rewards"]
             rewards = db["rewards"]
             email = str(self.get_argument('email'))
             order_total = int(self.get_argument('total'))
 
+            if not email or not is_email_valid(email):
+                raise ValueError(' email not valid, email: {0}'.format(email))
             # grab customer info if email exist, update the record,
             # other wise insert a new record for the email
             current_customer_reward = db.customer_rewards.find_one({"email":email},{"_id":0})
@@ -53,13 +57,13 @@ class CustomerOrderHandler(tornado.web.RequestHandler):
                             })
         except ValueError as e:
             logger.info('ValueError: {0}'.format(e))
-            self.write('An Error occured with Value type.')
+            self.write('An Value type error occured,an vaild email and order total are needed. Error:{0}'.format(e))
         except RuntimeError as e:
             logger.info('RuntimeError: {0}'.format(e))
-            self.write("A runtime error occured, please check database")
+            self.write("A runtime error occured, please check database.Error:{0}".format(e))
         except SystemError as e:
             logger.info('SystemError: {0}'.format(e))
-            self.write("A error occured with the System.")
+            self.write("A error occured with the System.Error:{0}".format(e))
 
     # get the customer tier base on the point
     def get_customer_reward_data(self,email,points,rewards):
