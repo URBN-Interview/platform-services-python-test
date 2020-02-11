@@ -36,12 +36,21 @@ class CustomerOrderHandler(tornado.web.RequestHandler):
                                 "nextRewardTierProgress":customer_reward_data['nextRewardTierProgress']
                             }
                         },upsert=True)
-                self.write('Reward info updated for customer with email address: {0} '.format(email))
+
+                self.write({
+                            "status": 200,
+                            "message": "Reward info udated for customer.",
+                            "details": {"email": email}
+                            })
             else:
                 customer_reward_data = self.get_customer_reward_data(email,order_total,rewards)
                 db.customer_rewards.insert_one(customer_reward_data)
-                #all_rewards = list(db.customer_rewards.find({}, {"_id": 0}))
-                self.write('Reward info inserted for customer with email address: {0} '.format(email))
+
+                self.write({
+                            "status": 200,
+                            "message": "Reward info inserted for customer.",
+                            "details": {"email": email}
+                            })
         except ValueError as e:
             logger.info('ValueError: {0}'.format(e))
             self.write('An Error occured with Value type.')
