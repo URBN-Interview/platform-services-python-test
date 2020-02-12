@@ -7,8 +7,6 @@ from rewards.forms import SearchCustomerForm, CustomerOrderForm
 
 from rewards.clients.rewards_service_client import RewardsServiceClient
 
-from .utils import is_email_valid
-
 class RewardsView(TemplateView):
     template_name = 'index.html'
 

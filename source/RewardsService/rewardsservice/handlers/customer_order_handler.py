@@ -3,7 +3,6 @@ import tornado.web
 
 from pymongo import MongoClient
 from tornado.gen import coroutine
-from utils import is_email_valid
 
 import logging
 logger = logging.getLogger(__name__)
@@ -18,10 +17,7 @@ class CustomerOrderHandler(tornado.web.RequestHandler):
             rewards = db["rewards"]
             email = str(self.get_argument('email'))
             order_total = float(self.get_argument('total'))
-            '''
-            if not email or not is_email_valid(email):
-                raise ValueError(' email not valid, email: {0}'.format(email))
-            '''
+
             # grab customer info if email exist, update the record,
             # other wise insert a new record for the email
             current_customer_reward = db.customer_rewards.find_one({"email":email},{"_id":0})
