@@ -7,6 +7,7 @@ from rewards.forms import SearchCustomerForm, CustomerOrderForm
 
 from rewards.clients.rewards_service_client import RewardsServiceClient
 
+from .utils import is_email_valid
 
 class RewardsView(TemplateView):
     template_name = 'index.html'
@@ -19,9 +20,15 @@ class RewardsView(TemplateView):
         context = self.get_context_data(**kwargs)
         print('herererererer')
         if request.method == "POST":
+            print('here 23')
             form = CustomerOrderForm(request.POST)
             if form.is_valid():
                 self.rewards_service_client.customer_order(form.cleaned_data['email_address'],form.cleaned_data['order_total'])
+            else:
+                print('input messed up')
+                context['form_error'] = 'form input invalid, vaild email and order total are expected. '
+            print('line 31')
+        print('line 30')
 
         return TemplateResponse(
             request,
