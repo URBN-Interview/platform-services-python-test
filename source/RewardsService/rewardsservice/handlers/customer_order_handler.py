@@ -9,7 +9,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 class CustomerOrderHandler(tornado.web.RequestHandler):
-    def get(self):
+    @coroutine
+    def post(self):
         try:
             client = MongoClient("mongodb", 27017)
             logger.info('check email valid')
@@ -17,7 +18,7 @@ class CustomerOrderHandler(tornado.web.RequestHandler):
             db = client["Rewards"]
             rewards = db["rewards"]
             email = str(self.get_argument('email'))
-            order_total = int(self.get_argument('total'))
+            order_total = float(self.get_argument('total'))
 
             if not email or not is_email_valid(email):
                 raise ValueError(' email not valid, email: {0}'.format(email))
@@ -36,7 +37,7 @@ class CustomerOrderHandler(tornado.web.RequestHandler):
                                 "rewardTier": customer_reward_data['rewardTier'],
                                 "rewardTierName":customer_reward_data['rewardTierName'],
                                 "nextRewardTier": customer_reward_data['nextRewardTier'],
-                                "nextRewardTierName": customer_reward_data['nextRewardName'],
+                                "nextRewardTierName": customer_reward_data['nextRewardTierName'],
                                 "nextRewardTierProgress":customer_reward_data['nextRewardTierProgress']
                             }
                         },upsert=True)
