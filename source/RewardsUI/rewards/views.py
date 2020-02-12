@@ -15,10 +15,11 @@ class RewardsView(TemplateView):
     def __init__(self, logger=logging.getLogger(__name__), rewards_service_client=RewardsServiceClient()):
         self.logger = logger
         self.rewards_service_client = rewards_service_client
+        self.rewards_data =  rewards_service_client.get_rewards()
 
     def post(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        print('herererererer')
+        context['rewards_data'] = self.rewards_data
         if request.method == "POST":
             print('here 23')
             form = CustomerOrderForm(request.POST)
@@ -26,9 +27,10 @@ class RewardsView(TemplateView):
                 self.rewards_service_client.customer_order(form.cleaned_data['email_address'],form.cleaned_data['order_total'])
             else:
                 print('input messed up')
-                context['form_error'] = 'form input invalid, vaild email and order total are expected. '
+                context['add_order_error'] = 'form input invalid, vaild email and order total are expected. '
             print('line 31')
         print('line 30')
+        context['customer_reward_info'] = self.rewards_service_client.get_all_customers_reward()
 
         return TemplateResponse(
             request,
@@ -38,28 +40,21 @@ class RewardsView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        rewards_data = self.rewards_service_client.get_rewards()
-        context['rewards_data'] = rewards_data
+        context['rewards_data'] = self.rewards_data
 
         if request.method == "GET":
             form = SearchCustomerForm(request.GET)
             if form.is_valid():
                 if form.cleaned_data['email_address']:
                     customer_reward_info = self.rewards_service_client.get_customer_reward(form.cleaned_data['email_address'])
-                    print('here 29')
+
                 else:
                     customer_reward_info = self.rewards_service_client.get_all_customers_reward()
-                    print('here 339389383')
+
                 if customer_reward_info:
                     context['customer_reward_info'] = customer_reward_info
-                print('what')
-                print(customer_reward_info)
             else:
-                print('debug1')
-                print(form)
-                print(dir(form))
-        else:
-            print('debug 2')
+                context['search_customer_error'] = 'please search with an email address.'
 
         return TemplateResponse(
             request,

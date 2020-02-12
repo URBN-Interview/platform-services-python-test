@@ -31,8 +31,8 @@
             <input type="text"id="order_total" name="order_total" value="{{order_total}}"/><br>
             <input type="submit" value="Submit Order"/>
             <br/>
-            {{form_error}}
         </form>
+        {{add_order_error}}
         <hr>
     </div>
     <div>
@@ -42,6 +42,8 @@
             <input type="text" id="email_address" name="email_address" value="{{email_address}}"/>
             <input type="submit" value="Search"/>
         </form>
+        {{search_customer_error}}
+        <br/>
         <table border="1">
             <thead>
             <tr>
