@@ -21,15 +21,13 @@ class RewardsView(TemplateView):
         context = self.get_context_data(**kwargs)
         context['rewards_data'] = self.rewards_data
         if request.method == "POST":
-            print('here 23')
+
             form = CustomerOrderForm(request.POST)
             if form.is_valid():
                 self.rewards_service_client.customer_order(form.cleaned_data['email_address'],form.cleaned_data['order_total'])
             else:
-                print('input messed up')
                 context['add_order_error'] = 'form input invalid, vaild email and order total are expected. '
-            print('line 31')
-        print('line 30')
+
         context['customer_reward_info'] = self.rewards_service_client.get_all_customers_reward()
 
         return TemplateResponse(
@@ -41,7 +39,7 @@ class RewardsView(TemplateView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         context['rewards_data'] = self.rewards_data
-
+        # if input is empty return all the customer reward, if an email is entered, return single data match that record
         if request.method == "GET":
             form = SearchCustomerForm(request.GET)
             if form.is_valid():

@@ -14,17 +14,14 @@ class RewardsServiceClient:
 
 
     def get_rewards(self):
-        print('get_rewards called')
         response = requests.get(self.rewards_url)
         return response.json()
 
     def customer_order(self,email_address,order_total):
-        print('customer order called')
         response = requests.post(url=self.customer_order_url, data={"email": email_address, "total": order_total})
         return response.json()
 
     def get_customer_reward(self,email_address):
-        print('get_customer_reward called')
         response = requests.get(self.get_customer_reward_url,{"email":email_address})
         return response.json()
 

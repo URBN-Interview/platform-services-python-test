@@ -13,8 +13,7 @@ class CustomerOrderHandler(tornado.web.RequestHandler):
     def post(self):
         try:
             client = MongoClient("mongodb", 27017)
-            logger.info('check email valid')
-            logger.info(is_email_valid('test1@gmail.com'))
+
             db = client["Rewards"]
             rewards = db["rewards"]
             email = str(self.get_argument('email'))
