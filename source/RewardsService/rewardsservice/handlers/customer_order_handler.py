@@ -70,6 +70,7 @@ class CustomerOrderHandler(tornado.web.RequestHandler):
     # get the customer tier base on the point
     def get_customer_reward_data(self,email,points,rewards):
         # if point is higher than 1000,set point to 1000
+        original_points = points
         if points > 1000:
             points = 1000
 
@@ -107,7 +108,7 @@ class CustomerOrderHandler(tornado.web.RequestHandler):
             #calculate the progression bease on current point and next reward points
             next_reward_tier_progress = str(int((points / next_reward_points) * 100)) + '%'
 
-        customer_reward_data = {"email": email, "points": points, "rewardTier":tier,
+        customer_reward_data = {"email": email, "points": original_points, "rewardTier":tier,
                                 "rewardTierName": reward_name,"nextRewardTier": next_reward_tier, 
                                 "nextRewardTierName": next_reward_tier_name,
                                 "nextRewardTierProgress": next_reward_tier_progress}
