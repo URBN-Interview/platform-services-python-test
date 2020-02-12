@@ -1,11 +1,13 @@
+{% load static %}
 <html>
 <head>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
     <h1>Welcome to the Rewards Dashboard</h1>
     <div>
         <h2>Reward Tiers</h2>
-        <table border="1">
+        <table border="3" align="center">
             <tr>
                 <th>Rewards Tier<th>
                 <th>Reward Points</th>
@@ -44,7 +46,7 @@
         </form>
         {{search_customer_error}}
         <br/>
-        <table border="1">
+        <table border="3" align="center">
             <thead>
             <tr>
                 <th>Email Address</th>
