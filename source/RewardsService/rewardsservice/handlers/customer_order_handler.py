@@ -36,7 +36,7 @@ class CustomerOrderHandler(tornado.web.RequestHandler):
                                 "rewardTier": customer_reward_data['rewardTier'],
                                 "rewardTierName":customer_reward_data['rewardTierName'],
                                 "nextRewardTier": customer_reward_data['nextRewardTier'],
-                                "nextRewardName": customer_reward_data['nextRewardName'],
+                                "nextRewardTierName": customer_reward_data['nextRewardName'],
                                 "nextRewardTierProgress":customer_reward_data['nextRewardTierProgress']
                             }
                         },upsert=True)
@@ -87,7 +87,7 @@ class CustomerOrderHandler(tornado.web.RequestHandler):
         # if the customer reached the highest tier, then their next tier info are set to None
         if points == 1000:
             next_reward_points = 'None'
-            next_reward_name = 'None'
+            next_reward_tier_name = 'None'
             next_reward_tier_progress = 'None'
             next_reward_tier = 'None'
         else:
@@ -100,14 +100,14 @@ class CustomerOrderHandler(tornado.web.RequestHandler):
 
             next_rewards_info = rewards.find_one({"tier":next_reward_tier},{"_id": 0})
             next_reward_points = next_rewards_info["points"]
-            next_reward_name = next_rewards_info["rewardName"]
+            next_reward_tier_name = next_rewards_info["rewardName"]
 
             #calculate the progression bease on current point and next reward points
             next_reward_tier_progress = str(int((points / next_reward_points) * 100)) + '%'
 
         customer_reward_data = {"email": email, "points": points, "rewardTier":tier,
                                 "rewardTierName": reward_name,"nextRewardTier": next_reward_tier, 
-                                "nextRewardName": next_reward_name,
+                                "nextRewardTierName": next_reward_tier_name,
                                 "nextRewardTierProgress": next_reward_tier_progress}
 
         return customer_reward_data
