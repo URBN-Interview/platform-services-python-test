@@ -1,5 +1,5 @@
 import tornado.web
-
+import json
 
 from util.validation import Validaton
 from pymongo import MongoClient
@@ -23,4 +23,16 @@ class CustomerHandler(tornado.web.RequestHandler):
 
         self.write({"email": email, "orderTotal": orderTotal})
 
+    @coroutine
+    def get(self):
+        client = MongoClient("mongodb", 27017)
+        db = client[self.collectionName]
+        validation = Validaton()
+        email = str(self.get_argument('email', ''))
 
+        if email :
+            validation.emailValidation(email).validate()
+            customers = db.customers.find_one({"email": email}, {"_id": 0})
+        else:
+            customers = list(db.customers.find({}, {"_id": 0}))
+        self.write(json.dumps(customers))
