@@ -4,14 +4,14 @@ import json
 from util.validation import Validaton
 from pymongo import MongoClient
 from tornado.gen import coroutine
+from tornado.options import options
 
-
-class CustomerHandler(tornado.web.RequestHandler):
+class CustomersHandler(tornado.web.RequestHandler):
     collectionName = 'Customers'
 
     @coroutine
     def post(self):
-        client = MongoClient("mongodb", 27017)
+        client = MongoClient(options.mongodb_host)
         db = client[self.collectionName]
         validation = Validaton()
 
@@ -25,7 +25,7 @@ class CustomerHandler(tornado.web.RequestHandler):
 
     @coroutine
     def get(self):
-        client = MongoClient("mongodb", 27017)
+        client = MongoClient(options.mongodb_host)
         db = client[self.collectionName]
         validation = Validaton()
         email = str(self.get_argument('email', ''))

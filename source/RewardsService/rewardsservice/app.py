@@ -5,11 +5,12 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 
-from tornado.options import options
+from tornado.options import define, options
 
 from settings import settings
 from url_patterns import url_patterns
 
+define('mongodb_host', default='mongodb://mongodb:27017')
 
 class App(tornado.web.Application):
     def __init__(self, urls):
