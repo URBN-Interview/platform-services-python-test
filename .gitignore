@@ -1,4 +1,4 @@
 *.pyc
 *.pyo
-source/RewardsService/data
+**/data
 */__pycache__
