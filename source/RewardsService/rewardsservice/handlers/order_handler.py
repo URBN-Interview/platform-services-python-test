@@ -7,10 +7,12 @@ from pymongo import MongoClient
 from tornado.gen import coroutine
 from tornado.options import options
 from model.customer import Customer
+from util.server_error import DatabaseError
 
 class OrderHandler(tornado.web.RequestHandler):
     customerClient = 'Customers'
     rewardsClient = 'Rewards'
+    error =  None
 
     @coroutine
     def post(self):
@@ -20,11 +22,17 @@ class OrderHandler(tornado.web.RequestHandler):
 
         email = str(self.get_argument('email', ''))
         orderTotal = str(self.get_argument('orderTotal', ''))
-        Validaton().emailValidation(email).currencyValidation(orderTotal).validate()
+
+        validateError = Validaton().emailValidation(email, 'email').currencyValidation(orderTotal, 'orderType').validate()
         
+        if validateError:
+            self.error = validateError
+            raise Exception(self.error.type)
+
         customerExist = customerDb.customers.find_one({'email': email}, {'_id': 0})
         if(customerExist):
-            raise Exception('Customer already exist')
+            self.error = DatabaseError('Customer already exist')
+            raise Exception(self.error.type)
 
         customer = Customer(email, float(orderTotal))
         dallor = int(orderTotal.split('.')[0])
@@ -48,7 +56,12 @@ class OrderHandler(tornado.web.RequestHandler):
                 currentRewardPoints = currentReward['points']
             customer.tierProgress = (dallor - currentRewardPoints)/(nextReward['points'] - currentRewardPoints)
             
-
         customerDb.customers.insert({'email': customer.email, 'orderTotal': customer.orderTotal, 'rewardTier': customer.rewardTier, 'rewardName': customer.rewardName, 'nextRewardTier': customer.nextRewardTier, 'nextRewardName': customer.nextRewardName, 'nextRewardProgress': customer.tierProgress})
         createdCustomer = customerDb.customers.find_one({'email': email}, {'_id': 0})
         self.write(json.dumps(createdCustomer))
+
+    def write_error(self, status_code, **kwargs):
+        if status_code == 500 and self.error:
+            self.write({"type" : self.error.type, "context": self.error.context})
+        elif status_code == 500:
+            self.write({'message: Unknown Error'})
