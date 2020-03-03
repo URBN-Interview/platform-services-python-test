@@ -43,13 +43,12 @@ class OrderHandler(tornado.web.RequestHandler):
 
         if(nextReward):
             customer.setNextReward(nextReward['tier'], nextReward['rewardName'])
-
-        if(nextReward):
             currentRewardPoints = 0
             if(currentReward):
                 currentRewardPoints = currentReward['points']
             customer.tierProgress = (dallor - currentRewardPoints)/(nextReward['points'] - currentRewardPoints)
+            
 
-        customerDb.customers.insert({'email': customer.email, 'orderTotal': customer.orderTotal, 'rewardTier': customer.rewardTier, 'rewardName': customer.rewardName, 'nextRewardTier': customer.nextRewardTier, 'nextRewardName': customer.nextRewardName, 'nextRewardTierProgress': customer.tierProgress})
+        customerDb.customers.insert({'email': customer.email, 'orderTotal': customer.orderTotal, 'rewardTier': customer.rewardTier, 'rewardName': customer.rewardName, 'nextRewardTier': customer.nextRewardTier, 'nextRewardName': customer.nextRewardName, 'nextRewardProgress': customer.tierProgress})
         createdCustomer = customerDb.customers.find_one({'email': email}, {'_id': 0})
         self.write(json.dumps(createdCustomer))
