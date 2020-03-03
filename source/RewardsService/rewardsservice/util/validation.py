@@ -1,4 +1,5 @@
 import re
+from util.server_error import ValidationError
 
 emailRegex  = '^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
 currencyRegex = '^[0-9]+\.[0-9]{2}'
@@ -6,26 +7,22 @@ currencyRegex = '^[0-9]+\.[0-9]{2}'
 class Validaton:
 
     def __init__(self):
-        self.message = ''
-        self.errorExist = False
+        self.errors = list()
 
-    def _setMessage(self, message):
-        self.message = '%s \n %s' % (self.message, message)
-
-    def _validator(self, regex, data, name):
+    def _validator(self, regex, data, regrexType, name):
         result = re.search(regex, data)
         if(not result):
-            self._setMessage('Invalid %s validation' % (name))
-            self.errorExist = True
+            self.errors.append('%s does not match %s format' %(name, regrexType))
         return self
 
     def validate(self):
-        if(self.errorExist):
-            raise Exception(self.message)
+        if len(self.errors) > 0:
+            error = ValidationError(self.errors)
+            return error
 
-    def emailValidation(self, email):
-        return self._validator(emailRegex, email, 'email')
+    def emailValidation(self, email, name):
+        return self._validator(emailRegex, email, 'email', name)
 
-    def currencyValidation(self, currency):
-        return self._validator(currencyRegex, currency, 'currency')
+    def currencyValidation(self, currency, name):
+        return self._validator(currencyRegex, currency, 'currency', name)
 
