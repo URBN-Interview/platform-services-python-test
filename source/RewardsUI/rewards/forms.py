@@ -4,5 +4,5 @@ class EmailForm(forms.Form):
     email = forms.CharField(label='email')
 
 class OrderForm(forms.Form):
-    email = forms.CharField(label="email")
-    totalOrder = forms.CharField(label="totalOrder")
+    order_email = forms.CharField(label="order email")
+    order_total = forms.CharField(label="order total")
