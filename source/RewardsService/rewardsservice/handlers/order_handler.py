@@ -32,12 +32,12 @@ class OrderHandler(tornado.web.RequestHandler):
             raise Exception(self.error.type)
 
         customerExist = customerDb.customers.find_one({'email': email}, {'_id': 0})
+        dallor = int(orderTotal.split('.')[0])
+
         if(customerExist):
-            self.error = DatabaseError('Customer already exist')
-            raise Exception(self.error.type)
+            dallor += customerExist['rewardPoints']
 
         customer = Customer(email, float(orderTotal))
-        dallor = int(orderTotal.split('.')[0])
 
         for reward in list(rewardsDb.rewards.find({}, {'_id': 0})):
             if(dallor < reward['points']):
@@ -47,7 +47,7 @@ class OrderHandler(tornado.web.RequestHandler):
             currentReward = reward
 
         if(currentReward):
-            customer.setReward(currentReward['tier'], currentReward['rewardName'])
+            customer.setReward(currentReward['tier'], currentReward['rewardName'], currentReward['points'])
 
         if(nextReward):
             customer.setNextReward(nextReward['tier'], nextReward['rewardName'])
@@ -56,9 +56,14 @@ class OrderHandler(tornado.web.RequestHandler):
                 currentRewardPoints = currentReward['points']
             customer.tierProgress = (dallor - currentRewardPoints)/(nextReward['points'] - currentRewardPoints)
             
-        customerDb.customers.insert({'email': customer.email, 'orderTotal': customer.orderTotal, 'rewardTier': customer.rewardTier, 'rewardName': customer.rewardName, 'nextRewardTier': customer.nextRewardTier, 'nextRewardName': customer.nextRewardName, 'nextRewardProgress': customer.tierProgress})
-        createdCustomer = customerDb.customers.find_one({'email': email}, {'_id': 0})
-        self.write(json.dumps(createdCustomer))
+        
+        if(customerExist):
+            customerDb.customers.update({'email': customer.email}, {'email': customer.email, 'rewardPoints': dallor, 'rewardTier': customer.rewardTier, 'rewardName': customer.rewardName, 'nextRewardTier': customer.nextRewardTier, 'nextRewardName': customer.nextRewardName, 'nextRewardProgress': customer.tierProgress})
+        else:    
+            customerDb.customers.insert({'email': customer.email, 'rewardPoints': dallor, 'rewardTier': customer.rewardTier, 'rewardName': customer.rewardName, 'nextRewardTier': customer.nextRewardTier, 'nextRewardName': customer.nextRewardName, 'nextRewardProgress': customer.tierProgress})
+        
+        result = list(customerDb.customers.find({'email': email}, {'_id': 0}))
+        self.write(json.dumps(result))
 
     def write_error(self, status_code, **kwargs):
         if status_code == 500 and self.error:
