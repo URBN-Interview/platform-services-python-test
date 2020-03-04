@@ -17,7 +17,7 @@ class CustomerHandler(tornado.web.RequestHandler):
         db = client[self.collectionName]
         
         email = str(self.get_argument('email', ''))
-        validateError = Validaton().emailValidation(email).validate()
+        validateError = Validaton().emailValidation(email, 'email').validate()
         if validateError:
             self.error = validateError
             raise Exception(self.error.type)
