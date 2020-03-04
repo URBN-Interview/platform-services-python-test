@@ -22,7 +22,7 @@ class CustomerHandler(tornado.web.RequestHandler):
             self.error = validateError
             raise Exception(self.error.type)
 
-        customers = db.customers.find_one({"email": email}, {"_id": 0})
+        customers = list(db.customers.find({"email": email}, {"_id": 0}))
         self.write(json.dumps(customers))
 
     def write_error(self, status_code, **kwargs):
