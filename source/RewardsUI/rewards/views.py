@@ -19,21 +19,20 @@ class RewardsView(TemplateView):
         context = self.get_context_data(**kwargs)
 
         rewards_data = self.rewards_service_client.get_rewards()
-        customers_data = self.rewards_service_client.get_customers()
-
-        context['rewards_data'] = rewards_data
+        customers_data = self.rewards_service_client.get_all_customers()
 
         if request.method == 'GET':
             form = EmailForm(request.GET)
             if form.is_valid():
                 email = form.cleaned_data['email']
-                result = re.search(self.email_regrex , email)
+                emailValidate = re.search(self.email_regrex , email)
 
-                if(not result or not email):
+                if(not emailValidate or not email):
                     print('err')
                 else:
                     customers_data = self.rewards_service_client.get_customer(email)
-        
+
+        context['rewards_data'] = rewards_data
         context['customers_data'] = customers_data
 
         return TemplateResponse(
@@ -46,15 +45,26 @@ class RewardsView(TemplateView):
         context = self.get_context_data(**kwargs)
 
         rewards_data = self.rewards_service_client.get_rewards()
-        customer_data = self.rewards_service_client.get_customers()
-
-        context['rewards_data'] = rewards_data
-        context['customers_data'] = customer_data
+        customer_data = self.rewards_service_client.get_all_customers()
 
         if request.method == 'POST':
             form = OrderForm(request.POST)
+            print(form.is_valid())
             if form.is_valid():
-                print(form.cleaned_data)
+                email = form.cleaned_data['order_email']
+                orderTotal = form.cleaned_data['order_total']
+                
+                emailValidate = re.search(self.email_regrex , email)
+
+                if(not emailValidate):
+                    print('err')
+                else:
+                    self.rewards_service_client.save_order(email, orderTotal)
+                    customer_data = self.rewards_service_client.get_all_customers()
+
+                
+        context['rewards_data'] = rewards_data
+        context['customers_data'] = customer_data
             
         return TemplateResponse(
             request,
