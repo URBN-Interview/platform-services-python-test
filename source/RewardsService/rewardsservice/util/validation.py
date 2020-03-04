@@ -2,7 +2,7 @@ import re
 from util.server_error import ValidationError
 
 emailRegex  = '^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
-currencyRegex = '^[0-9]+\.[0-9]{2}'
+currencyRegex = '^\d+(\.|\,)\d{2}$'
 
 class Validaton:
 
