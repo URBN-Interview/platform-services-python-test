@@ -7,7 +7,6 @@ from pymongo import MongoClient
 from tornado.gen import coroutine
 from tornado.options import options
 from model.customer import Customer
-from util.server_error import DatabaseError
 
 class OrderHandler(tornado.web.RequestHandler):
     customerClient = 'Customers'
