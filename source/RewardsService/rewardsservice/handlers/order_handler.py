@@ -15,10 +15,12 @@ class OrderHandler(tornado.web.RequestHandler):
     error =  None
 
     @coroutine
-    def post(self):
+    def get(self):
         client = MongoClient(options.mongodb_host)
         customerDb = client[self.customerClient]
         rewardsDb = client[self.rewardsClient]
+        currentReward = None
+        nextReward = None
 
         email = str(self.get_argument('email', ''))
         orderTotal = str(self.get_argument('orderTotal', ''))
@@ -36,8 +38,6 @@ class OrderHandler(tornado.web.RequestHandler):
 
         customer = Customer(email, float(orderTotal))
         dallor = int(orderTotal.split('.')[0])
-        currentReward = None
-        nextReward = None
 
         for reward in list(rewardsDb.rewards.find({}, {'_id': 0})):
             if(dallor < reward['points']):
