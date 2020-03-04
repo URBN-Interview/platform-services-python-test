@@ -27,7 +27,7 @@
         <form for="order" method="post">
             {% csrf_token %}
             <label>Enter email address: </label><input id="email" name="email" type="text"/><br>
-            <label>Enter order total: </label><input id="totalOrder" name="totalOrder" type="text"/><input type="submit" value="Submit Order"/>
+            <label>Enter order total: </label><input id="totalOrder" name="totalOrder" type="number" min="0.01" step="0.01" pattern="^\d+(\.|\,)\d{2}$" /><input type="submit" value="Submit Order"/>
         </form>
         <hr>
     </div>
@@ -49,7 +49,7 @@
             </tr>
             </thead>
             <tbody>
-                {% for customer in customer_data %}
+                {% for customer in customers_data %}
                 <tr>
                     
                     <td>{{ customer.email }}</td>
