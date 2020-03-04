@@ -4,15 +4,17 @@ class Customer:
         self.orderTotal = orderTotal
         self.rewardTier = None
         self.rewardName = None
+        self.rewardPoints = None
         self.nextRewardTier = None
         self.nextRewardName = None
         self.tierProgress = 0.0
 
-    def setReward(self, rewardTier, rewardName):
-        self.rewardTier = rewardTier
-        self.rewardName = rewardName
+    def setReward(self, tier, name, points):
+        self.rewardTier = tier
+        self.rewardName = name
+        self.rewardPoints = points
     
-    def setNextReward(self, nextRewardTier, nextRewardName):
-        self.nextRewardTier = nextRewardTier
-        self.nextRewardName = nextRewardName
+    def setNextReward(self, tier, name):
+        self.nextRewardTier = tier
+        self.nextRewardName = name
 
