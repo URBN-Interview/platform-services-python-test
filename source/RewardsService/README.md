@@ -41,3 +41,15 @@ Create RESTful endpoint(s) to calculate, store, and retrieve customer rewards da
 * $ docker-compose build
 * $ docker-compose up -d
 * Services are accessible at http://localhost:7050/
+
+# Changes
+* Added global definition of mongodb connection
+* Added endpoint and handlers
+* Added error handling and error class
+* Added data validation logic 
+* Added unit testing
+
+# Unit test
+* $ docker-compose up -d
+* Traverse to source/RewardsService folder
+* $ python -m tornado.testing rewardsservice.test.unit_test

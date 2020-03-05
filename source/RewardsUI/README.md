@@ -16,3 +16,13 @@
 * $ docker-compose build
 * $ docker-compose up -d
 * Open http://localhost:8000/rewards/ in your browser.
+
+# Changes
+* Update setting to import custom filter and static fol
+* Added template mutiplication filter 
+* Updated client with new endpoints
+* Added forms logic for template
+* Updated template to integrate and save customer data 
+* Added styling to template
+* Added routing logic for rewards page
+* Added api request and validation error handling
