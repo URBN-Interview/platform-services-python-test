@@ -2,6 +2,8 @@ import tornado.web
 import json
 import math
 
+
+from util.server_error import UnknownError
 from util.validation import Validaton
 from pymongo import MongoClient
 from tornado.gen import coroutine
@@ -65,7 +67,6 @@ class OrderHandler(tornado.web.RequestHandler):
         self.write(json.dumps(result))
 
     def write_error(self, status_code, **kwargs):
-        if status_code == 500 and self.error:
-            self.write({"type" : self.error.type, "context": self.error.context})
-        elif status_code == 500:
-            self.write({'message: Unknown Error'})
+        if status_code == 500 and not self.error:
+            self.error = UnknownError()
+        self.write({"type" : self.error.type, "context": self.error.context, "error": self.error.error})
