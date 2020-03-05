@@ -15,11 +15,11 @@ class MyTestCase(tornado.testing.AsyncTestCase):
 
 class MyTestCase2(tornado.testing.AsyncTestCase):
     @tornado.testing.gen_test
-    def test_create_order_fail(self):
+    def test_update_customer(self):
         client = tornado.httpclient.AsyncHTTPClient()
         client.fetch('%s/order?email=%s&orderTotal=%s' % (app, mockCustomer.email, mockCustomer.orderTotal), self.stop)
         response = self.wait()
-        self.assertEqual(500, response.code)
+        self.assertEqual(200, response.code)
 
 class MyTestCase3(tornado.testing.AsyncTestCase):
     @tornado.testing.gen_test
