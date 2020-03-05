@@ -3,26 +3,45 @@ import requests
 
 class RewardsServiceClient:
 
-    def __init__(self):
+    def __init__(self, endpoint):
         self.url = "http://rewardsservice:7050/"
-        self.rewards_endpoint = "rewards"
-        self.all_customers_endpoint = "customers"
-        self.get_customer_endpoint = "customer"
-        self.save_order_endpoint = "order"
+        self.endpoint = endpoint
 
-    def get_rewards(self):
-        response = requests.get(self.url + self.rewards_endpoint)
-        return response.json()
 
-    def get_all_customers(self):
-        response = requests.get(self.url + self.all_customers_endpoint)
-        return response.json()
+    def request(self, context=None):
+        if context is not None:
+            response = requests.get(self.url + self.endpoint, context)
+        else:
+            response = requests.get(self.url + self.endpoint)
 
-    def get_customer(self, email):
-        response = requests.get(self.url + self.get_customer_endpoint, {"email": email})
-        return response.json()
-    
-    def save_order(self, email, orderTotal):
-        response = requests.get(self.url + self.save_order_endpoint, {"email": email, "orderTotal": orderTotal})
-        return response.json()
+        body = response.json()
+        if(type(body) != list and body.error):
+            raise Exception(body.type)
+        else:
+            return body
 
+
+
+class RewardsRequest(RewardsServiceClient):
+
+    def __init__(self):
+        self.endpoint = "rewards"
+        super().__init__(self.endpoint)
+
+class AllCustomersRequest(RewardsServiceClient):
+
+    def __init__(self):
+        self.endpoint = "customers"
+        super().__init__(self.endpoint)
+
+class CustomerRequest(RewardsServiceClient):
+
+    def __init__(self):
+        self.endpoint = "customer"
+        super().__init__(self.endpoint)
+
+class OrderRequest(RewardsServiceClient):
+
+    def __init__(self):
+        self.endpoint = "order"
+        super().__init__(self.endpoint)
