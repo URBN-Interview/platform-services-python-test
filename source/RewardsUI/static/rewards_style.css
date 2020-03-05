@@ -102,6 +102,12 @@ tr:nth-child(even){
     height: 30px;
     border-radius: 2px;
     margin: 20px 0;
-    border:1px solid #cccccc
+    border:1px solid #cccccc;
+    font-size: 16px;
+    padding: 5px;
+}
+
+.error-msg{
+    color: #e74c3c;
 }
 
