@@ -1,12 +1,16 @@
 <html>
 <head>
     {% load reward_extra %}
+    {% load static %}
+    <link href="{% static 'rewards_style.css' %}" rel="stylesheet" type="text/css">
 </head>
 <body>
-    <h1>Welcome to the Rewards Dashboard</h1>
-    <div>
+    <div class="section row " id="top-header">
+        <h1>Welcome to the Rewards Dashboard</h1>
+    </div>
+    <div class="section col center-content" id="rewards-table-container">
         <h2>Reward Tiers</h2>
-        <table border="1">
+        <table cellspacing="0" cellpadding="0">
             <thead>
             <tr>
                 <th>Rewards Tier</th>
@@ -26,48 +30,61 @@
         </table>
         <hr>
     </div>
-    <div>
-        <h2>Add orders</h2>
-        <form for="order" method="post">
-            {% csrf_token %}
-            <label>Enter email address: </label><input id="order_email" name="order_email" type="email" required/><br>
-            <label>Enter order total: </label><input id="order_total" name="order_total" type="number" min="0.01" step="0.01" pattern="^\d+(\.|\,)\d{2}$" required/><input type="submit" value="Submit Order"/>
-        </form>
-        <hr>
+    <div class="section col center-content">
+        <div class="container">
+            <h2 class="input-header">Add orders</h2>
+            <form for="order" method="post">
+                {% csrf_token %}
+                <label>Enter email address </label>
+                <input class="input-box" id="order_email" name="order_email" type="email" required/><br>
+                <label>Enter order total</label>
+                <input class="input-box" id="order_total" name="order_total" type="number" min="0.01" step="0.01" pattern="^\d+(\.|\,)\d{2}$" required/>
+                <br>
+                <input class="submit-btn" type="submit" value="Submit Order"/>
+            </form>
+        </div>
     </div>
-    <div>
-        <h2>User Rewards</h2>
-        <form for="email" method="get">
-            <label>Email address: <br></label><input id="email" name="email" type="text"/><input type="submit" value="Search"/>
-        </form>
-        <table border="1">
-            <thead>
-            <tr>
-                <th>Email Address</th>
-                <th>Reward Points</th>
-                <th>Reward Tier</th>
-                <th>Reward Tier Name</th>
-                <th>Next Reward Tier</th>
-                <th>Next Reward Tier Name</th>
-                <th>Next Reward Tier Progress</th>
-            </tr>
-            </thead>
-            <tbody>
-                {% for customer in customers_data %}
+    <div class="section col center-content">
+        <div class="container">
+            <h2 class="input-header">User Rewards</h2>
+            <form for="email" method="get">
+                <label>Email address</label>
+                <input id="email" name="email" type="text" class="input-box"/>
+                
+                <input class="submit-btn" type="submit" value="Search"/>
+            </form>
+        </div>
+
+        <div class="section col center-content">
+            <table cellspacing="0" cellpadding="0">
+                <thead>
                 <tr>
-                    
-                    <td>{{ customer.email }}</td>
-                    <td>{{ customer.rewardPoints }}</td>
-                    <td>{{ customer.rewardTier }}</td>
-                    <td>{{ customer.rewardName }}</td>
-                    <td>{{ customer.nextRewardTier}}</td>
-                    <td>{{ customer.nextRewardName }}</td>
-                    <td>{{ customer.nextRewardProgress|mutiple:100 }}%</td>
-                    
+                    <th>Email Address</th>
+                    <th>Reward Points</th>
+                    <th>Reward Tier</th>
+                    <th>Reward Tier Name</th>
+                    <th>Next Reward Tier</th>
+                    <th>Next Reward Tier Name</th>
+                    <th>Next Reward Tier Progress</th>
                 </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for customer in customers_data %}
+                    <tr>
+                        
+                        <td>{{ customer.email }}</td>
+                        <td>{{ customer.rewardPoints }}</td>
+                        <td>{{ customer.rewardTier }}</td>
+                        <td>{{ customer.rewardName }}</td>
+                        <td>{{ customer.nextRewardTier}}</td>
+                        <td>{{ customer.nextRewardName }}</td>
+                        <td>{{ customer.nextRewardProgress|mutiple:100 }}%</td>
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </body>
 </html>
