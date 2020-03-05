@@ -39,7 +39,7 @@
                 <input class="input-box" id="order_email" name="order_email" type="email" required/><br>
                 <label>Enter order total</label>
                 <input class="input-box" id="order_total" name="order_total" type="number" min="0.01" step="0.01" pattern="^\d+(\.|\,)\d{2}$" required/>
-                <br>
+                <span class="error-msg">{% if order_email_error %} {{ order_email_error }} {% endif %}</span>
                 <input class="submit-btn" type="submit" value="Submit Order"/>
             </form>
         </div>
@@ -50,6 +50,7 @@
             <form for="email" method="get">
                 <label>Email address</label>
                 <input id="email" name="email" type="text" class="input-box"/>
+                <span class="error-msg">{% if customer_error %} {{ customer_error }} {% endif %}</span>
                 
                 <input class="submit-btn" type="submit" value="Search"/>
             </form>
