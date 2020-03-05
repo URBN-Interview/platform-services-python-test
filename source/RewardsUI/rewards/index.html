@@ -7,18 +7,22 @@
     <div>
         <h2>Reward Tiers</h2>
         <table border="1">
+            <thead>
             <tr>
-                <th>Rewards Tier<th>
+                <th>Rewards Tier</th>
                 <th>Reward Points</th>
                 <th>Rewards Tier Name</th>
             </tr>
+            </thead>
+            <tbody>
             {% for reward in rewards_data %}
                 <tr>
-                    <td>{{ reward.tier }}<td>
+                    <td>{{ reward.tier }}</td>
                     <td>{{ reward.points }}</td>
                     <td>{{ reward.rewardName }}</td>
                 </tr>
             {% endfor %}
+            </tbody>
         </table>
         <hr>
     </div>
@@ -34,7 +38,7 @@
     <div>
         <h2>User Rewards</h2>
         <form for="email" method="get">
-            <label>Email address: </label><input id="email" name="email" type="text"/><input type="submit" value="Search"/>
+            <label>Email address: <br></label><input id="email" name="email" type="text"/><input type="submit" value="Search"/>
         </form>
         <table border="1">
             <thead>
