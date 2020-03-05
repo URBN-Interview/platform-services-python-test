@@ -5,14 +5,19 @@
     <link href="{% static 'rewards_style.css' %}" rel="stylesheet" type="text/css">
 </head>
 <body>
+    {% if error %}
+        <div class="section" id="error-container"> <span>Something went wrong. Please try again</span></div>
+    {% endif %}
+    
     <div class="section row " id="top-header">
         <h1>Welcome to the Rewards Dashboard</h1>
     </div>
+
     <div class="section col center-content" id="rewards-table-container">
         <h2>Reward Tiers</h2>
-        <table cellspacing="0" cellpadding="0">
+        <table cellspacing="0" cellpadding="0" id="reward-table">
             <thead>
-            <tr>
+            <tr class="table-header">
                 <th>Rewards Tier</th>
                 <th>Reward Points</th>
                 <th>Rewards Tier Name</th>
@@ -30,6 +35,7 @@
         </table>
         <hr>
     </div>
+
     <div class="section col center-content">
         <div class="container">
             <h2 class="input-header">Add orders</h2>
@@ -39,7 +45,7 @@
                 <input class="input-box" id="order_email" name="order_email" type="email" required/><br>
                 <label>Enter order total</label>
                 <input class="input-box" id="order_total" name="order_total" type="number" min="0.01" step="0.01" pattern="^\d+(\.|\,)\d{2}$" required/>
-                <span class="error-msg">{% if order_email_error %} {{ order_email_error }} {% endif %}</span>
+                <span class="error-msg">{% if order_input_error %} {{ order_input_error }} {% endif %}</span>
                 <input class="submit-btn" type="submit" value="Submit Order"/>
             </form>
         </div>
@@ -50,42 +56,43 @@
             <form for="email" method="get">
                 <label>Email address</label>
                 <input id="email" name="email" type="text" class="input-box"/>
-                <span class="error-msg">{% if customer_error %} {{ customer_error }} {% endif %}</span>
+                <span class="error-msg">{% if customer_input_error %} {{ customer_input_error }} {% endif %}</span>
                 
                 <input class="submit-btn" type="submit" value="Search"/>
             </form>
         </div>
-
-        <div class="section col center-content">
-            <table cellspacing="0" cellpadding="0">
-                <thead>
-                <tr>
-                    <th>Email Address</th>
-                    <th>Reward Points</th>
-                    <th>Reward Tier</th>
-                    <th>Reward Tier Name</th>
-                    <th>Next Reward Tier</th>
-                    <th>Next Reward Tier Name</th>
-                    <th>Next Reward Tier Progress</th>
-                </tr>
-                </thead>
-                <tbody>
-                    {% for customer in customers_data %}
-                    <tr>
-                        
-                        <td>{{ customer.email }}</td>
-                        <td>{{ customer.rewardPoints }}</td>
-                        <td>{{ customer.rewardTier }}</td>
-                        <td>{{ customer.rewardName }}</td>
-                        <td>{{ customer.nextRewardTier}}</td>
-                        <td>{{ customer.nextRewardName }}</td>
-                        <td>{{ customer.nextRewardProgress|mutiple:100 }}%</td>
-                        
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
     </div>
+
+    <div class="section col center-content">
+        <table cellspacing="0" cellpadding="0" id="order-table">
+            <thead>
+            <tr class="table-header">
+                <th>Email Address</th>
+                <th>Reward Points</th>
+                <th>Reward Tier</th>
+                <th>Reward Tier Name</th>
+                <th>Next Reward Tier</th>
+                <th>Next Reward Tier Name</th>
+                <th>Next Reward Tier Progress</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers_data %}
+                <tr>
+                    
+                    <td>{{ customer.email }}</td>
+                    <td>{{ customer.rewardPoints }}</td>
+                    <td>{{ customer.rewardTier }}</td>
+                    <td>{{ customer.rewardName }}</td>
+                    <td>{{ customer.nextRewardTier}}</td>
+                    <td>{{ customer.nextRewardName }}</td>
+                    <td>{{ customer.nextRewardProgress|mutiple:100 }}%</td>
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
 </body>
 </html>
