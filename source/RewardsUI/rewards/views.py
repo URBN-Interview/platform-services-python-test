@@ -17,7 +17,7 @@ class RewardsView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-
+        error = ''
         rewards_data = self.rewards_service_client.get_rewards()
         customers_data = self.rewards_service_client.get_all_customers()
 
@@ -27,13 +27,20 @@ class RewardsView(TemplateView):
                 email = form.cleaned_data['email']
                 emailValidate = re.search(self.email_regrex , email)
 
-                if(not emailValidate or not email):
-                    print('err')
-                else:
-                    customers_data = self.rewards_service_client.get_customer(email)
+                if(email):
+                    print(emailValidate)
+                    if(not emailValidate):
+                        error = 'Invalid email input'
+                    else:
+                        customers_data = self.rewards_service_client.get_customer(email)
+        
+        if(type(customers_data) != list and customers_data.error):
+            error = customers_data.context
+        else:
+            context['customers_data'] = customers_data
 
+        context['customer_error'] = error
         context['rewards_data'] = rewards_data
-        context['customers_data'] = customers_data
 
         return TemplateResponse(
             request,
@@ -43,9 +50,8 @@ class RewardsView(TemplateView):
     
     def post(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-
         rewards_data = self.rewards_service_client.get_rewards()
-        customer_data = self.rewards_service_client.get_all_customers()
+        error = ''
 
         if request.method == 'POST':
             form = OrderForm(request.POST)
@@ -54,17 +60,21 @@ class RewardsView(TemplateView):
                 email = form.cleaned_data['order_email']
                 orderTotal = '%.2f' % float(form.cleaned_data['order_total'])
                 emailValidate = re.search(self.email_regrex , email)
-
                 if(not emailValidate):
-                    print('err')
+                    error = 'Invalid email input'
                 else:
                     self.rewards_service_client.save_order(email, orderTotal)
-                    customer_data = self.rewards_service_client.get_all_customers()
 
-                
+        customers_data = self.rewards_service_client.get_all_customers()
+
+        if(type(customers_data) != list and customers_data.error):
+            error = customers_data.context
+        else:
+            context['customers_data'] = customers_data
+        
+        context['order_error'] = error
         context['rewards_data'] = rewards_data
-        context['customers_data'] = customer_data
-            
+        
         return TemplateResponse(
             request,
             self.template_name,
