@@ -64,7 +64,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
             ],
             'libraries':{
-                'reward_extra': 'templatetags.reward_extra',
+                'reward_extra': 'rewards.templatetags.reward_extra',
             }
         },
     },
@@ -121,3 +121,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
