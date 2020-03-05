@@ -1,6 +1,7 @@
 import tornado.testing
 import tornado.httpclient
 from ..model.customer import Customer
+import json
 
 app = 'http://localhost:7050'
 mockCustomer = Customer(email="test@email.com", orderTotal='100.00')
@@ -11,6 +12,9 @@ class MyTestCase(tornado.testing.AsyncTestCase):
         client = tornado.httpclient.AsyncHTTPClient()
         client.fetch('%s/order?email=%s&orderTotal=%s' % (app, mockCustomer.email, mockCustomer.orderTotal), self.stop)
         response = self.wait()
+        body = json.loads(response.body.decode('utf-8'))
+        self.assertEqual(1, len(body))
+        self.assertEqual(mockCustomer.email, body[0]['email'])
         self.assertEqual(200, response.code)
 
 class MyTestCase2(tornado.testing.AsyncTestCase):
@@ -19,6 +23,9 @@ class MyTestCase2(tornado.testing.AsyncTestCase):
         client = tornado.httpclient.AsyncHTTPClient()
         client.fetch('%s/order?email=%s&orderTotal=%s' % (app, mockCustomer.email, mockCustomer.orderTotal), self.stop)
         response = self.wait()
+        body = json.loads(response.body.decode('utf-8'))
+        self.assertEqual(1, len(body))
+        self.assertEqual(mockCustomer.email, body[0]['email'])
         self.assertEqual(200, response.code)
 
 class MyTestCase3(tornado.testing.AsyncTestCase):
@@ -27,6 +34,9 @@ class MyTestCase3(tornado.testing.AsyncTestCase):
         client = tornado.httpclient.AsyncHTTPClient()
         response = yield client.fetch('%s/customer?email=%s' % (app, mockCustomer.email), self.stop)
         response = self.wait()
+        body = json.loads(response.body.decode('utf-8'))
+        self.assertEqual(1, len(body))
+        self.assertEqual(mockCustomer.email, body[0]['email'])
         self.assertEqual(200, response.code)
 
 class MyTestCase4(tornado.testing.AsyncTestCase):
