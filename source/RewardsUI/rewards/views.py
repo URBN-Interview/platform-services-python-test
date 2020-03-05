@@ -53,7 +53,6 @@ class RewardsView(TemplateView):
             if form.is_valid():
                 email = form.cleaned_data['order_email']
                 orderTotal = '%.2f' % float(form.cleaned_data['order_total'])
-                print(orderTotal)
                 emailValidate = re.search(self.email_regrex , email)
 
                 if(not emailValidate):
