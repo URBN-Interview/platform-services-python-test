@@ -22,7 +22,7 @@ Create RESTful endpoint(s) to calculate, store, and retrieve customer rewards da
 # Instructions:
 * Design and implement the following endpoints.
     * **Endpoint 1:**
-        * Accept a customer's order data: **email adress**  (ex. "customer01@gmail.com") and **order total** (ex. 100.80).
+        * Accept a customer's order data: **email address**  (ex. "customer01@gmail.com") and **order total** (ex. 100.80).
         * Calculate and store the following customer rewards data into MongoDB. For each dollar a customer spends, the customer will earn 1 reward point. For example, an order of $100.80 earns 100 points. Once a customer has reached the top rewards tier, there are no more rewards the customer can earn.
             * **Email Address:** the customer's email address (ex. "customer01@gmail.com")
             * **Reward Points:** the customer's rewards points (ex. 100)
