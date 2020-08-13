@@ -15,11 +15,13 @@ class RewardsHandler(tornado.web.RequestHandler):
         db = client["Rewards"]
         rewards = list(db.rewards.find({}, {"_id": 0}))
         self.write(json.dumps(rewards))
+        raise tornado.gen.Return(rewards) # return the list of reward tiers
 
 
 class Init(tornado.web.RequestHandler):
     def get(self):
         self.write({'message':'hello world'})
+
 
 class CustomerData(RewardsHandler):
 
@@ -48,7 +50,7 @@ class CustomerData(RewardsHandler):
         else:
             return "J"
 
-
+    #use literal rewards array temporarily (ideal would be to pull from RewardsHandler Class)
     tiers = [
         { "tier": "A", "rewardName": "5% off purchase", "points": 100 },
         { "tier": "B", "rewardName": "10% off purchase", "points": 200 },
@@ -86,6 +88,7 @@ class CustomerData(RewardsHandler):
     @coroutine #async function
     def post(self):
 
+        #calculate inputs to store into customer information database
         customerInfo = json.loads(self.request.body.decode('utf-8')) # {'email': 'xx', 'order-total': 'xxx'}
         email = customerInfo['e-mail']
         orderTotal = customerInfo['order-total'] # 100.80
@@ -101,8 +104,8 @@ class CustomerData(RewardsHandler):
         # create cusomer database
         db = client["Customer"]
 
-        #inserts the customer in the 'customer' collection
-        db.customers.insert({
+        #schema for customer db
+        input = {
             "Email Address": email,
             "Reward Points": points,
             "Reward Tier": rewardsTier,
@@ -110,7 +113,10 @@ class CustomerData(RewardsHandler):
             "Next Reward Tier": nextRewardTier,
             "Next Reward Tier Name": nextRewardTierName,
             "Next Reward Tier Progress": progress
-        })
+        }
+
+        #inserts the customer in the 'customer' collection
+        db.customers.insert(input)
 
         #output data inserted into db on post req
         self.write({
@@ -123,4 +129,32 @@ class CustomerData(RewardsHandler):
             "Next Reward Tier Progress": progress
         })
 
+        # return input
 
+
+class CustomerSummary(CustomerData):
+
+    @coroutine
+    def post(self):
+        customerInfo = json.loads(self.request.body.decode('utf-8')) # {'email': 'xx'}
+        email = customerInfo['e-mail']
+
+        # get rewards data for customer
+        client = MongoClient("mongodb", 27017)
+        db = client["Customer"]
+        output = db.customers.find_one({"Email Address": email})
+
+        #get rid of non-JSON serializable key (ObjectId)
+        customerData = {k: v for k, v in output.items() if k != "_id"}
+
+        self.write({"output": customerData})
+
+
+
+
+
+    # @coroutine #async function
+    # def get(self):
+    #     client = MongoClient("mongodb", 27017)
+    #     db = client["Rewards"]
+    #     rewards = list(db.rewards.find({}, {"_id": 0}))
