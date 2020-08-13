@@ -1,10 +1,12 @@
 import logging
+from django.http import Http404
 
 from django.template.response import TemplateResponse
 from django.views.generic.base import TemplateView
 
 from rewards.clients.rewards_service_client import RewardsServiceClient
 
+#import model to this view and calculate rewards here...?
 
 class RewardsView(TemplateView):
     template_name = 'index.html'
@@ -16,11 +18,15 @@ class RewardsView(TemplateView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
 
-        rewards_data = self.rewards_service_client.get_rewards()
-        context['rewards_data'] = rewards_data
+        try:
+            rewards_data = self.rewards_service_client.get_rewards()
+            context['rewards_data'] = rewards_data
+        except self.rewards_service_client.DoesNotExist:
+            raise Http404("Data does not exist")
 
         return TemplateResponse(
             request,
             self.template_name,
             context
         )
+
