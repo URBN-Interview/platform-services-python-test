@@ -21,7 +21,7 @@ class Init(tornado.web.RequestHandler):
     def get(self):
         self.write({'message':'hello world'})
 
-class CustomerData(tornado.web.RequestHandler):
+class CustomerData(RewardsHandler):
 
     #determine tier (helper function)
     def tier(self, total):
@@ -49,17 +49,52 @@ class CustomerData(tornado.web.RequestHandler):
             return "J"
 
 
+    tiers = [
+        { "tier": "A", "rewardName": "5% off purchase", "points": 100 },
+        { "tier": "B", "rewardName": "10% off purchase", "points": 200 },
+        { "tier": "C", "rewardName": "15% off purchase", "points": 300 },
+        { "tier": "D", "rewardName": "20% off purchase", "points": 400 },
+        { "tier": "E", "rewardName": "25% off purchase", "points": 500 },
+        { "tier": "F", "rewardName": "30% off purchase", "points": 600 },
+        { "tier": "G", "rewardName": "35% off purchase", "points": 700 },
+        { "tier": "H", "rewardName": "40% off purchase", "points": 800 },
+        { "tier": "I", "rewardName": "45% off purchase", "points": 900 },
+        { "tier": "J", "rewardName": "50% off purchase", "points": 1000 }
+    ]
+
+    def nextTier(self, tier):
+        if tier == "F":
+            return "You are top tier!"
+        for i in range(len(self.tiers)):
+            if self.tiers[i]["tier"] == tier:
+                return self.tiers[i + 1]["tier"]
+
+    def TierName(self, tier):
+        if tier == "F":
+            return "No more upgrades!"
+        for i in range(len(self.tiers)):
+            if self.tiers[i]["tier"] == tier:
+                return self.tiers[i]["rewardName"]
+
+    def nextTierPoints(self, tier):
+        if tier == "F":
+            return "You are top tier!"
+        for i in range(len(self.tiers)):
+            if self.tiers[i]["tier"] == tier:
+                return self.tiers[i + 1]["points"]
 
     @coroutine #async function
     def post(self):
-        # client = MongoClient("mongodb", 27017)
-        # create cusomer database
-        # db = client["Customer"]
 
         customerInfo = json.loads(self.request.body.decode('utf-8')) # {'email': 'xx', 'order-total': 'xxx'}
-        # email = customerInfo['e-mail']
-        orderTotal = customerInfo['order-total']
-        rewardsTier = self.tier(float(orderTotal))
+        email = customerInfo['e-mail']
+        orderTotal = customerInfo['order-total'] # 100.80
+        points = int(float(orderTotal)) # 100
+        rewardsTier = self.tier(float(orderTotal)) # "A"
+        rewardsTierName = self.TierName(rewardsTier) #"5% off purchase"
+        nextRewardTier = self.nextTier(rewardsTier) # "B"
+        nextRewardTierName = self.TierName(nextRewardTier) #"10% off purchase"
+        progress = round(float(orderTotal) / self.nextTierPoints(rewardsTier), 2)
 
         # db = client["Rewards"]
         # rewards = list(db.rewards.find({''}, {"_id": 0}))
@@ -68,12 +103,24 @@ class CustomerData(tornado.web.RequestHandler):
         # rewardPoints =
         # rewardTier =
 
+        # client = MongoClient("mongodb", 27017)
+        # create cusomer database
+        # db = client["Customer"]
+
         #inserts the customer in the 'customer' collection
-        # customers = db.customers.insert({"email": email, 'order-total': orderTotal, })
+        # customers = db.customers.insert({
+        #     "Email Address": email,
+        #     "Reward Points": points,
+        #     "Reward Tier": rewardsTier,
+        #     "Reward Tier Name":  rewardsTierName,
+        #     "Next Reward Tier": nextRewardTier,
+        #     "Next Reward Tier Name": nextRewardTierName,
+        #     "Next Reward Tier Progress":
+        #     })
 
         # data
 
-        self.write({"tier": rewardsTier})
+        self.write({"tier": progress})
         # self.write({'email': customerInfo['e-mail'], 'orderTotal': customerInfo['order-total'] })
 
 
