@@ -18,6 +18,8 @@ class RewardsHandler(tornado.web.RequestHandler):
         raise tornado.gen.Return(rewards) # return the list of reward tiers
 
 
+
+
 class Init(tornado.web.RequestHandler):
     def get(self):
         self.write({'message':'hello world'})
@@ -129,7 +131,9 @@ class CustomerData(RewardsHandler):
             "Next Reward Tier Progress": progress
         })
 
-        # return input
+    def write_error(self, status_code, **kwargs):
+        if status_code in [403, 404, 500, 503]:
+            self.write('Error %s' % status_code)
 
 
 class CustomerSummary(CustomerData):
@@ -149,6 +153,10 @@ class CustomerSummary(CustomerData):
 
         self.write({"output": customerData})
 
+    def write_error(self, status_code, **kwargs):
+        if status_code in [403, 404, 500, 503]:
+            self.write('Error %s' % status_code)
+
 
 class AllCustomers(CustomerData):
 
@@ -159,4 +167,8 @@ class AllCustomers(CustomerData):
         db = client["Customer"]
         output = list(db.customers.find({}, {"_id": 0}))
         self.write(json.dumps(output))
+
+    def write_error(self, status_code, **kwargs):
+        if status_code in [403, 404, 500, 503]:
+            self.write('Error %s' % status_code)
 
