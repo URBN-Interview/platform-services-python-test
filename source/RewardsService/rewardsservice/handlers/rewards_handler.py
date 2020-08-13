@@ -112,8 +112,15 @@ class CustomerData(RewardsHandler):
             "Next Reward Tier Progress": progress
         })
 
-        # self.write({"tier": progress})
-        # self.write({'email': customerInfo['e-mail'], 'orderTotal': customerInfo['order-total'] })
-
+        #output data inserted into db on post req
+        self.write({
+            "Email Address": email,
+            "Reward Points": points,
+            "Reward Tier": rewardsTier,
+            "Reward Tier Name":  rewardsTierName,
+            "Next Reward Tier": nextRewardTier,
+            "Next Reward Tier Name": nextRewardTierName,
+            "Next Reward Tier Progress": progress
+        })
 
 
