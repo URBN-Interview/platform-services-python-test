@@ -10,7 +10,7 @@ from tornado.options import options
 from settings import settings
 from url_patterns import url_patterns
 
-
+#defines and runs server
 class App(tornado.web.Application):
     def __init__(self, urls):
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -36,3 +36,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
