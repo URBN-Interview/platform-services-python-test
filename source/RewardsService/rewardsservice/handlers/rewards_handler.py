@@ -25,7 +25,7 @@ class Init(tornado.web.RequestHandler):
         self.write({'message':'hello world'})
 
 
-class CustomerData(RewardsHandler):
+class CustomerData(tornado.web.RequestHandler):
 
     #determine tier (helper function)
     def tier(self, total):
@@ -136,7 +136,7 @@ class CustomerData(RewardsHandler):
             self.write('Error %s' % status_code)
 
 
-class CustomerSummary(CustomerData):
+class CustomerSummary(tornado.web.RequestHandler):
 
     @coroutine
     def post(self):
@@ -158,7 +158,7 @@ class CustomerSummary(CustomerData):
             self.write('Error %s' % status_code)
 
 
-class AllCustomers(CustomerData):
+class AllCustomers(tornado.web.RequestHandler):
 
     @coroutine
     def get(self):
