@@ -150,11 +150,13 @@ class CustomerSummary(CustomerData):
         self.write({"output": customerData})
 
 
+class AllCustomers(CustomerData):
 
+    @coroutine
+    def get(self):
+        # get rewards data for all customers
+        client = MongoClient("mongodb", 27017)
+        db = client["Customer"]
+        output = list(db.customers.find({}, {"_id": 0}))
+        self.write(json.dumps(output))
 
-
-    # @coroutine #async function
-    # def get(self):
-    #     client = MongoClient("mongodb", 27017)
-    #     db = client["Rewards"]
-    #     rewards = list(db.rewards.find({}, {"_id": 0}))

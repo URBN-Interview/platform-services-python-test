@@ -1,4 +1,4 @@
-from handlers.rewards_handler import RewardsHandler, Init, CustomerData, CustomerSummary
+from handlers.rewards_handler import RewardsHandler, Init, CustomerData, CustomerSummary, AllCustomers
 
 #define endpoint settings
 url_patterns = [
@@ -6,5 +6,6 @@ url_patterns = [
     (r'/', Init),
     (r'/rewards', RewardsHandler),
     (r'/info', CustomerData),
-    (r'/summary', CustomerSummary)
+    (r'/getone', CustomerSummary),
+    (r'/getall', AllCustomers)
 ]
