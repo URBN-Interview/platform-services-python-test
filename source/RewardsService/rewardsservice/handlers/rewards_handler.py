@@ -96,31 +96,23 @@ class CustomerData(RewardsHandler):
         nextRewardTierName = self.TierName(nextRewardTier) #"10% off purchase"
         progress = round(float(orderTotal) / self.nextTierPoints(rewardsTier), 2)
 
-        # db = client["Rewards"]
-        # rewards = list(db.rewards.find({''}, {"_id": 0}))
-        # self.write(json.dumps(rewards))
 
-        # rewardPoints =
-        # rewardTier =
-
-        # client = MongoClient("mongodb", 27017)
+        client = MongoClient("mongodb", 27017)
         # create cusomer database
-        # db = client["Customer"]
+        db = client["Customer"]
 
         #inserts the customer in the 'customer' collection
-        # customers = db.customers.insert({
-        #     "Email Address": email,
-        #     "Reward Points": points,
-        #     "Reward Tier": rewardsTier,
-        #     "Reward Tier Name":  rewardsTierName,
-        #     "Next Reward Tier": nextRewardTier,
-        #     "Next Reward Tier Name": nextRewardTierName,
-        #     "Next Reward Tier Progress":
-        #     })
+        db.customers.insert({
+            "Email Address": email,
+            "Reward Points": points,
+            "Reward Tier": rewardsTier,
+            "Reward Tier Name":  rewardsTierName,
+            "Next Reward Tier": nextRewardTier,
+            "Next Reward Tier Name": nextRewardTierName,
+            "Next Reward Tier Progress": progress
+        })
 
-        # data
-
-        self.write({"tier": progress})
+        # self.write({"tier": progress})
         # self.write({'email': customerInfo['e-mail'], 'orderTotal': customerInfo['order-total'] })
 
 
