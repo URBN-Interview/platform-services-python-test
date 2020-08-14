@@ -18,3 +18,12 @@ class AddedOrders:
     def add_info(self):
         response = requests.post(self.addInfo_url)
         return response.json()
+
+class GetAllInfo:
+
+    def __init__(self):
+        self.getAllInfo_url = "http://rewardsservice:7050/getall"
+
+    def get_all_info(self):
+        response = requests.get(self.getAllInfo_url)
+        return response.json()
