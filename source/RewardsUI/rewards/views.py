@@ -7,7 +7,7 @@ from django.views.generic.base import TemplateView
 from rewards.clients.rewards_service_client import RewardsServiceClient, AddedOrders, GetAllInfo
 
 #import model
-from models import OrderData
+from . import models
 
 class RewardsView(TemplateView):
     template_name = 'index.html'
@@ -71,7 +71,7 @@ class UserRewards(TemplateView):
         context = self.get_context_data(**kwargs)
 
         all_info = self.rewards_service_client.get_all_info()
-        context['all info'] = all_info
+        context['all_info'] = all_info
 
         return TemplateResponse(
             request,
