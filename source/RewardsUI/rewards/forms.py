@@ -7,4 +7,4 @@ class AddOrderForm(forms.Form):
 
 
 class QueryUser(forms.Form):
-    searchEmailAddress = forms.EmailField(label='Enter email', required=False)
+    searchEmailAddress = forms.EmailField(label='Enter email')

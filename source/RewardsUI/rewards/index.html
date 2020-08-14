@@ -1,3 +1,4 @@
+{% load static %}
 <html>
 <head>
 </head> 
@@ -35,9 +36,9 @@
     </div>
     <div>
         <h2>User Rewards</h2>
-        <form action="/rewards/" method="get">
+        <form action="/rewards/" method="post">
             {% csrf_token %}
-            {{ get_user.as_p}}
+            {{ search_user_form.as_p}}
             <button type="submit">Search</button>
         </form>
 
@@ -56,7 +57,9 @@
             </tr>
         
             <tbody>
+            
                 {% for customer in all_customers %}
+            
                 <tr>
                     <td>{{ customer.emailAddress }}<td>
                     <td>{{ customer.rewardPoints }}</td>
@@ -66,7 +69,6 @@
                     <td>{{ customer.nextRewardTierName }}</td>
                     <td>{{ customer.nextTierProgress }}</td>
                 </tr>
-        
             {% endfor %}
             </tbody>
         </table>
