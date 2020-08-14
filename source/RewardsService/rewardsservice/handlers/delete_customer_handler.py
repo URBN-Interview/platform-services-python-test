@@ -13,7 +13,7 @@ class DeleteCustomer(tornado.web.RequestHandler):
         # handles errors for foregin email and orderTotal input 
         self.write('<html><body><form action="/del" method="POST">'
         '<label for="email">Enter your email: </label>'
-            '<input type="email" name="email"> '
+            '<input type="number" name="email"> '
             '<input type="submit" value="Submit">'
             '</form></body></html>')
 
