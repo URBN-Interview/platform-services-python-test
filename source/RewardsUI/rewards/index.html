@@ -23,10 +23,11 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <form method="post">
+        <form action = "/info" method="post">
             <label>Enter email address: </label><input type="text" name="email"/><br>
             <label>Enter order total: </label><input type="text" name="total"/><input type="button" value="Submit Order"/>
         </form>
+        {% for data info %}
         <hr>
     </div>
     <div>
