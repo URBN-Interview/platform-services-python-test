@@ -112,5 +112,3 @@ class OrderData(models.Model):
         self.Next_Reward_Tier_Progress = self.get_progress()
 
         super(OrderData, self).save(*args, **kwargs)
-
-
