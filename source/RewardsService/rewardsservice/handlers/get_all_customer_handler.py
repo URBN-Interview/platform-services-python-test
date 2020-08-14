@@ -9,7 +9,7 @@ from tornado.gen import coroutine
 class AllCustomer(tornado.web.RequestHandler):
 
     def get(self):
-        self.set_header("Content-Type", "application/json")
+        # self.set_header("Content-Type", "application/json")
         client = MongoClient("mongodb", 27017)
         db = client['Customers']
         allcustomers = list(db.Customers.find({}, {'_id': 0}))

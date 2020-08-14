@@ -23,7 +23,7 @@ class DeleteCustomer(tornado.web.RequestHandler):
         client = MongoClient("mongodb", 27017)
         db = client['Customers']
         email = self.get_body_argument('email', None)
-        customer = db.Customers.find_one({'Email Address': email}, {'_id': 0})
+        customer = db.Customers.find_one({'emailAddress': email}, {'_id': 0})
         if customer == None:
             self.write("Customer is not in the database")
         else:

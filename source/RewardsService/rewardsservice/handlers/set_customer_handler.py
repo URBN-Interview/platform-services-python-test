@@ -58,20 +58,20 @@ class SetCustomerHandler(tornado.web.RequestHandler):
 
         email = self.get_body_argument('email', None)
         orderTotal = self.get_body_argument('orderTotal', None)
-        rewardPoints = self.convertToInt(float(orderTotal))
+        points = self.convertToInt(float(orderTotal))
 
-        old_customer = db.Customers.find_one({'Email Address': email}, {'_id': 0})
+        old_customer = db.Customers.find_one({'emailAddress': email}, {'_id': 0})
         new_rewardPoints = 0
         # Check for unique users
         if not old_customer:
             # insert new customers into the data base
             db.Customers.insert(
-            {'Email Address': email, 'Reward Points': rewardPoints})
+            {'emailAddress': email, 'rewardPoints': points})
             self.write(self.get_body_argument("email") + "  Welcome to the rewards program  ")
             
         else:
             self.write(self.get_body_argument("email") + "  Your reward points have been updated  ")
-            new_rewardPoints = old_customer['Reward Points'] + rewardPoints 
+            new_rewardPoints = old_customer['rewardPoints'] + points 
             if new_rewardPoints > 1000:
                 new_rewardPoints = 1000
             self.write(json.dumps(new_rewardPoints) + "\n")
@@ -83,11 +83,11 @@ class SetCustomerHandler(tornado.web.RequestHandler):
             max_current_tier_points = rewards_db.rewards.find_one({'tier': current_tier}, {'_id': 0})['points']
             percentage_to_next_tier = 1-(new_rewardPoints)/max_current_tier_points
  
-            db.Customers.update({'Email Address': email},{
-                'Email Address': email,
-                'Reward Points': new_rewardPoints,
-                'Reward Tier': current_tier,
-                'Reward Tier Name': reward_tier_name,
-                'Next Reward Tier': nextTier,
-                'Next Reward Tier Name': next_reward_tier_name,
-                'Next Reward Tier Progress': percentage_to_next_tier})
+            db.Customers.update({'emailAddress': email},{
+                'emailAddress': email,
+                'rewardPoints': new_rewardPoints,
+                'rewardTier': current_tier,
+                'rewardTierName': reward_tier_name,
+                'nextRewardTier': nextTier,
+                'nextRewardTierName': next_reward_tier_name,
+                'nextTierProgress': percentage_to_next_tier})
