@@ -5,7 +5,7 @@ from django.db import models
 
 class OrderData(models.Model):
       Email_Address = models.CharField(max_length=30)
-      Order_Total = models.IntegerField()
+      Order_Total = models.FloatField()
       Reward_Points = models.CharField(max_length=30)
       Reward_Tier = models.CharField(max_length=30)
       Reward_Tier_Name =  models.CharField(max_length=30)
@@ -14,31 +14,32 @@ class OrderData(models.Model):
       Next_Reward_Tier_Progress = models.CharField(max_length=30)
 
 
-      @property
-      def get_points(self, total):
-          return int(float(total))
+      # @property
+      # def get_points(self):
+      #     points = (float(self.Order_Total))
+      #     return points
 
       @property
-      def get_tier(self, total):
-          if total < 100:
+      def get_tier(self):
+          if int(float(self.Order_Total)) < 100:
               return "not yet"
-          elif total < 200:
+          elif int(float(self.Order_Total)) < 200:
               return "A"
-          elif total < 300:
+          elif int(float(self.Order_Total)) < 300:
               return "B"
-          elif total < 400:
+          elif int(float(self.Order_Total)) < 400:
               return "C"
-          elif total < 500:
+          elif int(float(self.Order_Total)) < 500:
               return "D"
-          elif total < 600:
+          elif int(float(self.Order_Total)) < 600:
               return "E"
-          elif total < 700:
+          elif int(float(self.Order_Total)) < 700:
               return "F"
-          elif total < 800:
+          elif int(float(self.Order_Total)) < 800:
               return "G"
-          elif total < 900:
+          elif int(float(self.Order_Total)) < 900:
               return "H"
-          elif total < 1000:
+          elif int(float(self.Order_Total))< 1000:
               return "I"
           else:
               return "J"
@@ -104,8 +105,8 @@ class OrderData(models.Model):
 
       def save(self, *args, **kwargs):
         # 'not callable' py-lint error - vs code problem?
-        self.Reward_Points = self.get_points(self, self.Order_Total)
-        self.Reward_Tier = self.get_tier(self, self.Order_Total)
+        self.Reward_Points = self.Order_Total
+        self.Reward_Tier = self.get_tier()
         self.Reward_Tier_Name = self.get_tier_name(self, self.Reward_Tier)
         self.Next_Reward_Tier = self.get_next_tier(self, self.Reward_Tier_Name)
         self.Next_Reward_Tier_Name = self.get_tier_name(self, self.Next_Reward_Tier)
