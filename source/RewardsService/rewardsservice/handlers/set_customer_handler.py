@@ -37,17 +37,6 @@ class SetCustomerHandler(tornado.web.RequestHandler):
         return integer
 
 
-    # @coroutine
-    # def get(self):
-    ###    # handles errors for foregin email and orderTotal input 
-    # #    <!-- self.write('<html><body><form action="/set" method="POST">'
-    #     '<label for="email">Enter your email: </label>'
-    #        '<input type="email" name="email"> '
-    #     '<label for="orderTotal">Enter your Order Total: </label>'
-    #         '<input type="number" min="0.01" step="0.01" name="orderTotal"> '
-    #         '<input type="submit" value="Submit">'
-    #         '</form></body></html>') 
-
     @coroutine
     def post(self):
         self.set_header("Content-Type", "application/json") 
@@ -83,14 +72,13 @@ class SetCustomerHandler(tornado.web.RequestHandler):
             'nextTierProgress': percentage_to_next_tier},)
             current_tier = self.getTier(new_rewardPoints)
             nextTier = self.getNextTier(current_tier)
-            # self.write(self.get_body_argument("email") + "  Welcome to the rewards program  ")
+
             
         else:
-            # self.write(self.get_body_argument("email") + "  Your reward points have been updated  ")
             new_rewardPoints = old_customer['rewardPoints'] + points 
             if new_rewardPoints > 1000:
                 new_rewardPoints = 1000
-            # self.write(json.dumps(new_rewardPoints) + "\n")
+
             current_tier = self.getTier(new_rewardPoints)
             nextTier = self.getNextTier(current_tier)
   
