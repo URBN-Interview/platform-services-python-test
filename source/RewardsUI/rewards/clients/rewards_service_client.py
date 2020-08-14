@@ -11,6 +11,7 @@ class RewardsServiceClient:
         response = requests.get(self.rewards_url)
         return response.json()
 
+
 class AddedOrders:
 
     def __init__(self):
