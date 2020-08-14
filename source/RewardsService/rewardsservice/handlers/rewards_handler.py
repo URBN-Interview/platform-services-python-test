@@ -68,6 +68,7 @@ class CustomerData(tornado.web.RequestHandler):
     def TierName(self, tier):
         if tier == "F":
             return "No more upgrades!"
+
         for i in range(len(self.tiers)):
             if self.tiers[i]["tier"] == tier:
                 return self.tiers[i]["rewardName"]
