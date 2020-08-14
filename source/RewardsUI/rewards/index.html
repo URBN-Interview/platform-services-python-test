@@ -53,13 +53,22 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>customer01@gmail.com</td>
+                    <!-- <td>customer01@gmail.com</td>
                     <td>100</td>
                     <td>A</td>
                     <td>5% off purchase</td>
                     <td>B</td>
                     <td>10% off purchase</td>
-                    <td>50%</td>
+                    <td>50%</td> -->
+                {% for info in all_info %}
+                    <td>{{ all_info.Email_Address }}/td>
+                    <td>{{ all_info.Reward_Points }}</td>
+                    <td>{{all_info.Reward_Tier}}</td>
+                    <td>{{all_info.Reward_Tier_Name}}</td>
+                    <td>{{all_info.Next_Reward_Tier}}</td>
+                    <td>{{all_info.Next_Reward_Tier_Name}}</td>
+                    <td>{{all_info.Next_Reward_Tier_Progress}}</td>
+                {% endfor %}
                 </tr>
             </tbody>
         </table>
