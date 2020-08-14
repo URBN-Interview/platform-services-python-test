@@ -131,7 +131,6 @@ class OrderData(models.Model):
 
       def save(self, *args, **kwargs):
         # 'not callable' py-lint error - vs code problem?
-        # or perhaps I need separate classes for every field I am calculating the values for, and import them here?
         self.Reward_Points = self.Order_Total
         self.Reward_Tier = self.get_tier
         self.Reward_Tier_Name = self.get_tier_name
