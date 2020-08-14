@@ -1,13 +1,13 @@
 import logging
-from django.http import Http404
+# from django.http import Http404
 
 from django.template.response import TemplateResponse
 from django.views.generic.base import TemplateView
 
 from rewards.clients.rewards_service_client import RewardsServiceClient
 
-#import model to this view and calculate rewards here...?
-# from .models import CustomerData
+#import model
+from .models import OrderData
 
 class RewardsView(TemplateView):
     template_name = 'index.html'
@@ -19,11 +19,8 @@ class RewardsView(TemplateView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
 
-        try:
-            rewards_data = self.rewards_service_client.get_rewards()
-            context['rewards_data'] = rewards_data
-        except self.rewards_service_client.DoesNotExist:
-            raise Http404("Data does not exist")
+        rewards_data = self.rewards_service_client.get_rewards()
+        context['rewards_data'] = rewards_data
 
         return TemplateResponse(
             request,
@@ -45,7 +42,6 @@ class AddInfo(TemplateView):
             email = request.POST["email"]
             total = request.POST["total"]
             context["info"] = {"email" : email, "total": total}
-            print (email)
 
         except (KeyError):
             return  TemplateResponse(
@@ -55,6 +51,8 @@ class AddInfo(TemplateView):
             )
 
         else:
+            entry = OrderData(Email_Address = email, Order_Total = total)
+            entry.save()
 
             return TemplateResponse(
                 request,
