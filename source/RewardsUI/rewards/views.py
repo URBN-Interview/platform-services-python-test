@@ -7,7 +7,7 @@ from django.views.generic.base import TemplateView
 from rewards.clients.rewards_service_client import RewardsServiceClient, AddedOrders, GetAllInfo
 
 #import model
-from . import models
+from rewards.models import OrderData
 
 class RewardsView(TemplateView):
     template_name = 'index.html'

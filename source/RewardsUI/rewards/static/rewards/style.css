@@ -1,4 +1,32 @@
 body {
   font-family: "Avenir Medium", sans-serif;
   letter-spacing: .06rem;
+  background-color: rgb(255 193 7 / 5%);
+}
+
+h2 {
+  color: #167a92;
+  font-style: normal;
+    font-variant-ligatures: normal;
+    font-variant-caps: normal;
+    font-variant-numeric: normal;
+    font-variant-east-asian: normal;
+    font-weight: normal;
+    font-stretch: normal;
+    font-size: 1.2rem;
+    line-height: normal;
+    font-family: "Avenir Book", sans-serif;
+}
+
+th {
+    background-color: rgb(76 175 80 / 60%);
+    text-align: center;
+}
+
+tr {
+  text-align: center;
+}
+
+div {
+  margin: auto;
 }
