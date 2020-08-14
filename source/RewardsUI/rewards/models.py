@@ -45,59 +45,85 @@ class OrderData(models.Model):
               return "J"
 
       @property
-      def get_tier_name(self, tiername):
+      def get_tier_name(self):
         #hard-code for brute force solution (ideal : pull from get req or other file)
-        if tiername == "J":
+        if self.Reward_Tier == "J":
           return "No more upgrades!"
-        elif tiername == "A":
+        elif self.Reward_Tier == "A":
           return "5% off purchase"
-        elif tiername == "B":
+        elif self.Reward_Tier == "B":
           return "10% off purchase"
-        elif tiername == "C":
+        elif self.Reward_Tier == "C":
           return "15% off purchase"
-        elif tiername == "D":
+        elif self.Reward_Tier == "D":
           return "20% off purchase"
-        elif tiername == "E":
+        elif self.Reward_Tier == "E":
           return "25% off purchase"
-        elif tiername == "F":
+        elif self.Reward_Tier == "F":
           return "30% off purchase"
-        elif tiername == "G":
+        elif self.Reward_Tier == "G":
           return "35% off purchase"
-        elif tiername == "H":
+        elif self.Reward_Tier == "H":
           return "40% off purchase"
-        elif tiername == "I":
+        elif self.Reward_Tier == "I":
           return "45% off purchase"
-        elif tiername == "J":
+        elif self.Reward_Tier == "J":
           return "50% off purchase"
 
 
       @property
-      def get_next_tier(self, currentTier):
-        if currentTier == "not yet":
+      def get_next_tier(self):
+        if self.Reward_Tier_Name == "not yet":
           return "A"
-        elif currentTier == "A":
+        elif self.Reward_Tier_Name == "A":
           return "B"
-        elif currentTier == "B":
+        elif self.Reward_Tier_Name == "B":
           return "C"
-        elif currentTier == "C":
+        elif self.Reward_Tier_Name == "C":
           return "D"
-        elif currentTier == "D":
+        elif self.Reward_Tier_Name == "D":
           return "E"
-        elif currentTier == "E":
+        elif self.Reward_Tier_Name == "E":
           return "F"
-        elif currentTier == "F":
+        elif self.Reward_Tier_Name == "F":
           return "G"
-        elif currentTier == "G":
+        elif self.Reward_Tier_Name == "G":
           return "H"
-        elif currentTier == "H":
+        elif self.Reward_Tier_Name == "H":
           return "I"
-        elif currentTier == "I":
+        elif self.Reward_Tier_Name == "I":
           return "J"
-        elif currentTier == "J":
+        elif self.Reward_Tier_Name == "J":
           return "No more"
 
       @property
-      def get_progress(self, total):
+      def get_next_tier_name(self):
+        #hard-code for brute force solution (ideal : pull from get req or other file)
+        if self.Next_Reward_Tier == "J":
+          return "No more upgrades!"
+        elif self.Next_Reward_Tier == "A":
+          return "5% off purchase"
+        elif self.Next_Reward_Tier == "B":
+          return "10% off purchase"
+        elif self.Next_Reward_Tier == "C":
+          return "15% off purchase"
+        elif self.Next_Reward_Tier == "D":
+          return "20% off purchase"
+        elif self.Next_Reward_Tier == "E":
+          return "25% off purchase"
+        elif self.Next_Reward_Tier == "F":
+          return "30% off purchase"
+        elif self.Next_Reward_Tier == "G":
+          return "35% off purchase"
+        elif self.Next_Reward_Tier == "H":
+          return "40% off purchase"
+        elif self.Next_Reward_Tier == "I":
+          return "45% off purchase"
+        elif self.Next_Reward_Tier == "J":
+          return "50% off purchase"
+
+      @property
+      def get_progress(self):
         # return round(float(total) / )
 
         #place holder
@@ -105,11 +131,12 @@ class OrderData(models.Model):
 
       def save(self, *args, **kwargs):
         # 'not callable' py-lint error - vs code problem?
+        # or perhaps I need separate classes for every field I am calculating the values for, and import them here?
         self.Reward_Points = self.Order_Total
-        self.Reward_Tier = self.get_tier()
-        self.Reward_Tier_Name = self.get_tier_name(self, self.Reward_Tier)
-        self.Next_Reward_Tier = self.get_next_tier(self, self.Reward_Tier_Name)
-        self.Next_Reward_Tier_Name = self.get_tier_name(self, self.Next_Reward_Tier)
-        self.Next_Reward_Tier_Progress = self.get_progress()
+        self.Reward_Tier = self.get_tier
+        self.Reward_Tier_Name = self.get_tier_name
+        self.Next_Reward_Tier = self.get_next_tier
+        self.Next_Reward_Tier_Name = self.get_next_tier_name
+        self.Next_Reward_Tier_Progress = self.get_progress
 
         super(OrderData, self).save(*args, **kwargs)
