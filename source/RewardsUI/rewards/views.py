@@ -73,12 +73,9 @@ class UserRewards(TemplateView):
         all_info = self.rewards_service_client.get_all_info()
         context['all_info'] = all_info
 
-
-
         """ have note implemented filter function yet
             OrderData.objects.all().filter(Email_Address=request.POST["email_search"])
         """
-
 
         return TemplateResponse(
             request,
