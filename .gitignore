@@ -1,0 +1,4 @@
+
+source/RewardsService/data/db/*
+source/RewardsService/rewardsservice/__pycache__/*
+source/RewardsService/rewardsservice/handlers/__pycache__/*
