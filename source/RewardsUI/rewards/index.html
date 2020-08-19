@@ -1,70 +1,123 @@
 <html>
 <head>
+	<title>Rewards Dashboard</title>
+	<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	<!-- TODO move to static css file -->
+	<style type="text/css">
+		body {
+			background-color: #FFFFFF;
+			font-family: 'Work Sans', sans-serif;
+			font-size: 15px;
+		}
+		table {
+			border-collapse: collapse;
+			font-weight: normal;
+		}
+
+		th, td {
+			border: 1px solid #ddd;
+			padding: 5px;
+		}
+		th{
+			font-weight: lighter;
+		}
+		.header {
+			padding: 40px;
+			text-align: center;
+			background: #F9DD17;
+			color: white;
+			font-size: 30px;
+			font-weight: bold;
+		}
+		.rewards_info table{
+			margin: 0 auto;
+		}
+		.rewards_info h2{
+			text-align: center;
+		}
+		h1{
+			font-weight: normal;
+		}
+		h2 {
+			font-weight: bold;
+		}
+		#rewards_table{
+			text-align: center;
+		}
+		#customer_table{
+			text-align: center;
+		}
+		#td_email {
+			text-align: left;
+		}
+	</style>
 </head>
 <body>
-    <h1>Welcome to the Rewards Dashboard</h1>
-    <div>
-        <h2>Reward Tiers</h2>
-        <table border="1">
-            <tr>
-                <th>Rewards Tier<th>
-                <th>Reward Points</th>
-                <th>Rewards Tier Name</th>
-            </tr>
-            {% for reward in rewards_data %}
-                <tr>
-                    <td>{{ reward.tier }}<td>
-                    <td>{{ reward.points }}</td>
-                    <td>{{ reward.rewardName }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-        <hr>
-    </div>
-    <div>
-        <h2>Add orders</h2>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <label>Enter email address: </label>
-            <input id="order_email_address" name= "order_email_address" type="text"/><br>
-            <label>Enter order total: </label>
-            <input id="order_total" name= "order_total" type="text"/><input type="submit" value="Submit Order"/>
-        </form>
-        <hr>
-    </div>
-    <div>
-        <h2>User Rewards</h2>
-        <form action="" method="GET">
-            <label>Email address: </label>
-            <input id="email_address" name = "email_address" type="text" /><input type="submit" value="Search"/>
-        </form>
-        <table border="1">
-            <thead>
-            <tr>
-                <th>Email Address</th>
-                <th>Reward Points</th>
-                <th>Reward Tier</th>
-                <th>Reward Tier Name</th>
-                <th>Next Reward Tier</th>
-                <th>Next Reward Tier Name</th>
-                <th>Next Reward Tier Progress</th>
-            </tr>
-            </thead>
-            <tbody>
-                {% for customer in customers_data %}
-                    <tr>
-                        <td>{{ customer.emailAddress }}</td>
-                        <td>{{ customer.rewardPoints }}</td>
-                        <td>{{ customer.rewardTier }}</td>
-                        <td>{{ customer.rewardTierName }}</td>
-                        <td>{{ customer.nextRewardTier }}</td>
-                        <td>{{ customer.nextRewardTierName }}</td>
-                        <td>{{ customer.nextRewardTierProgress }}</td>
-                    </tr>
-                {% endfor %}
+	<div class="header">Rewards Dashboard</div>
+	<h1>Welcome to the Rewards Dashboard</h1>
+	<div class="rewards_info">
+		<h2>Reward Tiers</h2>
+		<table id="rewards_table">
+			<tr>
+				<th>Rewards Tier</th>
+				<th></th>
+				<th>Reward Points</th>
+				<th>Rewards Tier Name</th>
+			</tr>
+			{% for reward in rewards_data %}
+			<tr>
+				<td>{{ reward.tier }}<td>
+					<td>{{ reward.points }}</td>
+					<td>{{ reward.rewardName }}</td>
+				</tr>
+				{% endfor %}
+			</table>
+			<hr>
+		</div>
+		<div>
+			<h2>Add orders</h2>
+			<form action="" method="POST">
+				{% csrf_token %}
+				<label>Enter email address: </label>
+				<input id="order_email_address" name= "order_email_address" type="text"/><br>
+				<label>Enter order total: </label>
+				<input id="order_total" name= "order_total" type="text"/><input type="submit" value="Submit Order"/>
+			</form>
+			<hr>
+		</div>
+		<div>
+			<h2>User Rewards</h2>
+			<form action="" method="GET">
+				<label>Email address: </label>
+				<input id="email_address" name = "email_address" type="text" /><input type="submit" value="Search"/>
+			</form>
+			<table id="customer_table">
+				<thead>
+					<tr>
+						<th>Email Address</th>
+						<th>Reward Points</th>
+						<th>Reward Tier</th>
+						<th>Reward Tier Name</th>
+						<th>Next Reward Tier</th>
+						<th>Next Reward Tier Name</th>
+						<th>Next Reward Tier Progress</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for customer in customers_data %}
+					<tr>
+						<td id="td_email">{{ customer.emailAddress }}</td>
+						<td>{{ customer.rewardPoints|floatformat }}</td>
+						<td>{{ customer.rewardTier }}</td>
+						<td>{{ customer.rewardTierName }}</td>
+						<td>{{ customer.nextRewardTier }}</td>
+						<td>{{ customer.nextRewardTierName }}</td>
+						<td>{% widthratio customer.nextRewardTierProgress 1 100 %}%</td>
+					</tr>
+					{% endfor %}
 
-            </tbody>
-        </table>
-    </div>
-</body>
-</html>
+				</tbody>
+			</table>
+		</div>
+	</body>
+	</html>
