@@ -26,6 +26,6 @@ class CustomerHandler(tornado.web.RequestHandler):
             rewardPoints = 0
             self.write(json.dumps(list(db.customers.find({}, {"_id": 0}))))
     		#insert a new one to the database
-            db.customers.insert({'emailAddress': email_address, 'Reward Points': rewardPoints})
+            db.customers.insert({'emailAddress': email_address, 'rewardPoints': rewardPoints})
     	else: 
     		self.write(json.dumps(db.customers.find_one({"emailAddress": email_address}, {"_id": 0})))
