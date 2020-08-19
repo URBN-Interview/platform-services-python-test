@@ -23,8 +23,8 @@ def main():
     print("Removing and reloading customers in mongo")
     db = client["Customers"]
     db.customers.remove()
-    db.customers.insert({"email_adress": "coolemail1@gmail.com", "reward_points": 650, "reward_tier": "F", "reward_tier_name": "30% off purchase", "next_reward_tier": "G", "next_reward_tier_name": "35% off purchase", "next_reward_tier_progress": 0.5})
-    db.customers.insert({"email_adress": "myawesomeemail@outlook.com", "reward_points": 750, "reward_tier": "G", "reward_tier_name": "35% off purchase", "next_reward_tier": "H", "next_reward_tier_name": "40% off purchase", "next_reward_tier_progress": 0.5})
+    db.customers.insert({"email_address": "coolemail1@gmail.com", "reward_points": 650, "reward_tier": "F", "reward_tier_name": "30% off purchase", "next_reward_tier": "G", "next_reward_tier_name": "35% off purchase", "next_reward_tier_progress": 0.5})
+    db.customers.insert({"email_address": "myawesomeemail@outlook.com", "reward_points": 750, "reward_tier": "G", "reward_tier_name": "35% off purchase", "next_reward_tier": "H", "next_reward_tier_name": "40% off purchase", "next_reward_tier_progress": 0.5})
     print("Customers loaded in mongo")
 
 if __name__ == "__main__":
