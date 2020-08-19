@@ -9,4 +9,5 @@ class LandingPage(tornado.web.RequestHandler):
 
     @coroutine
     def get(self):
-        self.write("Landing Page")
+    	client = MongoClient("mongodb", 27017)
+    	self.write("Landing Page")
