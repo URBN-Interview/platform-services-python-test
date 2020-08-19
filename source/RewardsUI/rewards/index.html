@@ -23,16 +23,20 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <form>
-            <label>Enter email address: </label><input type="text"/><br>
-            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order"/>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <label>Enter email address: </label>
+            <input id="order_email_address" name= "order_email_address" type="text"/><br>
+            <label>Enter order total: </label>
+            <input id="order_total" name= "order_total" type="text"/><input type="submit" value="Submit Order"/>
         </form>
         <hr>
     </div>
     <div>
         <h2>User Rewards</h2>
-        <form>
-            <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
+        <form action="" method="GET">
+            <label>Email address: </label>
+            <input id="email_address" name = "email_address" type="text" /><input type="submit" value="Search"/>
         </form>
         <table border="1">
             <thead>
@@ -58,6 +62,7 @@
                         <td>{{ customer.nextRewardTierProgress }}</td>
                     </tr>
                 {% endfor %}
+
             </tbody>
         </table>
     </div>
