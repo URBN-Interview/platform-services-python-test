@@ -2,3 +2,6 @@
 source/RewardsService/data/db/*
 source/RewardsService/rewardsservice/__pycache__/*
 source/RewardsService/rewardsservice/handlers/__pycache__/*
+source/RewardsUI/rewards/clients/__pycache__/*
+source/RewardsUI/global/__pycache__/*
+source/RewardsUI/rewards/__pycache__/*
