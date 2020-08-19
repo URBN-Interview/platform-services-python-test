@@ -25,6 +25,7 @@ class CustomerHandler(tornado.web.RequestHandler):
         # order_total = self.get_argument("orderTotal")
         #if customer does not already exist
         if not email_exists:
+            #set rewardPoints to 0
             rewardPoints = 0
             self.write(json.dumps(list(db.customers.find({}, {"_id": 0}))))
     		#insert a new one to the database
