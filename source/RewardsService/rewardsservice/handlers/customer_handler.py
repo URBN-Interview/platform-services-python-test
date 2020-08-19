@@ -18,8 +18,8 @@ class CustomerHandler(tornado.web.RequestHandler):
         customers = list(db.customers.find({}, {"_id": 0}))
         self.write(json.dumps(customers))
         # email_address = "test@test.com"
-        email_address = "test@test.com"
-        # order_total = self.get_argument("orderTotal")
+        email_address = self.get_argument("email_address")
+        order_total = self.get_argument("orderTotal")
         # self.get_argument("emailAddress")
         email_exists = db.customers.find_one({'emailAddress': email_address}, {'_id': 0})
         # order_total = self.get_argument("orderTotal")
