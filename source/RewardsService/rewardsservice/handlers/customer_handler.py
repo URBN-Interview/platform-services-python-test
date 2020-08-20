@@ -8,11 +8,11 @@ from tornado.gen import coroutine
 #following OOD design best practices, I am creating a class to handle the customer operations and rewards
 class CustomerHandler(tornado.web.RequestHandler):
     client = MongoClient("mongodb", 27017)
-    db = client["Customers"]
 
     @coroutine
     def get(self):
-        # self.write(client.list_database_names())        
+        # self.write(client.list_database_names()) 
+        db = self.client["Customers"]
         email_address = self.get_argument("emailAddress", None)
         self.write(db.customers.find_one({"emailAddress": email_address}, {"_id": 0}))
         # if not email_exists:
@@ -30,6 +30,7 @@ class CustomerHandler(tornado.web.RequestHandler):
     	# self.write(client.list_database_names())
         # self.write(json.dumps(customers))
         # email_address = "test@test.com"
+        db = self.client["Customers"]
         email_address = self.get_argument("emailAddress", None)
         order_total = self.get_argument("orderTotal", None)
         # remove decimals
