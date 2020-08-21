@@ -1,9 +1,8 @@
 from django import forms
 
-class AddOrder(forms.Form):
-    email_address = forms.CharField(label="Email", required = True)
-    order_total = forms.FloatField(label="Order Total", required = True)
-
-
 class Search(forms.Form):
-    email_address = forms.CharField(label="Email", required=True) 
+    emailAddress = forms.EmailField(label="Email", required=False) 
+
+class AddOrder(forms.Form):
+    emailAddress = forms.EmailField(label="Email", required = True)
+    orderTotal = forms.FloatField(label="Order Total", required = True)
