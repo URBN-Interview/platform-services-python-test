@@ -11,8 +11,6 @@ class OrdersHandler(tornado.web.RequestHandler):
 
     @coroutine
     def get(self):
-        client = MongoClient("mongodb", 27017)
-        db = client["Orders"]
         self.write('<html><body><form action="/order" method="POST">'
                    '<label for="email">Email Address:</label>'
                    '<br>'
@@ -27,14 +25,14 @@ class OrdersHandler(tornado.web.RequestHandler):
     @coroutine
     def post(self):
         client = MongoClient("mongodb", 27017)
-        db = client["Orders"]
-        customer_record = OrderCalculator.get_email_record(self, self.get_body_argument("email address"))
+        db = client["Rewards"]
+        customer_record = OrderCalculator.get_email_record(self, self.get_body_argument("email address"), db)
         if customer_record is not None:
             OrdersHandler.add_order_to_existing_customer(self, db, customer_record)
         else:
             OrdersHandler.create_new_customer_record(self, db)
-        orders = list(db.orders.find({}, {"_id": 0}))
-        self.write(json.dumps(orders))
+        customer = db.orders.find_one({"emailAddress": self.get_body_argument("email address")})
+        self.write(json.dumps(customer, default=str))
 
     def create_new_customer_record(self, db):
         reward_points = OrderCalculator.get_reward_points(self, self.get_body_argument("order total"))
