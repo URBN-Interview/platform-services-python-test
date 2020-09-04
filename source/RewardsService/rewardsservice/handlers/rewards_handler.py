@@ -13,3 +13,5 @@ class RewardsHandler(tornado.web.RequestHandler):
         db = client["Rewards"]
         rewards = list(db.rewards.find({}, {"_id": 0}))
         self.write(json.dumps(rewards))
+
+#This is a test to make sure I have git set up correctly! :)
