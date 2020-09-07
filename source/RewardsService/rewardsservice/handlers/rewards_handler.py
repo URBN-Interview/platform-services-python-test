@@ -37,40 +37,82 @@ class OrderHandler(tornado.web.RequestHandler):
         listOfOrders = list(orderCollection.find(query))
         totalSpent = 0
         for order in listOfOrders:
-            totalSpent += int(order.get("orderTotal"))
+            totalSpent += float(order.get("orderTotal"))
+            print('TOTAL SPENT')
+            print(totalSpent)
 
-        #Use the findRewardTiers method below to find the relevent reward tiers
-        rewardTiers = self.findRewardTiers(totalSpent)
-        returnedTiers = db.rewards.find({"$or": [{"tier": rewardTiers[0]}, {"tier": rewardTiers[1]}]}).sort("points", 1)
+        #Use the methods below to find the relevent reward tiers
+        currentRewardTier = db.rewards.find_one({"tier": self.findCurrentRewardTier(totalSpent)})
+        nextRewardTier = db.rewards.find_one({"tier": self.findNextRewardTier(totalSpent)})
 
-        #Use the same query to determine if the customer's email already exists in the collection. 
-        customer = customerCollection.find_one(query)
-        if customer is None:
-            customer = {"email": email, "rewardPoints": int(totalSpent), "rewardTier": "", "rewardTierName": "", "nextRewardTier": "", "nextRewardTierName": "", "nextRewardTierProgress": ""}
-            customerCollection.insert_one(customer)
-        
-
-    def findRewardTiers(self, totalSpent):
+        #Determine the format of the entry based on the dollar amount spent/points
         if totalSpent >= 1000:
-            return list(["J","J"])
-        elif totalSpent >= 800 and totalSpent < 900:
-            return list(["H","I"])
-        elif totalSpent >= 700 and totalSpent < 800:
-            return list(["G","H"])
-        elif totalSpent >= 600 and totalSpent < 700:
-            return list(["F","G"])
-        elif totalSpent >= 500 and totalSpent < 600:
-            return list(["E","F"])
-        elif totalSpent >= 400 and totalSpent < 500:
-            return list(["D","E"])
-        elif totalSpent >= 300 and totalSpent < 400:
-            return list(["C","D"])
-        elif totalSpent >= 200 and totalSpent < 300:
-            return list(["B","C"])
-        elif totalSpent >= 100 and totalSpent < 200:
-            return list(["A","B"])
+            customer =  {"email": email, "rewardPoints": int(totalSpent), "rewardTier": currentRewardTier.get("tier"), "rewardTierName": currentRewardTier.get("rewardName"), "nextRewardTier": "", "nextRewardTierName": "", "nextRewardTierProgress": ""}
         elif totalSpent < 100:
-            return list(["", "A"])
+            customer =  {"email": email, "rewardPoints": int(totalSpent), "rewardTier": "", "rewardTierName": "", "nextRewardTier": nextRewardTier.get("tier"), "nextRewardTierName": nextRewardTier.get("rewardName"), "nextRewardTierProgress": ""}
+        else:
+            customer =  {"email": email, "rewardPoints": int(totalSpent), "rewardTier": currentRewardTier.get("tier"), "rewardTierName": currentRewardTier.get("rewardName"), "nextRewardTier": nextRewardTier.get("tier"), "nextRewardTierName": nextRewardTier.get("rewardName"), "nextRewardTierProgress": ""}
+
+        #Lookup the customer to see if they already have an entry in the collection. If they do not, add them to the collection, if they do, update their record
+        customerLookup = customerCollection.find_one(query)
+        if customerLookup is None:
+            customerCollection.insert_one(customer)
+        else:
+            customerId = customer.get("_id")
+            customerCollection.replace_one({"_id": customerId}, customer)
+
+        testAddCustomer = customerCollection.find_one(query)
+        print("test add")
+        print(testAddCustomer)         
+            
+
+    def findCurrentRewardTier(self, totalSpent):
+        if totalSpent >= 1000:
+            return "J"
+        elif totalSpent >= 900 and totalSpent <1000:
+            return "I"
+        elif totalSpent >= 800 and totalSpent < 900:
+            return "H"
+        elif totalSpent >= 700 and totalSpent < 800:
+            return "G"
+        elif totalSpent >= 600 and totalSpent < 700:
+            return "F"
+        elif totalSpent >= 500 and totalSpent < 600:
+            return "E"
+        elif totalSpent >= 400 and totalSpent < 500:
+            return "D"
+        elif totalSpent >= 300 and totalSpent < 400:
+            return "C"
+        elif totalSpent >= 200 and totalSpent < 300:
+            return "B"
+        elif totalSpent >= 100 and totalSpent < 200:
+            return "A"
+        elif totalSpent < 100:
+            return ""
+
+    def findNextRewardTier(self, totalSpent):
+        if totalSpent >= 1000:
+            return "J"
+        elif totalSpent >= 900 and totalSpent < 1000:
+            return "J"
+        elif totalSpent >= 800 and totalSpent < 900:
+            return "I"
+        elif totalSpent >= 700 and totalSpent < 800:
+            return "H"
+        elif totalSpent >= 600 and totalSpent < 700:
+            return "G"
+        elif totalSpent >= 500 and totalSpent < 600:
+            return "F"
+        elif totalSpent >= 400 and totalSpent < 500:
+            return "E"
+        elif totalSpent >= 300 and totalSpent < 400:
+            return "D"
+        elif totalSpent >= 200 and totalSpent < 300:
+            return "C"
+        elif totalSpent >= 100 and totalSpent < 200:
+            return "B"
+        elif totalSpent < 100:
+            return "A"
 
 class CustomerHandler(tornado.web.RequestHandler):
 
@@ -93,5 +135,5 @@ class CustomerDataHandler(tornado.web.RequestHandler):
         customerCollection = db["Customers"]
         email = self.get_argument("email", "default")
         query = {"email": email}
-        customer = list(customerCollection.find(query))
+        customer = list(customerCollection.find_one(query))
 
