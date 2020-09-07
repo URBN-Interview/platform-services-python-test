@@ -58,8 +58,8 @@ class OrderHandler(tornado.web.RequestHandler):
         if customerLookup is None:
             customerCollection.insert_one(customer)
         else:
-            customerId = customer.get("_id")
-            customerCollection.replace_one({"_id": customerId}, customer)
+            newValues = {"$set": customer}
+            customerCollection.update_one({"_id": customerLookup.get("_id")}, newValues)
 
         testAddCustomer = customerCollection.find_one(query)
         print("test add")
