@@ -1,19 +1,15 @@
-import json
-import tornado.web
+import json	
+import tornado.web	
 
-from pymongo import MongoClient
-from tornado.gen import coroutine
+from pymongo import MongoClient	
+from tornado.gen import coroutine	
 
 
-class RewardsHandler(tornado.web.RequestHandler):
+class MainHandler(tornado.web.RequestHandler):	
 
-    @coroutine
-    def get(self):
-        client = MongoClient("mongodb", 27017)
-        db = client["Rewards"]
-        rewards = list(db.rewards.find({}, {"_id": 0}))
-        self.write(json.dumps(rewards))
-
+    @coroutine	
+    def get(self):	
+        self.write("Welcome to reward system")	
 # error handler	
     def write_error(self, status_code, **kwargs):	
         if self.settings.get("serve_traceback") and "exc_info" in kwargs:	
