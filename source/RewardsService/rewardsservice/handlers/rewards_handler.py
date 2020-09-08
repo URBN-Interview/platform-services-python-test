@@ -122,7 +122,7 @@ class CustomerHandler(tornado.web.RequestHandler):
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
         customerCollection = db["Customers"]
-        customers = list(db.rewards.customerCollection.find())
+        customers = list(customerCollection.find({}, {"_id": 0}))
         self.write(json.dumps(customers))
 
 class CustomerDataHandler(tornado.web.RequestHandler):
@@ -135,5 +135,8 @@ class CustomerDataHandler(tornado.web.RequestHandler):
         customerCollection = db["Customers"]
         email = self.get_argument("email", "default")
         query = {"email": email}
-        customer = list(customerCollection.find_one(query))
+        customer = customerCollection.find_one(query, {"_id": 0})
+        if customer is not None:
+            self.write(json.dumps(customer))
+
 
