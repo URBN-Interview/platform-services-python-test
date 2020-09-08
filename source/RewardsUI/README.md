@@ -16,3 +16,15 @@
 * $ docker-compose build
 * $ docker-compose up -d
 * Open http://localhost:8000/rewards/ in your browser.
+
+# Checklist for Coco's work	
+* User is able to search for existing customers	
+* CSS for index.html	
+* Customers information is rendered on customer table	
+* views.py to render customers' information on the table	
+* form.py to handle customers' input 	
+
+### Future improvements	
+* POST orders only works on backend via postman	
+* Clean up views.py	
+* Clean up data format for customers input from front end

@@ -41,3 +41,13 @@ Create RESTful endpoint(s) to calculate, store, and retrieve customer rewards da
 * $ docker-compose build
 * $ docker-compose up -d
 * Services are accessible at http://localhost:7050/
+
+# Checklist for Coco's work	
+* http://localhost:7050/ MainHandler, to make sure server is running	
+* http://localhost:7050/rewards RewardsHandler, GET all rewards information	
+* http://localhost:7050/orders OrderHandler, POST call to get email and orderTotal	
+* http://localhost:7050/customer CustomerHandler, GET speicific customer information based on customer's email	
+* http://localhost:7050/customers CustomersHandler, GET all customers information	
+### Future improvements	
+* Add unit tests	
+* More error handlers for user's input
