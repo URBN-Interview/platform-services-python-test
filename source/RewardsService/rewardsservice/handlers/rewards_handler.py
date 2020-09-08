@@ -38,8 +38,15 @@ class OrderHandler(tornado.web.RequestHandler):
         totalSpent = 0
         for order in listOfOrders:
             totalSpent += float(order.get("orderTotal"))
-            print('TOTAL SPENT')
-            print(totalSpent)
+
+        #Calculate progress to the next level
+        progress = ""
+        points = int(totalSpent)
+        pointsString = str(points)
+        if len(pointsString) > 2:
+            progress = pointsString[1:] + "%"
+        else:
+            progress = pointsString + "%"
 
         #Use the methods below to find the relevent reward tiers
         currentRewardTier = db.rewards.find_one({"tier": self.findCurrentRewardTier(totalSpent)})
@@ -49,9 +56,9 @@ class OrderHandler(tornado.web.RequestHandler):
         if totalSpent >= 1000:
             customer =  {"email": email, "rewardPoints": int(totalSpent), "rewardTier": currentRewardTier.get("tier"), "rewardTierName": currentRewardTier.get("rewardName"), "nextRewardTier": "", "nextRewardTierName": "", "nextRewardTierProgress": ""}
         elif totalSpent < 100:
-            customer =  {"email": email, "rewardPoints": int(totalSpent), "rewardTier": "", "rewardTierName": "", "nextRewardTier": nextRewardTier.get("tier"), "nextRewardTierName": nextRewardTier.get("rewardName"), "nextRewardTierProgress": ""}
+            customer =  {"email": email, "rewardPoints": int(totalSpent), "rewardTier": "", "rewardTierName": "", "nextRewardTier": nextRewardTier.get("tier"), "nextRewardTierName": nextRewardTier.get("rewardName"), "nextRewardTierProgress": progress}
         else:
-            customer =  {"email": email, "rewardPoints": int(totalSpent), "rewardTier": currentRewardTier.get("tier"), "rewardTierName": currentRewardTier.get("rewardName"), "nextRewardTier": nextRewardTier.get("tier"), "nextRewardTierName": nextRewardTier.get("rewardName"), "nextRewardTierProgress": ""}
+            customer =  {"email": email, "rewardPoints": int(totalSpent), "rewardTier": currentRewardTier.get("tier"), "rewardTierName": currentRewardTier.get("rewardName"), "nextRewardTier": nextRewardTier.get("tier"), "nextRewardTierName": nextRewardTier.get("rewardName"), "nextRewardTierProgress": progress}
 
         #Lookup the customer to see if they already have an entry in the collection. If they do not, add them to the collection, if they do, update their record
         customerLookup = customerCollection.find_one(query)
@@ -59,11 +66,7 @@ class OrderHandler(tornado.web.RequestHandler):
             customerCollection.insert_one(customer)
         else:
             newValues = {"$set": customer}
-            customerCollection.update_one({"_id": customerLookup.get("_id")}, newValues)
-
-        testAddCustomer = customerCollection.find_one(query)
-        print("test add")
-        print(testAddCustomer)         
+            customerCollection.update_one({"_id": customerLookup.get("_id")}, newValues)         
             
 
     def findCurrentRewardTier(self, totalSpent):

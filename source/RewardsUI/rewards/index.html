@@ -1,16 +1,12 @@
 <html>
 <head>
-    <!--<link rel="stylesheet" type="text/css" href="style.css" />-->
+    {% load static %}
+    <link rel='stylesheet' type="text/css" href="{% static '/css/style.css' %}">
     <title>URBN Rewards Dashboard</title>
-    <style>@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap');</style>
-    <script>
-        //function submitOrder(email, orderTotal) {
-            //console.log('You clicked the button!');
-            //$.post('/order/(.*)', function({'email': email, 'orderTotal': orderTotal}) {
-                //alert('Order Added!');
-            //});
-        //}
-    </script>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap');
+    </style>
+    
 </head>
 
 <body>
@@ -35,7 +31,8 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <form>
+        <form method="POST">
+            {% csrf_token %}
             <label>Enter email address: </label><input type="text" name="orderEmail"/><br>
             <label>Enter order total: </label><input type="text" name="orderTotal"/>
             <input type="submit" value="Submit Order"/>
@@ -45,7 +42,7 @@
     <div>
         <h2>User Rewards</h2>
         <form>
-            <label>Email address: </label><input type="text" name="filterEmail"/>
+            <label>Email address: </label><input type="text" name="filerEmail"/>
             <input type="submit" value="Search"/>
         </form>
         <table border="1">
@@ -69,7 +66,7 @@
                     <td>{{customer.rewardTierName}}</td>
                     <td>{{customer.nextRewardTier}}</td>
                     <td>{{customer.nextRewardTierName}}</td>
-                    <td>50%</td>
+                    <td>{{customer.nextRewardTierProgress}}</td>
                 </tr>
             {% endfor %}
             </tbody>

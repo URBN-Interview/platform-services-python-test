@@ -27,7 +27,7 @@ class RewardsServiceClient:
     def post_order(self, order):
 
         response = requests.post(self.order_url, params=order)
-        return response.json()
+        return
 
 
 
