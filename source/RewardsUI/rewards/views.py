@@ -19,8 +19,14 @@ class RewardsView(TemplateView):
         rewards_data = self.rewards_service_client.get_rewards()
         context['rewards_data'] = rewards_data
 
-        all_customer_data = self.rewards_service_client.get_all_customers()
+        email = request.GET.get('filterEmail', '')
+        if email is '':
+            all_customer_data = self.rewards_service_client.get_all_customers()
+        else:
+            all_customer_data = [self.rewards_service_client.get_customer(email)]
+        
         context['all_customer_data'] = all_customer_data
+        
 
         return TemplateResponse(
             request,

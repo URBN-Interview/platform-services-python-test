@@ -35,18 +35,18 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <form action="add" method="POST">
-            {% csrf_token %}
-            <label>Enter email address: </label><input type="text"/><br>
-            <label>Enter order total: </label><input type="text"/>
-            <input type="button" value="Submit Order" name="submitOrder"/>
+        <form>
+            <label>Enter email address: </label><input type="text" name="orderEmail"/><br>
+            <label>Enter order total: </label><input type="text" name="orderTotal"/>
+            <input type="submit" value="Submit Order"/>
         </form>
         <hr>
     </div>
     <div>
         <h2>User Rewards</h2>
         <form>
-            <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
+            <label>Email address: </label><input type="text" name="filterEmail"/>
+            <input type="submit" value="Search"/>
         </form>
         <table border="1">
             <thead>
