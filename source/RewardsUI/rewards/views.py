@@ -19,37 +19,11 @@ class RewardsView(TemplateView):
         rewards_data = self.rewards_service_client.get_rewards()
         context['rewards_data'] = rewards_data
 
-        return TemplateResponse(
-            request,
-            self.template_name,
-            context
-        )
-
-class CustomerView(TemplateView):
-    template_name = 'index.html'
-
-    def __init__(self, logger=logging.getLogger(__name__), rewards_service_client=RewardsServiceClient()):
-        self.logger = logger
-        self.rewards_service_client = rewards_service_client
-
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-
-        rewards_data = self.rewards_service_client.get_customer()
-        context['customer_data'] = customer_data
+        all_customer_data = self.rewards_service_client.get_all_customers()
+        context['all_customer_data'] = all_customer_data
 
         return TemplateResponse(
             request,
             self.template_name,
             context
         )
-
-class OrderView(TemplateView):
-    template_name = 'index.html'
-    
-    def __init__(self, logger=logging.getLogger(__name__), rewards_service_client=RewardsServiceClient()):
-        self.logger = logger
-        self.rewards_service_client = rewards_service_client
-
-    def post(self, request, *args, **kwargs):
-        
