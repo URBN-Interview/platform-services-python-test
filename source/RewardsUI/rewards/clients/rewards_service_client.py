@@ -18,3 +18,10 @@ class CustomerServiceClient:
     def get_customer(self, keys):
         response = requests.get(self.customer_url)
         return response.json()
+
+class OrderServiceClient:
+
+    def __init__(self):
+        self.customer_url = "http://rewardsservice:7050/order/(.*)"
+
+    

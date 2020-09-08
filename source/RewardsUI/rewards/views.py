@@ -43,5 +43,13 @@ class CustomerView(TemplateView):
             self.template_name,
             context
         )
-    
 
+class OrderView(TemplateView):
+    template_name = 'index.html'
+    
+    def __init__(self, logger=logging.getLogger(__name__), rewards_service_client=RewardsServiceClient()):
+        self.logger = logger
+        self.rewards_service_client = rewards_service_client
+
+    def post(self, request, *args, **kwargs):
+        

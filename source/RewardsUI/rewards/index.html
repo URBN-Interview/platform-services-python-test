@@ -1,11 +1,18 @@
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="style.css" />
+    <!--<link rel="stylesheet" type="text/css" href="style.css" />-->
     <title>URBN Rewards Dashboard</title>
-    <style>
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap');
-</style>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap');</style>
+    <script>
+        function testClick(email, orderTotal) {
+            $.get('/order/?email=' + email + '&orderTotal=' + orderTotal, function({'email': email; 'orderTotal': orderTotal}) {
+                alert('Order Added!');
+            });
+            console.log("You clicked this!");
+        }
+    </script>
 </head>
+
 <body>
     <h1 id="title">URBN Rewards Dashboard</h1>
     <div>
@@ -28,9 +35,10 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <form>
+        <form action="add" method="post">
+            {% csrf_token %}
             <label>Enter email address: </label><input type="text"/><br>
-            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order"/>
+            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order" onClick="testClick(email, orderTotal);"/>
         </form>
         <hr>
     </div>
