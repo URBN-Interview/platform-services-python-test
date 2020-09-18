@@ -10,7 +10,7 @@ class GetCustomerHandler(tornado.web.RequestHandler):
     #get single customer data
 
     @coroutine
-    def getCustomer(self):
+    def get(self):
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
 
@@ -19,7 +19,7 @@ class GetCustomerHandler(tornado.web.RequestHandler):
         findEmailQuery = {"email": email}
 
         #check db to see if it exsists
-        myCustomer = db.customers.find_one(findEmailQuery)
+        myCustomer = db.customers.find_one(findEmailQuery, {"_id": 0})
 
-        if customer is not None:
+        if myCustomer is not None:
             self.write(json.dumps(myCustomer))

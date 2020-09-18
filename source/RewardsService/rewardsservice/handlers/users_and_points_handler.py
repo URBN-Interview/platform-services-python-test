@@ -8,32 +8,6 @@ from tornado.gen import coroutine
 
 class UsersAndPointsHandler(tornado.web.RequestHandler):
     #add new customer or update customer rewards data
-    
-    @coroutine
-    def addCustomer(self):
-        client = MongoClient("mongodb", 27017)
-        db = client["Rewards"]
-
-        # get email | order total | points
-        email = self.get_argument("email")
-        total = self.get_argument("total")
-
-        #turn total into points
-        points = int(math.floor(total))
-
-        #check if email exsists or not in customer collection
-        findEmailQuery = {"email": email}
-        myCustomer = db.customers.find_one(findEmailQuery)
-
-        if myCustomer is None:
-            #create new customer
-            newCustomer = createQuery(db, points)
-            db.customers.insert_one(newCustomer)
-        else:
-            #get the points & add to points
-            #check tier again! & do calculations | update customer
-            updateCustomer = createQuery(db, points)
-            db.customers.update_one(findEmailQuery, updateCustomer)
 
     #find current tier that customer is on
     def findTier(self, db, points):
@@ -53,12 +27,12 @@ class UsersAndPointsHandler(tornado.web.RequestHandler):
         return db.rewards.find_one({"points": point})
 
     #get the percentage of the progress to next tier | return string
-    def findProgress(curr, next):
+    def findProgress(self, curr, next):
         return str((next - curr) / 100) + "%"
 
     #create a query to update or create new customer/order
-    def createQuery(self, db, points):
-        reward = findTier(db,points);
+    def createQuery(self, db, points, email):
+        reward = self.findTier(db,points);
         tier = ''
         tierName = ''
 
@@ -66,14 +40,41 @@ class UsersAndPointsHandler(tornado.web.RequestHandler):
             tier = reward["tier"]
             tierName = reward["rewardName"]
 
-        nextReward = findNextTier(db, points);
+        nextReward = self.findNextTier(db, points);
         nextTier = nextReward["tier"]
         nextTierName = nextReward["rewardName"]
 
         if not tier:
-            nextTierProgress = findProgress(0, nextReward["points"])
+            nextTierProgress = self.findProgress(0, nextReward["points"])
         else:
-            nextTierProgress = findProgress(reward["points"], nextReward["points"])
+            nextTierProgress = self.findProgress(reward["points"], nextReward["points"])
 
         query = {"email": email, "points": points, "tier": tier, "tierName": tierName, "nextTier": nextTier, "nextTierName": nextTierName, "nextTierProgress": nextTierProgress}
         return query
+
+    #post function | add customer if exsist or update rewards
+    @coroutine
+    def post(self):
+        client = MongoClient("mongodb", 27017)
+        db = client["Rewards"]
+
+        # get email | order total | points
+        email = self.get_argument("email")
+        total = float(self.get_argument("total"))
+
+        #turn total into points
+        points = int(math.floor(total))
+
+        #check if email exsists or not in customer collection
+        findEmailQuery = {"email": email}
+        myCustomer = db.customers.find_one(findEmailQuery)
+
+        if myCustomer is None:
+            #create new customer
+            newCustomer = self.createQuery(db, points, email)
+            db.customers.insert_one(newCustomer)
+        else:
+            #get the points & add to points
+            #check tier again! & do calculations | update customer
+            updateCustomer = self.createQuery(db, points, email)
+            db.customers.update_one(findEmailQuery, updateCustomer)
