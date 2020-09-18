@@ -28,6 +28,9 @@ class UsersAndPointsHandler(tornado.web.RequestHandler):
 
     #get the percentage of the progress to next tier | return string
     def findProgress(self, curr, next):
+        if next - curr == 100:
+            return "0%"
+        
         return str(next - curr) + "%"
 
     #create a query to update or create new customer/order
@@ -57,7 +60,7 @@ class UsersAndPointsHandler(tornado.web.RequestHandler):
     def post(self):
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
-        
+
         # get email | order total | points
         email = self.get_argument("email")
         total = float(self.get_argument("total"))
@@ -76,5 +79,6 @@ class UsersAndPointsHandler(tornado.web.RequestHandler):
         else:
             #get the points & add to points
             #check tier again! & do calculations | update customer
+            points = points + myCustomer["points"]
             updateCustomer = self.createQuery(db, points, email)
-            db.customers.update_one(findEmailQuery, updateCustomer)
+            db.customers.update_one(findEmailQuery, {"$set" : updateCustomer})
