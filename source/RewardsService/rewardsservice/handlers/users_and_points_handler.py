@@ -7,6 +7,8 @@ import math
 from tornado.gen import coroutine
 
 class UsersAndPointsHandler(tornado.web.RequestHandler):
+    #add new customer or update customer rewards data
+    
     @coroutine
     def addCustomer(self):
         client = MongoClient("mongodb", 27017)
