@@ -7,34 +7,96 @@ import math
 from tornado.gen import coroutine
 
 class UsersAndPointsHandler(tornado.web.RequestHandler):
-    #add new customer or update customer rewards data
-
-    #find current tier that customer is on
     def findTier(self, db, points):
+        """
+        TODO: Find the current tier of the customer using their points.
+
+        Parameters
+        ----------
+        db : MongoClient
+            Database
+        points : int
+            Number of points customer has.
+
+        Returns
+        -------
+        mongo document
+            Return the first result you get with the query {"points": point}.
+        """
+
         if(points >= 1000):
             points = 1000
 
         point = int(points/100) * 100
         return db.rewards.find_one({"points": point})
 
-    #find next tier customer is on
     def findNextTier(self, db, points):
-        #if points >= 1000 just return 1000 tier
+        """
+        TODO: Find the next tier of the customer using their points.
+
+        Parameters
+        ----------
+        db : MongoClient
+            Database
+        points : int
+            Number of points customer has.
+
+        Returns
+        -------
+        mongo document
+            If points >= 1000 (There are no more tiers after 1000.)
+                Return the first result you get with the query {"points": 1000}.
+
+            Return the first result you get with the query {"points": point}.
+        """
+
         if(points >= 1000):
             return db.rewards.find_one({"points": 1000})
 
         point = (int(points/100) + 1) * 100
         return db.rewards.find_one({"points": point})
 
-    #get the percentage of the progress to next tier | return string
     def findProgress(self, curr, next):
+        """
+        TODO: Find percentage of progress made to get to next tier.
+
+        Parameters
+        ----------
+        curr : int
+            Current points a customer has.
+        next : int
+            The tier to reach.
+
+        Returns
+        -------
+        string
+            Return next-curr + "%"
+        """
+
         if next - curr == 100:
             return "0%"
-        
+
         return str(next - curr) + "%"
 
-    #create a query to update or create new customer/order
     def createQuery(self, db, points, email):
+        """
+        TODO: Create query to insert or update customer.
+
+        Parameters
+        ----------
+        db : MongoClient
+            Database
+        points : int
+            Number of points customer has.
+        email : string
+            Customer's email.
+
+        Returns
+        -------
+        mongo query
+            Return query
+        """
+
         reward = self.findTier(db,points);
         tier = ''
         tierName = ''
@@ -55,13 +117,18 @@ class UsersAndPointsHandler(tornado.web.RequestHandler):
         query = {"email": email, "points": points, "tier": tier, "tierName": tierName, "nextTier": nextTier, "nextTierName": nextTierName, "nextTierProgress": nextTierProgress}
         return query
 
-    #post function | add customer if exsist or update rewards
     @coroutine
     def post(self):
+        """
+        TODO: Post customer to database.
+
+        Get the email and total spent from input argument.
+        If it is a new customer insert new customer otherwise update the customer.
+        """
+
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
 
-        # get email | order total | points
         email = self.get_argument("email")
         total = float(self.get_argument("total"))
 
@@ -77,8 +144,7 @@ class UsersAndPointsHandler(tornado.web.RequestHandler):
             newCustomer = self.createQuery(db, points, email)
             db.customers.insert_one(newCustomer)
         else:
-            #get the points & add to points
-            #check tier again! & do calculations | update customer
+            #get the points & add to points | update customer
             points = points + myCustomer["points"]
             updateCustomer = self.createQuery(db, points, email)
             db.customers.update_one(findEmailQuery, {"$set" : updateCustomer})
