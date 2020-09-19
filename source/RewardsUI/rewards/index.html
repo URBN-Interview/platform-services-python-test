@@ -23,7 +23,7 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <form method="POST">
+        <form action="" method="post">
             {% csrf_token %}
             <label>Enter email address: </label>
             <input type="text" name="email" value="{{ email }}"required/>
@@ -35,7 +35,7 @@
 
             <br>
 
-            <input type="button" value="Submit Order"/>
+            <input type="submit" value="Submit Order"/>
         </form>
         <hr>
     </div>

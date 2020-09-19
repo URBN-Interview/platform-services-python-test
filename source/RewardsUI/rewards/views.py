@@ -1,10 +1,12 @@
 import logging
 
+from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 from django.views.generic.base import TemplateView
 
 from rewards.clients.rewards_service_client import RewardsServiceClient
 
+from .forms import OrderForm
 
 class RewardsView(TemplateView):
     template_name = 'index.html'
@@ -24,3 +26,15 @@ class RewardsView(TemplateView):
             self.template_name,
             context
         )
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+
+        orderForm = OrderForm(request.POST)
+        context['orderForm'] = orderForm
+
+        if orderForm.is_valid():
+            email = orderForm.cleaned_data.get("email")
+            total = orderForm.cleaned_data.get("total")
+            self.rewards_service_client.add_customers(email, total)
+            return HttpResponseRedirect("/rewards")
