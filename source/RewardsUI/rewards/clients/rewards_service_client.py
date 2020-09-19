@@ -16,9 +16,12 @@ class RewardsServiceClient:
     def add_customers(self, email, total):
         data = {"email": email, "total": total}
         requests.post(self.customers_add_url, data)
-        return
 
     def get_customer(self, email):
         data = {"email" : email}
         res = request.get(self.customer_url, params = data)
+        return res.json()
+
+    def get_customers(self):
+        res = requests.get(self.all_customers_url)
         return res.json()

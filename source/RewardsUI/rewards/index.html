@@ -42,7 +42,9 @@
     <div>
         <h2>User Rewards</h2>
         <form>
-            <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
+            <label>Email address: </label>
+            <input type="text" name="email" value="{{ email }}"/>
+            <input type="submit" value="Search"/>
         </form>
         <table border="1">
             <thead>
@@ -57,15 +59,17 @@
             </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>customer01@gmail.com</td>
-                    <td>100</td>
-                    <td>A</td>
-                    <td>5% off purchase</td>
-                    <td>B</td>
-                    <td>10% off purchase</td>
-                    <td>50%</td>
-                </tr>
+                {% for customer in customers_data %}
+                     <tr>
+                         <td>{{ customer.email }}</td>
+                         <td>{{ customer.points }}</td>
+                         <td>{{ customer.tier }}</td>
+                         <td>{{ customer.tierName }}</td>
+                         <td>{{ customer.nextTier }}</td>
+                         <td>{{ customer.nextTierName }}</td>
+                         <td>{{ customer.nextTierProgress }}</td>
+                     </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
