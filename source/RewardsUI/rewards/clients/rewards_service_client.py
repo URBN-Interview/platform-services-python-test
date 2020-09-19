@@ -5,9 +5,9 @@ class RewardsServiceClient:
 
     def __init__(self):
         self.rewards_url = "http://rewardsservice:7050/rewards"
-        self.customers_add_url = "http://rewardsservice:7050/customers"
+        self.orders_url = "http://rewardsservice:7050/orders"
         self.customer_url = "http://rewardsservice:7050/customer"
-        self.all_customers_url = "http://rewardsservice:7050/allCustomers"
+        self.customers_url = "http://rewardsservice:7050/customers"
 
     def get_rewards(self):
         response = requests.get(self.rewards_url)
@@ -15,7 +15,7 @@ class RewardsServiceClient:
 
     def add_customers(self, email, total):
         data = {"email": email, "total": total}
-        requests.post(self.customers_add_url, data)
+        requests.post(self.orders_url, data)
 
     def get_customer(self, email):
         data = {"email" : email}
@@ -23,5 +23,5 @@ class RewardsServiceClient:
         return res.json()
 
     def get_customers(self):
-        res = requests.get(self.all_customers_url)
+        res = requests.get(self.customers_url)
         return res.json()
