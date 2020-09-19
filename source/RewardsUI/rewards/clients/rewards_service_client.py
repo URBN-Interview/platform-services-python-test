@@ -19,7 +19,7 @@ class RewardsServiceClient:
 
     def get_customer(self, email):
         data = {"email" : email}
-        res = request.get(self.customer_url, params = data)
+        res = requests.get(self.customer_url, params = data)
         return res.json()
 
     def get_customers(self):

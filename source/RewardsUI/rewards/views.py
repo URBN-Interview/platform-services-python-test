@@ -6,7 +6,7 @@ from django.views.generic.base import TemplateView
 
 from rewards.clients.rewards_service_client import RewardsServiceClient
 
-from .forms import OrderForm
+from .forms import OrderForm, FilterForm
 
 class RewardsView(TemplateView):
     template_name = 'index.html'
@@ -23,6 +23,14 @@ class RewardsView(TemplateView):
 
         customers_data = self.rewards_service_client.get_customers()
         context['customers_data'] = customers_data
+
+        filterForm = FilterForm(request.GET)
+        context['filterForm'] = filterForm
+
+        if filterForm.is_valid():
+            email = filterForm.cleaned_data.get("email")
+            customers_data = self.rewards_service_client.get_customer(email)
+            context['customers_data'] = [customers_data]
 
         return TemplateResponse(
             request,
