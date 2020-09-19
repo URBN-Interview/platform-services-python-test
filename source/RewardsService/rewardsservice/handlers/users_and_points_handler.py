@@ -109,10 +109,7 @@ class UsersAndPointsHandler(tornado.web.RequestHandler):
         nextTier = nextReward["tier"]
         nextTierName = nextReward["rewardName"]
 
-        if not tier:
-            nextTierProgress = self.findProgress(0, nextReward["points"])
-        else:
-            nextTierProgress = self.findProgress(points, nextReward["points"])
+        nextTierProgress = self.findProgress(points, nextReward["points"])
 
         query = {"email": email, "points": points, "tier": tier, "tierName": tierName, "nextTier": nextTier, "nextTierName": nextTierName, "nextTierProgress": nextTierProgress}
         return query
@@ -128,7 +125,7 @@ class UsersAndPointsHandler(tornado.web.RequestHandler):
 
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
-
+        
         email = self.get_argument("email")
         total = float(self.get_argument("total"))
 
