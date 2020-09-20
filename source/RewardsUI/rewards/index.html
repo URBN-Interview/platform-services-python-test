@@ -1,10 +1,12 @@
 <html>
 <head>
+     {% load static %}
+     <link rel="stylesheet" type="text/css" href="{% static '/style.css' %}"/>
 </head>
 <body>
     <h1>Welcome to the Rewards Dashboard</h1>
     <div>
-        <h2>Reward Tiers</h2>
+        <h2 id="word">Reward Tiers</h2>
         <table border="1">
             <tr>
                 <th>Rewards Tier<th>
