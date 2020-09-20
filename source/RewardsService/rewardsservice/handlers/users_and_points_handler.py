@@ -73,7 +73,7 @@ class UsersAndPointsHandler(tornado.web.RequestHandler):
             Return next-curr + "%"
         """
 
-        if next - curr == 100:
+        if (next - curr == 100) or (next == 1000 and curr >= 1000):
             return "0%"
 
         return str(next - curr) + "%"
@@ -106,8 +106,12 @@ class UsersAndPointsHandler(tornado.web.RequestHandler):
             tierName = reward["rewardName"]
 
         nextReward = self.findNextTier(db, points);
-        nextTier = nextReward["tier"]
-        nextTierName = nextReward["rewardName"]
+        nextTier = ''
+        nextTierName = ''
+
+        if points < 1000:
+            nextTier = nextReward["tier"]
+            nextTierName = nextReward["rewardName"]
 
         nextTierProgress = self.findProgress(points, nextReward["points"])
 
