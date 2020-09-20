@@ -21,5 +21,5 @@ class GetAllCustomersHandler(tornado.web.RequestHandler):
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
 
-        myCustomers = list(db.customers.find({}, {"_id": 0}))
+        myCustomers = list(db.orders.find({}, {"_id": 0}))
         self.write(json.dumps(myCustomers))

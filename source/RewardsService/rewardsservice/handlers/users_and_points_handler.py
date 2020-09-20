@@ -125,7 +125,7 @@ class UsersAndPointsHandler(tornado.web.RequestHandler):
 
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
-        
+
         email = self.get_argument("email")
         total = float(self.get_argument("total"))
 
@@ -134,14 +134,14 @@ class UsersAndPointsHandler(tornado.web.RequestHandler):
 
         #check if email exsists or not in customer collection
         findEmailQuery = {"email": email}
-        myCustomer = db.customers.find_one(findEmailQuery)
+        myCustomer = db.orders.find_one(findEmailQuery)
 
         if myCustomer is None:
             #create new customer
             newCustomer = self.createQuery(db, points, email)
-            db.customers.insert_one(newCustomer)
+            db.orders.insert_one(newCustomer)
         else:
             #get the points & add to points | update customer
             points = points + myCustomer["points"]
             updateCustomer = self.createQuery(db, points, email)
-            db.customers.update_one(findEmailQuery, {"$set" : updateCustomer})
+            db.orders.update_one(findEmailQuery, {"$set" : updateCustomer})

@@ -24,7 +24,7 @@ class GetCustomerHandler(tornado.web.RequestHandler):
         email = self.get_argument("email")
         findEmailQuery = {"email": email}
 
-        myCustomer = db.customers.find_one(findEmailQuery, {"_id": 0})
+        myCustomer = db.orders.find_one(findEmailQuery, {"_id": 0})
 
         if myCustomer is not None:
             self.write(json.dumps(myCustomer))
