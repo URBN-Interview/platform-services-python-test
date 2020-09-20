@@ -1,3 +1,50 @@
-#word {
-     background-color: pink;
+body {
+     text-align: center;
+     background-color: #fffce2;
+}
+
+table {
+     display: inline-block;
+     border-color: #e8da8c;
+     border-width:4;
+     border-radius: 10px;
+}
+
+th {
+    border-width: 2;
+    border-radius: 2px;
+}
+
+td {
+    border-radius: 2px;
+    color: #5C5121;
+}
+
+input{
+     margin: 5px;
+     background-color: #fffdec;
+}
+
+h2, h1, th, hr, input, label {
+    color: #2d3663;
+}
+
+#form_div {
+     display: inline-block;
+     background-color: #FFE8E0;
+     text-align: right;
+     justify-content: center;
+     padding-left: 200px;
+     padding-right: 200px;
+     border-radius: 10px;
+     padding-bottom: 50px;
+     padding-top: 50px;
+}
+
+#add_order {
+     text-align: center;
+}
+
+#button_submit:hover {
+    background-color: #fff6a1
 }

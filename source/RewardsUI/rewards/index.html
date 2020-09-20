@@ -4,9 +4,9 @@
      <link rel="stylesheet" type="text/css" href="{% static '/style.css' %}"/>
 </head>
 <body>
-    <h1>Welcome to the Rewards Dashboard</h1>
-    <div>
-        <h2 id="word">Reward Tiers</h2>
+     <h1>Welcome to the Rewards Dashboard</h1>
+     <div>
+        <h2>Reward Tiers</h2>
         <table border="1">
             <tr>
                 <th>Rewards Tier<th>
@@ -24,21 +24,23 @@
         <hr>
     </div>
     <div>
-        <h2>Add orders</h2>
-        <form action="" method="post">
-            {% csrf_token %}
-            <label>Enter email address: </label>
-            <input type="text" name="email" value="{{ email }}"required/>
+        <div id="form_div">
+             <h2 id="add_order">Add orders</h2>
+             <form action="" method="post">
+                 {% csrf_token %}
+                 <label>Enter email address: </label>
+                 <input type="text" name="email" value="{{ email }}"required/>
 
-            <br>
+                 <br>
 
-            <label>Enter order total: </label>
-            <input type="text" name="total" value="{{ total }}" required/>
+                 <label>Enter order total: </label>
+                 <input type="text" name="total" value="{{ total }}" required/>
 
-            <br>
+                 <br>
 
-            <input type="submit" value="Submit Order"/>
-        </form>
+                 <input id="button_submit" type="submit" value="Submit Order"/>
+             </form>
+        </div>
         <hr>
     </div>
     <div>
@@ -46,7 +48,7 @@
         <form>
             <label>Email address: </label>
             <input type="text" name="email" value="{{ email }}"/>
-            <input type="submit" value="Search"/>
+            <input id="button_submit" type="submit" value="Search"/>
         </form>
         <table border="1">
             <thead>
