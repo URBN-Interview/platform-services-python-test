@@ -42,7 +42,8 @@ def main():
         "nextRewardName": "15% off purchase",
         "nextTierProgress":0.7
     })
-    print("Rewards loaded in mongo")
+    print("Customers loaded in mongo")
+
 
 if __name__ == "__main__":
     main()
