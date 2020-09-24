@@ -13,7 +13,7 @@ class CustomersHandler(tornado.web.RequestHandler):
         db = client["Customers"]
 
         email = self.get_argument("email",None)
-        
+
         if(not email):
             self.write("Email does not exist")
         else:
