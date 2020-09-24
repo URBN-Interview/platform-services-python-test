@@ -21,7 +21,7 @@ class OrdersHandler(tornado.web.RequestHandler):
 
         existingCustomer = customersdb.customers.find_one({"email":email}, {"_id": 0})
         totalPoints = int(float(orders))
-        
+
         rewards = list(rewardsdb.rewards.find({}, {"_id": 0}))
 
         reward = None
@@ -64,7 +64,7 @@ class OrdersHandler(tornado.web.RequestHandler):
                         "nextTierProgress":nextReward["nextTierProgress"]
                     })
             else:
-                if(totalPoints<=1000):
+                if(totalPoints<1000):
                     #Gets our reward tier that we are at and breaks after not getting next tier
                     for i in rewards:
                         if(totalPoints>=i["points"]):
@@ -93,8 +93,8 @@ class OrdersHandler(tornado.web.RequestHandler):
                         "points":totalPoints,
                         "rewardsTier":reward["tier"],
                         "rewardName":reward["rewardName"],
-                        "nextTier":nextReward["tier"],
-                        "nextRewardName":nextReward["rewardName"],
+                        "nextTier":nextReward["nextTier"],
+                        "nextRewardName":nextReward["nextRewardName"],
                         "nextTierProgress":nextReward["nextTierProgress"]
                     })
         else:
