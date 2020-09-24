@@ -4,7 +4,9 @@ from django.template.response import TemplateResponse
 from django.views.generic.base import TemplateView
 
 from rewards.clients.rewards_service_client import RewardsServiceClient
-from .forms import EmailForm
+from .forms import EmailForm, OrderForm
+from django.http import HttpResponseRedirect
+import requests
 
 class RewardsView(TemplateView):
     template_name = 'index.html'
@@ -35,6 +37,34 @@ class RewardsView(TemplateView):
                     # Error checks to see if email is found or not
                     if(not customers_data):
                         context["customer_error"] = "Email does not exist"
+
+        return TemplateResponse(
+            request,
+            self.template_name,
+            context
+        )
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+
+        if(request.method == 'POST'):
+            form = OrderForm(request.POST)
+            if(form.is_valid()):
+
+                email = form.cleaned_data["order_email"]
+                orders = form.cleaned_data["orders"]
+
+                print("Form works!")
+                requests.post("http://rewardsservice:7050/orders", data = { "email" : email, "orders" : orders })
+            else:
+                print("form not valid.")
+
+
+            return HttpResponseRedirect("/rewards")
+        rewards_data = self.rewards_service_client.get_rewards()
+        customers_data = self.rewards_service_client.get_all_customers()
+
+        context["customers_data"] = customers_data
+        context['rewards_data'] = rewards_data
 
         return TemplateResponse(
             request,
