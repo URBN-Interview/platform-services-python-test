@@ -31,11 +31,12 @@
     </div>
     <div>
         <h2>User Rewards</h2>
-        <form for="email" method ="GET">
+        <form action="/rewards/" method ="GET">
             <label>Email address: </label>
             <input name = "email" id = "email" type="text"/>
             <input type="submit" value="Search"/>
         </form>
+        {{customer_error}}
         <table border="1">
             <thead>
             <tr>
@@ -49,17 +50,33 @@
             </tr>
             </thead>
             <tbody>
-              {% for customer in customers_data %}
-                <tr>
-                    <td>{{customer.email}}</td>
-                    <td>{{customer.points}}</td>
-                    <td>{{customer.rewardsTier}}</td>
-                    <td>{{customer.rewardName}}</td>
-                    <td>{{customer.nextTier}}</td>
-                    <td>{{customer.nextRewardName}}</td>
-                    <td>{{customer.nextTierProgress}}</td>
-                </tr>
+              {% if customers_data %}
+                {% for customer in customers_data %}
+                  <tr>
+                      <td>{{customer.email}}</td>
+                      <td>{{customer.points}}</td>
+                      <td>{{customer.rewardsTier}}</td>
+                      <td>{{customer.rewardName}}</td>
+                      <td>{{customer.nextTier}}</td>
+                      <td>{{customer.nextRewardName}}</td>
+                      <td>{{customer.nextTierProgress}}</td>
+                  </tr>
                 {% endfor %}
+
+              {% else %}
+                {% for customer in all_customers_data %}
+                  <tr>
+                      <td>{{customer.email}}</td>
+                      <td>{{customer.points}}</td>
+                      <td>{{customer.rewardsTier}}</td>
+                      <td>{{customer.rewardName}}</td>
+                      <td>{{customer.nextTier}}</td>
+                      <td>{{customer.nextRewardName}}</td>
+                      <td>{{customer.nextTierProgress}}</td>
+                  </tr>
+                  {% endfor %}
+                {% endif %}
+
             </tbody>
         </table>
     </div>
