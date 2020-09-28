@@ -1,4 +1,5 @@
 import logging
+from django.http import HttpResponseRedirect
 
 from django.template.response import TemplateResponse
 from django.views.generic.base import TemplateView
@@ -24,3 +25,14 @@ class RewardsView(TemplateView):
             self.template_name,
             context
         )
+
+
+    def post(self, request, *args, **kwargs):
+
+        email = request.POST.get('orderEmail', '')
+        orderTotal = request.POST.get('orderTotal', '')
+        order = {'email': email, 'orderTotal': orderTotal}
+
+        self.rewards_service_client.post_order(order)
+
+        return HttpResponseRedirect('/rewards/')
