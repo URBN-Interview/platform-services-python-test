@@ -5,3 +5,4 @@ from . import views
 urlpatterns = [
     url(r'^$', views.RewardsView.as_view(), name='rewards'),
 ]
+f
