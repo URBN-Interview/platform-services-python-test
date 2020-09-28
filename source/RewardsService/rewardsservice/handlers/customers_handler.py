@@ -13,9 +13,10 @@ class CustomersHandler(tornado.web.RequestHandler):
         db = client["Customer"]
 
         email = self.get_argument("email","")
+        self.write(email)
         customerData = db.customers.find_one({"Email Address": email})
 
         if (not customerData):
-            self.write("No customer with corresponding email.")
+            self.write("This must be an invalid input.")
         else:
             self.write({"Customer Data": customerData})

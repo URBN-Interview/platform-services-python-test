@@ -12,4 +12,7 @@ class AllCustomersHandler(tornado.web.RequestHandler):
         client = MongoClient("mongodb", 27017)
         db = client["Customer"]
         allCustomers = list(db.customers.find({}, {"_id": 0}))
-        self.write(json.dumps(allCustomers))
+        if (len(allCustomers) == 0):
+            return self.write("No customers ...")
+        else:
+            self.write(json.dumps(allCustomers))
