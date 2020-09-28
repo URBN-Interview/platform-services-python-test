@@ -10,7 +10,6 @@ class AllCustomersHandler(tornado.web.RequestHandler):
     @coroutine
     def get(self):
         client = MongoClient("mongodb", 27017)
-        db = client["Customers"]
-        
-        all_customers = list(db.customers.find({}, {"_id": 0}))
-        self.write(json.dumps(all_customers))
+        db = client["Customer"]
+        allCustomers = list(db.customers.find({}, {"_id": 0}))
+        self.write(json.dumps(allCustomers))

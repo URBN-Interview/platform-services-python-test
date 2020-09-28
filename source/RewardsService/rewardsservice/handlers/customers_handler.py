@@ -10,12 +10,12 @@ class CustomersHandler(tornado.web.RequestHandler):
     @coroutine
     def get(self):
         client = MongoClient("mongodb", 27017)
-        db = client["Customers"]
+        db = client["Customer"]
 
-        email = self.get_argument("email", None)
+        email = self.get_argument("email","")
+        customerData = db.customers.find_one({"Email Address": email})
 
-        if (not email):
-            self.write("Email does not exist")
+        if (not customerData):
+            self.write("No customer with corresponding email.")
         else:
-            customers = list(db.customers.find({"email":email}, {"_id": 0}))
-            self.write(json.dumps(customers))
+            self.write({"Customer Data": customerData})

@@ -10,73 +10,94 @@ class OrdersHandler():
     @coroutine
     def post(self, keys):
         client = MongoClient("mongodb", 27017)
-        db = client["Rewards"]             
+        db = client["Customer"]
 
-        email = self.get_argument("email")
-        amount = self.get_argument("amount")
-
-        orders = db["Orders"]
-        order = {"email": email, "amount": amount}
-        orders.insert_one(order)
+        email = self.__getattribute__("email","")
+        orderTotal = self.__getattribute__("orderTotal","")
         
-        customersOrders = list(orders.find({"email": email}))        
-        totalAmount = 0
-        for order in customersOrders:
-            totalAmount += order.get("amount")
-            
-        curr_reward = db.rewards.find_one({"tier": self.currReward(totalAmount)})
-        next_reward = db.rewards.find_one({"tier": self.nextReward(totalAmount)})
-
-        progress = ""
-        points = int(totalAmount)
-        pointsString = str(points)
-        if len(pointsString) > 2:
-            progress = pointsString[1:] + "%"
-        else:
-            progress = pointsString + "%"
-
-        if totalAmount >= 1000:
-            customer =  {"email": email, "rewardPoints": int(totalAmount), "rewardTier": curr_reward.get("tier"), "rewardTierName": curr_reward.get("rewardName"), "nextRewardTier": "", "nextRewardTierName": "", "nextRewardTierProgress": ""}
-        elif totalAmount < 100:
-            customer =  {"email": email, "rewardPoints": int(totalAmount), "rewardTier": "", "rewardTierName": "", "nextRewardTier": next_reward.get("tier"), "nextRewardTierName": next_reward.get("rewardName"), "nextRewardTierProgress": progress}
-        else:
-            customer =  {"email": email, "rewardPoints": int(totalAmount), "rewardTier": curr_reward.get("tier"), "rewardTierName": curr_reward.get("rewardName"), "nextRewardTier": next_reward.get("tier"), "nextRewardTierName": next_reward.get("rewardName"), "nextRewardTierProgress": progress}
-
-        customers = db["Customers"]
-        customerLookup = customers.find_one(query)
-        if customerLookup is None:
-            customers.insert_one(customer)
-        else:
-            newValues = {"$set": customer}
-            customers.update_one({"_id": customerLookup.get("_id")}, newValues) 
-    
-
-    def currReward(self, total):
-        assert totalSpent > 0: "Earn points toward rewards every time you shop!" 
+        reward_tier = self.rewardTier(orderTotal)
+        reward_tier_name = self.rewardTierName(reward_tier)
         
+        next_reward_tier = self.nextRewardTierName(reward_tier_name)
+        next_reward_tier_name = self.nextRewardTierName(next_reward_tier)
+        next_reward_points = self.nextRewardPoints(next_reward_tier)
+
+        points = int(float(orderTotal))
+
+        if (next_reward_points == "N/A"):
+            progress = "N/A"
+        else:
+            progress - round(float(orderTotal) / next_reward_points, 2)
+        customerData = {"Email Address": email, "Reward Points": points, "Reward Tier": reward_tier, "Reward Tier Name": reward_tier_name, 
+            "Next Reward Tier": next_reward_tier, "Next Reward Tier Name": next_reward_tier_name, "Next Reward Tier Progress": progress}
+        db.customers.insert(customerData)
+        
+    def rewardTier(self, totalSpent):
         if (totalSpent < 100):
-            return ""
-        if (totalSpent < 200):
+            return "N/A"
+        elif (totalSpent < 200):
             return "A"
-        if (totalSpent < 300):
+        elif (totalSpent < 300):
             return "B"
-        if (totalSpent < 400):
+        elif (totalSpent < 400):
             return "C"
-        if (totalSpent < 500):
+        elif (totalSpent < 500):
             return "D"
-        if (totalSpent < 600):
+        elif (totalSpent < 600):
             return "E"
-        if (totalSpent < 700):
+        elif (totalSpent < 700):
             return "F"
-        if (totalSpent < 800):
+        elif (totalSpent < 800):
             return "G"
-        if (totalSpent < 900):
+        elif (totalSpent < 900):
             return "H"
-        return "J"
+        elif (totalSpent < 1000):
+            return "I"
+        else:
+            return "J"
 
-    def nextReward(self, total):
-        curr_reward = currReward(total)
-        if (curr_reward == "J"):
-            return "NO BETTER REWARD!"
+    def rewardTierName(self, reward_tier):        
+        if (reward_tier == "N/A"):
+            return "N/A"
+        for map in self.maps:
+            if (map["tier"] == reward_tier):
+                return map["rewardName"]
+
+    def nextRewardTier(self, reward_tier):
+        if (reward_tier == "N/A"):
+            return "A"
+        elif (reward_tier == "J"):
+            return "N/A"
         ## increment the value to obtain next reward
-        return chr(ord(curr_reward) + 1)
+        else:
+            return chr(ord(reward_tier) + 1)
+
+    def nextRewardTierName(self, next_reward_tier):
+        if (next_reward_tier == "N/A"):
+            return "N/A"
+        for map in self.maps:
+            if (map["tier"] == next_reward_tier):
+                return map["rewardName"]
+        return "Invalid entry ..."
+
+    
+    def nextRewardPoints(self, next_reward_tier):
+        if (next_reward_tier == "N/A"):
+            return "N/A"
+        for map in self.maps:
+            if (map["tier"] == next_reward_tier):
+                return map["points"]
+        return "Invalid entry ..."
+
+    maps = [
+        { "tier": "A", "rewardName": "5% off purchase", "points": 100 },
+        { "tier": "B", "rewardName": "10% off purchase", "points": 200 },
+        { "tier": "C", "rewardName": "15% off purchase", "points": 300 },
+        { "tier": "D", "rewardName": "20% off purchase", "points": 400 },
+        { "tier": "E", "rewardName": "25% off purchase", "points": 500 },
+        { "tier": "F", "rewardName": "30% off purchase", "points": 600 },
+        { "tier": "G", "rewardName": "35% off purchase", "points": 700 },
+        { "tier": "H", "rewardName": "40% off purchase", "points": 800 },
+        { "tier": "I", "rewardName": "45% off purchase", "points": 900 },
+        { "tier": "J", "rewardName": "50% off purchase", "points": 1000 }
+    ]
