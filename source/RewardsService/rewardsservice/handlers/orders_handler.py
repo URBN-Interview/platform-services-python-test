@@ -23,8 +23,7 @@ class OrdersHandler():
         totalAmount = 0
         for order in customersOrders:
             totalAmount += order.get("amount")
-
-        assert totalAmount > 0 : "Amount must be a positive value!"
+            
         curr_reward = db.rewards.find_one({"tier": self.currReward(totalAmount)})
         next_reward = db.rewards.find_one({"tier": self.nextReward(totalAmount)})
 
