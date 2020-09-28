@@ -4,7 +4,6 @@ import tornado.web
 from pymongo import MongoClient
 from tornado.gen import coroutine
 
-
 class RewardsHandler(tornado.web.RequestHandler):
 
     @coroutine
