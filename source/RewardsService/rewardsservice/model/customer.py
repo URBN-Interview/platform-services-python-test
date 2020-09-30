@@ -1,5 +1,4 @@
-# Customer DB model	
-class Customers:	
+class Customer:	
     def __init__(self, email, orderTotal):	
         self.email = email	
         self.orderTotal = orderTotal	

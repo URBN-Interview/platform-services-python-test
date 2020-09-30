@@ -3,52 +3,66 @@ import tornado.web
 import math	
 
 from pymongo import MongoClient	
-from pymongo import MongoClient	
 from tornado.gen import coroutine	
 from tornado.options import options	
-from model.customer import Customers	
+from model.customer import Customer	
 
 class OrderHandler(tornado.web.RequestHandler):	
 
     @coroutine	
     def post(self):	
         client = MongoClient(options.mongodb_host)	
-        customerDb = client["Customers"]	
+        db = client["Customers"]	
         rewardsDb = client["Rewards"]	
 
         email = self.get_argument('email', '')	
-        orderTotal = self.get_argument('orderTotal', '')	
+        orderTot = self.get_argument('orderTotal', '')
+        points = orderTot
 
-        oldCustomer = customerDb.customers.find_one({"email": email}, {'_id':0})	
+        existingCust = db.customers.find_one({"email": email}, {'_id':0})		
 
-        dollar = int(orderTotal)	
+        #if this customer already exists in the database, the total points should be their existing points + the points from this order
+        if(existingCust):	
+            points += existingCust['points']	
 
-        if(oldCustomer):	
-            dollar += oldCustomer['points']	
-        customer = Customers(email, int(orderTotal))	
-        print(customer)	
+        cust = Customer(email, orderTot))	
 
-        for reward in list(rewardsDb.rewards.find({}, {"_id": 0})):	
-            if(dollar < reward["points"]):	
-                    nextReward = reward	
-                    break	
-            currentReward = reward	
+        #see if customer is eligible for reward
+        for r in rewardsDb.rewards.find({}, {"_id": 0}):	
+            if(points < r["points"]):	
+                nextReward = r
+                break	
+            curReward = reward	
 
-        if(currentReward):	
-            customer.currentReward(currentReward["tier"], currentReward['rewardName'], currentReward['points'])	
+        if (curReward):	
+            cust.currentReward(
+                curReward["tier"], 
+                curReward['rewardName'], 
+                curReward['points']
+            )	
 	
         if(nextReward):		
-            customer.newReward(nextReward["tier"], nextReward["rewardName"], 'progress')		
-            currentPoints = 0	
-            if(currentReward):	
-                currentPoints = currentReward['points']	
-            customer.progress = currentPoints/nextReward['points']	
+            customer.newReward(
+                nextReward["tier"], 
+                nextReward["rewardName"], 
+                curReward["points"]/nextReward["points"]
+            )		
 	
         if(oldCustomer):	
-            customerDb.customers.update({'email': customer.email},	
-            {'email': customer.email, 'points': dollar, 'tier': customer.tier, 'rewardName': customer.rewardName, 'nextTier': customer.nextTier, 'nextReward': customer.nextReward, 'progress': customer.progress})	
+            customerDb.customers.update(
+                {'email': customer.email},	
+                {'points': points}
+            )	
         else:	
-            customerDb.customers.insert({'email': customer.email, 'points': dollar, 'tier': customer.tier, 'rewardName': customer.rewardName, 'nextTier': customer.nextTier, 'nextReward': customer.nextReward, 'progress': customer.progress})	
+            customerDb.customers.insert(
+                {'email': customer.email, 
+                'points': points, 
+                'tier': customer.tier, 
+                'rewardName': customer.rewardName, 
+                'nextTier': customer.nextTier, 
+                'nextReward': customer.nextReward, 
+                'progress': customer.progress}
+            )	
 
-        result = list(customerDb.customers.find({"email": email}, {"_id": 0}))	
+        result = customerDb.customers.find({"email": email}, {"_id": 0})
         self.write(json.dumps(result))	
