@@ -5,7 +5,6 @@ import math
 from pymongo import MongoClient	
 from tornado.gen import coroutine	
 from tornado.options import options	
-from model.customer import Customer	
 
 class OrderHandler(tornado.web.RequestHandler):	
 
@@ -25,14 +24,14 @@ class OrderHandler(tornado.web.RequestHandler):
         if(existingCust):	
             points += existingCust['points']	
 
-        cust = Customer(email, orderTot))	
+        cust = Customer(email, orderTot)	
 
         #see if customer is eligible for reward
         for r in rewardsDb.rewards.find({}, {"_id": 0}):	
             if(points < r["points"]):	
                 nextReward = r
                 break	
-            curReward = reward	
+            curReward = r
 
         if (curReward):	
             cust.currentReward(
@@ -42,27 +41,49 @@ class OrderHandler(tornado.web.RequestHandler):
             )	
 	
         if(nextReward):		
-            customer.newReward(
+            cust.newReward(
                 nextReward["tier"], 
                 nextReward["rewardName"], 
                 curReward["points"]/nextReward["points"]
             )		
 	
-        if(oldCustomer):	
-            customerDb.customers.update(
-                {'email': customer.email},	
+        if(existingCust):	
+            db.customers.update(
+                {'email': cust.email},	
                 {'points': points}
             )	
         else:	
-            customerDb.customers.insert(
-                {'email': customer.email, 
+            db.customers.insert(
+                {'email': cust.email, 
                 'points': points, 
-                'tier': customer.tier, 
-                'rewardName': customer.rewardName, 
-                'nextTier': customer.nextTier, 
-                'nextReward': customer.nextReward, 
-                'progress': customer.progress}
+                'tier': cust.tier, 
+                'rewardName': cust.rewardName, 
+                'nextTier': cust.nextTier, 
+                'nextReward': cust.nextReward, 
+                'progress': cust.progress}
             )	
 
-        result = customerDb.customers.find({"email": email}, {"_id": 0})
+        result = db.customers.find({"email": email}, {"_id": 0})
         self.write(json.dumps(result))	
+
+
+class Customer:	
+    def __init__(self, email, orderTotal):	
+        self.email = email	
+        self.orderTotal = orderTotal	
+        self.rewardName = ""	
+        self.tier = 0
+        self.points = 0.0
+        self.nextReward = 0.0	
+        self.nextTier = ""	
+        self.progress = 0.0	
+
+    def currentReward(self, tier, name, points):	
+        self.tier = tier	
+        self.rewardName = name	
+        self.points = points	
+
+    def newReward(self, tier, name, progress):	
+        self.tier = tier	
+        self.rewardName = name	
+        self.progress = progress
