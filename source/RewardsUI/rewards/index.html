@@ -23,10 +23,12 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        {{orders_data}}
-        <form action="/myform" method="POST">
-            <label>Enter email address: </label><input type="text"/><br>
-            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order"/>
+        <!--action="http://localhost:7050/orders"-->
+        <form method="POST">
+            {% csrf_token %}
+            <label>Enter email address: </label><input name="email" type="text"/><br>
+            <label>Enter order total: </label><input name="amount" type="text"/>
+            <input type="submit" value="Submit Order"/>
         </form>
         <hr>
     </div>

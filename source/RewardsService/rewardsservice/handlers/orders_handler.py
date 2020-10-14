@@ -9,11 +9,48 @@ class OrdersHandler(tornado.web.RequestHandler):
 
     @coroutine
     def get(self):
-        self.write("Hello, kitty")
+        email = self.get_arguments("email")
+        if(email == []):
+            client = MongoClient("mongodb", 27017)
+            col = client["Rewards"]["client_reward"]
+            rewards = list(col.find({}, {"_id": 0}))
+            self.write(json.dumps(rewards))
+        else:
+            client = MongoClient("mongodb", 27017)
+            col = client["Rewards"]["client_reward"]
+            reward = list(col.find({"email": email[0]}, {"_id": 0}))
+            self.write(json.dumps(reward))
 
     @coroutine
     def post(self):
         orderEmailAddress = self.get_body_argument("email")
         orderAmount = self.get_body_argument("amount")
+
+        client = MongoClient("mongodb", 27017)
+        db = client["Rewards"]
+        rewards = list(db.rewards.find({}, {"_id": 0}))
+        #sorted_obj = dict(rewards)
+        rewards = sorted(rewards, key=lambda x : x['points'], reverse=True)
+
+        previous = ''
+        previousTier = ''
+        previousName = ''
+        current = ''
+        currentTier = ''
+        currentName = ''
+        for reward in rewards:
+            current = int(reward['points'])
+            if(current < int(orderAmount)):
+                currentTier = reward['tier']
+                currentName = reward['rewardName']
+                #print(str(current) + ' - ' + reward['tier'] + ' - ' + reward['rewardName'])
+                break
+            previous = current
+            previousTier = reward['tier']
+            previousName = reward['rewardName']
+
+        col = db["client_reward"]
+        col.insert_one({"email":orderEmailAddress, "points": orderAmount, "tier": previousTier, "tierName": previousName, "nextTier": currentTier, "nextTierName": currentName, "nextTierProgress": 0})
+
         self.set_header("Content-Type", "text/plain")
         self.write("You wrote " + orderEmailAddress + " - " + orderAmount)

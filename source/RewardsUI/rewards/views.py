@@ -2,6 +2,7 @@ import logging
 
 from django.template.response import TemplateResponse
 from django.views.generic.base import TemplateView
+from django import forms
 
 from rewards.clients.rewards_service_client import RewardsServiceClient
 
@@ -19,8 +20,4 @@ class RewardsView(TemplateView):
         rewards_data = self.rewards_service_client.get_rewards()
         context['rewards_data'] = rewards_data
 
-        return TemplateResponse(
-            request,
-            self.template_name,
-            context
-        )
+        return TemplateResponse(request, self.template_name, context)
