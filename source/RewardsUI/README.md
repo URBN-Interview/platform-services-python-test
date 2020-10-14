@@ -15,4 +15,4 @@
 * $ cd APP_PATH/platform-services-python-test/source/RewardsUI
 * $ docker-compose build
 * $ docker-compose up -d
-* Open http://localhost:8000/rewards/ in your browser. Hello
+* Open http://localhost:8000/rewards/ in your browser.
