@@ -7,6 +7,17 @@ from tornado.gen import coroutine
 
 class OrdersHandler(tornado.web.RequestHandler):
 
+    def set_default_headers(self):
+        print("setting headers!!!")
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "Content-Type")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+
+    @coroutine
+    def options(self):
+        self.set_status(200)
+        self.finish()
+
     @coroutine
     def get(self):
         email = self.get_arguments("email")
