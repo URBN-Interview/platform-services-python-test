@@ -1,0 +1,263 @@
+.divPage {
+    min-width:800px;
+}
+.divAddPanel {
+    padding: 0 18px;
+    background-color: white;
+    overflow: hidden;
+}
+.loader {
+    border: 16px solid #f3f3f3;
+    border-top: 16px solid #F9DD17; /* Spin color */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+}
+.loaderAddRewardsIndicator {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #F9DD17; /* Spin color */
+    border-radius: 50%;
+    width: 5px;
+    height: 5px;
+    animation: spin 2s linear infinite;
+    vertical-align: middle;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.width100 {
+    width:100%;
+}
+.height100 {
+    height:100%;
+}
+.marginTop20px{
+    margin-top:20px;
+}
+.textAlignCenter {
+    text-align:center;
+}
+.textAlignLeft {
+    text-align:left;
+}
+.paddingTop10px {
+    padding-top:10px;
+}
+.positionRelative {
+    position:relative;
+}
+.positionAbsolute {
+    position:absolute;
+}
+.left50{
+    left:50%;
+}
+.right50{
+    right:50%;
+}
+.centerElement{
+    left:0;
+    right:0;
+}
+#tblClientRewards {
+    border-spacing: 0;
+}
+#tblClientRewards th {
+    padding-left:10px;
+}
+#tblClientRewards th, #tblClientRewards td {
+  border-bottom: 1px solid #ddd;
+  font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
+}
+#tblClientRewards tr:hover {
+    background-color:#f5f5f5;
+    cursor:pointer;
+}
+.imgHeader {
+    width:70px;
+    height:70px;
+    cursor:pointer;
+}
+.divSectionHeader h2 {
+    font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-size: 30px;
+}
+.displayTable{
+    display:table;
+}
+.displayTableRow{
+    display:table-row;
+}
+.displayTableCell{
+    display:table-cell;
+}
+.marginAuto {
+    margin:auto;
+}
+.marginTop5px {
+    margin-top:5px;
+}
+.buttonSearch {
+    background-color: #eee;
+    cursor: pointer;
+    padding-left: 5px;
+    width: 60px;
+    height:22px;
+    border: none;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 5px;
+    outline: none;
+    font-size: 15px;
+    transition: 0.4s;
+    margin-left:10px;
+    font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
+    color: #777;
+    font-weight: bold;
+    border:2px solid #757575;
+    padding-bottom:18px;
+}
+.accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding-left: 5px;
+    width: 22px;
+    height:22px;
+    border: none;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 5px;
+    outline: none;
+    font-size: 15px;
+    transition: 0.4s;
+    margin-left:10px;
+    border:2px solid #757575;
+    padding-bottom:18px;
+}
+.active, .accordion:hover, .buttonSearch:hover, .buttonAddRewards:hover {
+  background-color: #ccc;
+}
+.accordion:after {
+  content: '\002B';
+  color: #777;
+  font-weight: bold;
+}
+.active:after {
+  content: "\2212";
+}
+.panel {
+  padding: 0 18px;
+  background-color: white;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  margin-top:20px;
+}
+.fontFamilyPalatino {
+    font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
+}
+.inputSearchEmail{
+    font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
+    border-top:0;
+    border-left:0;
+    border-right:0;
+    margin-right:10px;
+    width:300px;
+}
+.buttonAddRewards {
+    background-color: #eee;
+    cursor: pointer;
+    padding-left: 5px;
+    width: 175px;
+    height:22px;
+    border: none;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 5px;
+    outline: none;
+    font-size: 15px;
+    transition: 0.4s;
+    margin-left:10px;
+    font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
+    color: #777;
+    font-weight: bold;
+    border:2px solid #757575;
+    padding-bottom:18px;
+}
+/*BEG: Snackbar*/
+#snackbarSuccess, #snackbarError, #snackbarRequiredInformation {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  color: #FFFFFF;
+  text-align: center;
+  border-radius: 10px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  top: 30px;
+  font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
+}
+#snackbarSuccess {
+  background-color: #0ad926;
+}
+#snackbarError {
+  background-color: #cd0b0b;
+}
+#snackbarRequiredInformation {
+  background-color: #E9D66B;
+  color:#000;
+  font-weight:bold;
+}
+#snackbarSuccess.show, #snackbarError.show, #snackbarRequiredInformation.show {
+  visibility: visible;
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+@-webkit-keyframes fadein {
+  from {top: 0; opacity: 0;}
+  to {top: 30px; opacity: 1;}
+}
+@keyframes fadein {
+  from {top: 0; opacity: 0;}
+  to {top: 30px; opacity: 1;}
+}
+@-webkit-keyframes fadeout {
+  from {top: 30px; opacity: 1;}
+  to {top: 0; opacity: 0;}
+}
+@keyframes fadeout {
+  from {top: 30px; opacity: 1;}
+  to {top: 0; opacity: 0;}
+}
+/*END: Snackbar*/
+/*BEG: Tooltip*/
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 370px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+}
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+.tooltiptext h2 {
+    font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-size:16px;
+    text-decoration: underline;
+}
+/*END: Tooltip*/
