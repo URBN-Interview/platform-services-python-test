@@ -21,10 +21,12 @@
             <button id="divAddButton" class="accordion" onclick="adjustAddPanel();" title="Add client rewards"></button>
         </div>
         <div id="divAddPanel" class="panel">
+            <hr class="hrAddPanel">
             <input id="email" required name="email" class="inputSearchEmail" placeholder="email@address.com" title="Email address for client rewards" />
             <input id="amount" required name="amount" class="inputSearchEmail" placeholder="100.10" title="Amount to add for client rewards" />
             <input id="buttonAddRewards" type="button" class="buttonAddRewards" onclick="submitForm();" value="Add Client Rewards"/>
             <div id="divAddRewardsIndicator" class="loaderAddRewardsIndicator" style="display:none;"></div>
+            <hr class="hrAddPanel">
         </div>
         <div class="width100 marginTop20px positionRelative">
             <div id="divClientRewardsIndicator" class="loader marginAuto"></div>

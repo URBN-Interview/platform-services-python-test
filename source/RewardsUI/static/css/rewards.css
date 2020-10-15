@@ -157,6 +157,8 @@
   overflow: hidden;
   transition: max-height 0.2s ease-out;
   margin-top:20px;
+  display: inline-block;
+  white-space: nowrap;
 }
 .fontFamilyPalatino {
     font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
@@ -264,3 +266,7 @@
     text-decoration: underline;
 }
 /*END: Tooltip*/
+.hrAddPanel {
+    width:820px;
+    min-width:400px;
+}
