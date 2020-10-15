@@ -47,9 +47,10 @@ function displayData(data) {
     row.appendChild(buildCell(entry.points));
     row.appendChild(buildCell(entry.tier));
     row.appendChild(buildCell(entry.tierName));
-    row.appendChild(buildCell(entry.nextTier));
-    row.appendChild(buildCell(entry.nextTierName));
-    row.appendChild(buildCell(entry.nextTierProgress));
+
+    row.appendChild(buildCell(entry.nextTier === '' ? '-' : entry.nextTier));
+    row.appendChild(buildCell(entry.nextTierName === '' ? '-' : entry.nextTierName));
+    row.appendChild(buildCell(entry.nextTierProgress === 0 ? '-' : entry.nextTierProgress));
     tblBody.appendChild(row);
   }
   tblClientRewards.appendChild(tblBody);

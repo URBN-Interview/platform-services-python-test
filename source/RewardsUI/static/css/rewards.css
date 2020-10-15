@@ -118,6 +118,7 @@
     font-weight: bold;
     border:2px solid #757575;
     padding-bottom:18px;
+    line-height:16px;
 }
 .accordion {
     background-color: #eee;
@@ -136,6 +137,7 @@
     margin-left:10px;
     border:2px solid #757575;
     padding-bottom:18px;
+    line-height:19px;
 }
 .active, .accordion:hover, .buttonSearch:hover, .buttonAddRewards:hover {
   background-color: #ccc;
@@ -186,6 +188,7 @@
     font-weight: bold;
     border:2px solid #757575;
     padding-bottom:18px;
+    line-height:16px;
 }
 /*BEG: Snackbar*/
 #snackbarSuccess, #snackbarError, #snackbarRequiredInformation {
