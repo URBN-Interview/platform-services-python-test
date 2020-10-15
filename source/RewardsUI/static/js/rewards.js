@@ -56,6 +56,7 @@ function displayData(data) {
   tblClientRewards.appendChild(tblBody);
   document.getElementById('tblClientRewards').style.display = 'table';
   document.getElementById('divClientRewardsIndicator').style.display = 'none';
+  document.getElementById('divClientRewardsErrorMessage').style.display = 'none';
 
 }
 function getClientRewards(email){
@@ -65,10 +66,17 @@ function getClientRewards(email){
 
   document.getElementById('tblClientRewards').style.display = 'none';
   document.getElementById('divClientRewardsIndicator').style.display = 'block';
+  document.getElementById('divClientRewardsErrorMessage').style.display = 'none';
 
   client.onreadystatechange = function() {
     if (client.readyState === 4) {
-      displayData(JSON.parse(client.response));
+        if(client.response === ''){
+            document.getElementById('tblClientRewards').style.display = 'none';
+            document.getElementById('divClientRewardsIndicator').style.display = 'none';
+            document.getElementById('divClientRewardsErrorMessage').style.display = 'table';
+        }else{
+            displayData(JSON.parse(client.response));
+        }
     }
   }
 
