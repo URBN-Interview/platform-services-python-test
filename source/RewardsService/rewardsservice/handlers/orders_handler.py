@@ -7,7 +7,7 @@ from tornado.gen import coroutine
 class OrdersHandler(tornado.web.RequestHandler):
 
     def set_default_headers(self):
-        print("setting headers!!!")
+        print("Enabling CORS...")
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "Content-Type")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
