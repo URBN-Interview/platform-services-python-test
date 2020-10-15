@@ -249,10 +249,10 @@
 .tooltip .tooltiptext {
   visibility: hidden;
   width: 370px;
-  background-color: black;
+  background-color: #757575;
   color: #fff;
   text-align: center;
-  padding: 5px 0;
+  padding: 0 5px 10px 5px;
   border-radius: 6px;
   position: absolute;
   z-index: 1;
