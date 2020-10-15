@@ -23,8 +23,9 @@ class OrdersHandler(tornado.web.RequestHandler):
         if(email == []):
             client = MongoClient("mongodb", 27017)
             col = client["Rewards"]["client_reward"]
-            rewards = list(col.find({}, {"_id": 0}))
-            self.write(json.dumps(rewards))
+            clients = list(col.find({}, {"_id": 0}))
+            clients = sorted(clients, key=lambda x : x['email'], reverse=False)
+            self.write(json.dumps(clients))
         else:
             self.write(json.dumps(self.getClientDataByEmail(email[0])))
 
