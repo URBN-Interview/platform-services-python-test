@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from pymongo import MongoClient
+    from pymongo import MongoClient
 
 
 def main():
@@ -19,6 +19,11 @@ def main():
     db.rewards.insert({"points": 900, "rewardName": "45% off purchase", "tier": "I"})
     db.rewards.insert({"points": 1000, "rewardName": "50% off purchase", "tier": "J"})
     print("Rewards loaded in mongo")
+
+    print("BEG: Remove Client Rewards")
+    col = client["Rewards"]["client_reward"]
+    col.remove()
+    print("END: Remove Client Rewards")
 
 if __name__ == "__main__":
     main()

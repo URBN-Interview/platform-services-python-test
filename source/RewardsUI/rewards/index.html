@@ -1,5 +1,14 @@
 <html>
 <head>
+    <title>Rewards Dashboard</title>
+
+    <!--BEG: Load Django static tag-->
+    {% load staticfiles %}
+    <!--END: Load Django static tag-->
+    <script src="{% static 'js/rewards.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static 'css/rewards.css' %}">
+
 </head>
 <body>
     <h1>Welcome to the Rewards Dashboard</h1>
@@ -22,73 +31,6 @@
         <hr>
     </div>
     <div>
-        <script>
-          function submitForm(){
-            var email = document.getElementById('email').value,
-            amount = document.getElementById('amount').value,
-            client = new XMLHttpRequest();
-
-            client.open("POST", "http://localhost:7050/orders", true);
-            client.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            client.send("email=" + email + "&amount=" + amount);
-          }
-          function displayData(data) {
-            var tblClientRewards = document.getElementById('tblClientRewards');
-            tblClientRewards.removeChild(tblClientRewards.getElementsByTagName('tbody')[0]);
-            for(var i=0;i<data.length;i++){
-              var entry = data[i];
-              var row = document.createElement('tr');
-              var cell0 = document.createElement('td');
-              var cell1 = document.createElement('td');
-              var cell2 = document.createElement('td');
-              var cell3 = document.createElement('td');
-              var cell4 = document.createElement('td');
-              var cell5 = document.createElement('td');
-              var cell6 = document.createElement('td');
-
-              var textNode0 = document.createTextNode(entry.email);
-              var textNode1 = document.createTextNode(entry.points);
-              var textNode2 = document.createTextNode(entry.tier);
-              var textNode3 = document.createTextNode(entry.tierName);
-              var textNode4 = document.createTextNode(entry.nextTier);
-              var textNode5 = document.createTextNode(entry.nextTierName);
-              var textNode6 = document.createTextNode(entry.nextTierProgress);
-
-              cell0.appendChild(textNode0);
-              cell1.appendChild(textNode1);
-              cell2.appendChild(textNode2);
-              cell3.appendChild(textNode3);
-              cell4.appendChild(textNode4);
-              cell5.appendChild(textNode5);
-              cell6.appendChild(textNode6);
-
-              row.appendChild(cell0);
-              row.appendChild(cell1);
-              row.appendChild(cell2);
-              row.appendChild(cell3);
-              row.appendChild(cell4);
-              row.appendChild(cell5);
-              row.appendChild(cell6);
-              tblClientRewards.appendChild(row);
-            }
-
-          }
-          function getClientRewards(email){
-            var client = new XMLHttpRequest(),
-            data = null;
-
-            client.onreadystatechange = function() {
-              if (client.readyState === 4) {
-                displayData(JSON.parse(client.response));
-              }
-            }
-
-            //client.open('GET', 'http://localhost:7050/orders?email=' + email, true);
-            client.open('GET', 'http://localhost:7050/orders', true);
-            client.setRequestHeader("Accept", "application/json");
-            client.send();
-          }
-        </script>
         <h2>Add orders</h2>
         <form method="POST">
             {% csrf_token %}
@@ -100,7 +42,8 @@
     </div>
     <div>
         <h2>User Rewards</h2>
-        <input type="button" onclick="getClientRewards('b@b.com');" value="Hello"></button>
+        <label>Search email addresses: </label><input id="searchEmail" name="searchEmail" type="text" />
+        <input type="button" onclick="getClientRewards(document.getElementById('searchEmail').value);" value="Search"/>
         <hr>
         <table border="1" id="tblClientRewards">
             <thead>
