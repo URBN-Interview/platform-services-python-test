@@ -14,7 +14,7 @@ function submitForm(){
   client = new XMLHttpRequest();
 
   if(email === '' || amount === ''){
-      openSnackbar('snackbarRequiredInformation', 10000);
+      openSnackbar('snackbarRequiredInformation', 8000);
   }else{
       client.onreadystatechange = function() {
         if (client.readyState === 4) {
