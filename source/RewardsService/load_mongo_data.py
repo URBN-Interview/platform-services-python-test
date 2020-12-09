@@ -69,6 +69,16 @@ def updateCustomerData(email, points):
 
     # db.customer_data.delete_many({})
 
+def returnRewards(email):
+    client = MongoClient("mongodb", 27017)
+    db = client["Rewards"]
+
+    customer = db.customer_data.find_one({"email": email})
+
+    if customer is not None:
+        return {"points": customer["points"]}
+    else:
+        return "Not a rewards member."
 
 if __name__ == "__main__":
     main()
