@@ -22,20 +22,37 @@ def main():
     print("Rewards loaded in mongo")
 
 
-def updateCustomerData(email, rewards):
+def updateCustomerData(email, points):
     client = MongoClient("mongodb", 27017)
     db = client["Rewards"]
 
-    current_query = {"points": {"$lt": rewards}}
-    next_query = {"points": {"$gt": rewards}}
+    customer = db.customer_data.find_one({"email": email})
+
+    if customer is not None:
+        newPoints = customer["points"] + points
+
+        current_query = {"points": {"$gt": customer["points"], "$lt": newPoints}}
+        next_query = {"points": {"$gt": newPoints}}
+
+        current_tier = db.rewards.find_one(current_query)
+        next_tier = db.rewards.find_one(next_query)
+
+        db.customer_data.update_one({"email": email}, {"$set": {"points": newPoints,
+                                     "tier": current_tier["tier"], "rewardName": current_tier["rewardName"],
+                                     "nextTier": next_tier["tier"], "nextRewardName": next_tier["rewardName"], "nextTierProgress": next_tier["points"]}})
+
+        return
+
+    current_query = {"points": {"$lt": points}}
+    next_query = {"points": {"$gt": points}}
 
     current_tier = db.rewards.find_one(current_query)
     next_tier = db.rewards.find_one(next_query)
 
-    db.customer_data.delete_many({})
-    db.customer_data.insert_one({"email": email, "points": rewards,
+    #db.customer_data.delete_many({})
+    db.customer_data.insert_one({"email": email, "points": points,
                                  "tier": current_tier["tier"], "rewardName": current_tier["rewardName"],
-                                 "nextTier": next_tier["tier"], "nextRewardName": next_tier["rewardName"], "nextTierProgress": next_tier["points"]-rewards})
+                                 "nextTier": next_tier["tier"], "nextRewardName": next_tier["rewardName"], "nextTierProgress": next_tier["points"]})
 
     #db.customer_data.insert_one(jsonData)
 
