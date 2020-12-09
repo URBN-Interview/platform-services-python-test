@@ -32,11 +32,19 @@ def updateCustomerData(email, points):
     if customer is not None and customer["points"] < 1000:
         newPoints = customer["points"] + points
 
-        if newPoints >= 1000:
-            newPoints = 1000
+        roundedPoints = newPoints - (newPoints % 100)
 
-        current_query = {"points": {"$gt": customer["points"], "$lte": newPoints}}
-        next_query = {"points": {"$gte": newPoints}}
+        if roundedPoints >= 1000:
+            db.customer_data.update_one({"email": email}, {"$set": {"points": roundedPoints,
+                                                                    "tier": "J",
+                                                                    "rewardName": "50% off purchase",
+                                                                    "nextTier": "None",
+                                                                    "nextRewardName": "None",
+                                                                    "nextTierProgress": 0}})
+            return
+
+        current_query = {"points": {"$eq": roundedPoints}}
+        next_query = {"points": {"$eq": roundedPoints+100}}
 
         current_tier = db.rewards.find_one(current_query)
 
@@ -55,9 +63,18 @@ def updateCustomerData(email, points):
     elif customer is not None and customer["points"] >= 1000:
         return
 
+    roundedPoints = points - (points % 100)
+
+    if roundedPoints >= 1000:
+        db.customer_data.insert_one({"email": email, "points": roundedPoints,
+                                    "tier": "J", "rewardName": "50% off purchase",
+                                    "nextTier": "None", "nextRewardName": "None",
+                                    "nextTierProgress": 0})
+        return
+
     # Customer doesn't exist in database, add them to start rewards
-    current_query = {"points": {"$lt": points}}
-    next_query = {"points": {"$gt": points}}
+    current_query = {"points": {"$eq": roundedPoints}}
+    next_query = {"points": {"$eq": roundedPoints+100}}
 
     current_tier = db.rewards.find_one(current_query)
     next_tier = db.rewards.find_one(next_query)
@@ -67,7 +84,7 @@ def updateCustomerData(email, points):
                                  "nextTier": next_tier["tier"], "nextRewardName": next_tier["rewardName"],
                                  "nextTierProgress": next_tier["points"]})
 
-    # db.customer_data.delete_many({})
+    #db.customer_data.delete_many({})
 
 def returnRewards(email):
     client = MongoClient("mongodb", 27017)
@@ -76,7 +93,9 @@ def returnRewards(email):
     customer = db.customer_data.find_one({"email": email})
 
     if customer is not None:
-        return {"points": customer["points"]}
+        return {"points": customer["points"], "tier": customer["tier"], "rewardName": customer["rewardName"],
+                                 "nextTier": customer["tier"], "nextRewardName": customer["rewardName"],
+                                 "nextTierProgress": customer["points"]}
     else:
         return "Not a rewards member."
 
