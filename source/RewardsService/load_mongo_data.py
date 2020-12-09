@@ -28,33 +28,47 @@ def updateCustomerData(email, points):
 
     customer = db.customer_data.find_one({"email": email})
 
-    if customer is not None:
+    # If customer exists, update their rewards and tiers
+    if customer is not None and customer["points"] < 1000:
         newPoints = customer["points"] + points
 
-        current_query = {"points": {"$gt": customer["points"], "$lt": newPoints}}
-        next_query = {"points": {"$gt": newPoints}}
+        if newPoints >= 1000:
+            newPoints = 1000
+
+        current_query = {"points": {"$gt": customer["points"], "$lte": newPoints}}
+        next_query = {"points": {"$gte": newPoints}}
 
         current_tier = db.rewards.find_one(current_query)
+
         next_tier = db.rewards.find_one(next_query)
 
         db.customer_data.update_one({"email": email}, {"$set": {"points": newPoints,
-                                     "tier": current_tier["tier"], "rewardName": current_tier["rewardName"],
-                                     "nextTier": next_tier["tier"], "nextRewardName": next_tier["rewardName"], "nextTierProgress": next_tier["points"]}})
+                                                                "tier": current_tier["tier"],
+                                                                "rewardName": current_tier["rewardName"],
+                                                                "nextTier": next_tier["tier"],
+                                                                "nextRewardName": next_tier["rewardName"],
+                                                                "nextTierProgress": next_tier["points"]}})
 
         return
 
+    # Do nothing if the customer's rewards are maxed out
+    elif customer is not None and customer["points"] >= 1000:
+        return
+
+    # Customer doesn't exist in database, add them to start rewards
     current_query = {"points": {"$lt": points}}
     next_query = {"points": {"$gt": points}}
 
     current_tier = db.rewards.find_one(current_query)
     next_tier = db.rewards.find_one(next_query)
 
-    #db.customer_data.delete_many({})
     db.customer_data.insert_one({"email": email, "points": points,
                                  "tier": current_tier["tier"], "rewardName": current_tier["rewardName"],
-                                 "nextTier": next_tier["tier"], "nextRewardName": next_tier["rewardName"], "nextTierProgress": next_tier["points"]})
+                                 "nextTier": next_tier["tier"], "nextRewardName": next_tier["rewardName"],
+                                 "nextTierProgress": next_tier["points"]})
 
-    #db.customer_data.insert_one(jsonData)
+    # db.customer_data.delete_many({})
+
 
 if __name__ == "__main__":
     main()
