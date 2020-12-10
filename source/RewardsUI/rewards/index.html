@@ -23,16 +23,17 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <form>
-            <label>Enter email address: </label><input type="text"/><br>
-            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order"/>
+        <form action="/rewards/" method="post">
+            {% csrf_token %}
+            <label>Enter email address: </label><input type="text" name="email"/><br>
+            <label>Enter order total: </label><input type="text" name="purchase"/><input type="submit" value="Submit Order"/>
         </form>
         <hr>
     </div>
     <div>
         <h2>User Rewards</h2>
-        <form>
-            <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
+        <form method="">
+            <label>Email address: </label><input type="text" name="search"/><input type="button" value="Search"/>
         </form>
         <table border="1">
             <thead>
@@ -46,16 +47,20 @@
                 <th>Next Reward Tier Progress</th>
             </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td>customer01@gmail.com</td>
-                    <td>100</td>
-                    <td>A</td>
-                    <td>5% off purchase</td>
-                    <td>B</td>
-                    <td>10% off purchase</td>
-                    <td>50%</td>
+            <tbody id="rewardMembers">
+
+            {% for member in members_data%}
+                <tr id="{{ member.email }}" >
+                    <td> {{ member.email }} </td>
+                    <td> {{ member.points }} </td>
+                    <td> {{ member.tier }} </td>
+                    <td> {{ member.rewardName }} </td>
+                    <td> {{ member.nextTier }} </td>
+                    <td> {{ member.nextRewardName }} </td>
+                    <td> {{ member.nextTierProgress }} </td>
                 </tr>
+            {% endfor %}
+
             </tbody>
         </table>
     </div>
