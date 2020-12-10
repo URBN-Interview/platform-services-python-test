@@ -11,6 +11,7 @@ class RewardsServiceClient:
         return response.json()
 
 class RewardMembersClient:
+
     def __init__(self):
         self.members_url = "http://rewardsservice:7050/rewardMembers"
 
@@ -19,8 +20,22 @@ class RewardMembersClient:
         return response.json()
 
 class OrderClient:
+
     def __init__(self):
         self.members_url = "http://rewardsservice:7050/postData"
 
     def post_order(self, json):
         r = requests.post(self.members_url, json=json)
+
+class FindMemberClient:
+
+    def __init__(self):
+        self.members_url = "http://rewardsservice:7050/getRewards"
+
+    def get_member(self, json):
+        response = requests.post(self.members_url, json=json)
+
+        print(response.json(), flush=True)
+
+        if response.status_code == 200:
+            return response.json()

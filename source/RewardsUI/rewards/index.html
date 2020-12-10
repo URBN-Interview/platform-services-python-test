@@ -32,8 +32,9 @@
     </div>
     <div>
         <h2>User Rewards</h2>
-        <form method="">
-            <label>Email address: </label><input type="text" name="search"/><input type="button" value="Search"/>
+        <form action="/rewards/" method="post">
+            {% csrf_token %}
+            <label>Email address: </label><input type="text" name="search"/><input type="submit" value="Search"/>
         </form>
         <table border="1">
             <thead>
@@ -49,7 +50,7 @@
             </thead>
             <tbody id="rewardMembers">
 
-            {% for member in members_data%}
+            {% for member in members_data %}
                 <tr id="{{ member.email }}" >
                     <td> {{ member.email }} </td>
                     <td> {{ member.points }} </td>
