@@ -1,5 +1,7 @@
+import json
 import logging
 
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 from django.views.generic.base import TemplateView
@@ -31,9 +33,12 @@ class RewardsView(TemplateView):
         context['user_rewards_form'] = user_rewards_form
 
         if user_rewards_form.is_valid():
-            email = user_rewards_form.cleaned_data.get("email_filter")
-            user_data = self.rewards_service_client.get_user_rewards(email)
-            context['customer_data'] = user_data
+            try:
+                email = user_rewards_form.cleaned_data.get("email_filter")
+                user_data = self.rewards_service_client.get_user_rewards(email)
+                context['customer_data'] = user_data
+            except json.decoder.JSONDecodeError:
+                messages.error(request, 'User not found')
 
         return TemplateResponse(
             request,

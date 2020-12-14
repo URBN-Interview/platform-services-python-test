@@ -46,7 +46,11 @@
     </div>
     <div class="container-fluid">
         <h2>User Rewards</h2>
-
+        {% for message in messages %}
+                    <div class="alert  alert-danger">
+                        {{ message }}
+                    </div>
+            {% endfor %}
         <form action="" method="GET">
             {{ user_rewards_form.email_filter.label_tag }}
             {{ user_rewards_form.email_filter }}
