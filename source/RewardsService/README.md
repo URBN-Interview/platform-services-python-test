@@ -41,3 +41,7 @@ Create RESTful endpoint(s) to calculate, store, and retrieve customer rewards da
 * $ docker-compose build
 * $ docker-compose up -d
 * Services are accessible at http://localhost:7050/
+
+# Testing
+* $ docker-compose up 
+* $ python -m pytest

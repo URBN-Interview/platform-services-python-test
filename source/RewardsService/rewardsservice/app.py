@@ -7,15 +7,19 @@ import tornado.web
 
 from tornado.options import options
 
-from settings import settings
-from url_patterns import url_patterns
+from rewardsservice.settings import settings
+from rewardsservice.url_patterns import url_patterns
 
 
 class App(tornado.web.Application):
     def __init__(self, urls):
         self.logger = logging.getLogger(self.__class__.__name__)
 
-        tornado.web.Application.__init__(self, urls, **settings)
+        self.make_app(urls)
+
+    def make_app(self, urls):
+        return tornado.web.Application.__init__(self, urls, **settings)
+
 
 app = App(url_patterns)
 
