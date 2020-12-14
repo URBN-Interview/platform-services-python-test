@@ -24,6 +24,7 @@ class CalculateRewardsHandler(tornado.web.RequestHandler):
             self.finish("<html><body>Order total is not a valid number</body></html>")
 
         if email_is_valid(email):
+            # checks if existing or new customer
             if existing_customer is not None:
                 updated_points = existing_customer["rewardPoints"] + points
                 tier = get_tier(updated_points, rewards)
@@ -59,6 +60,7 @@ def get_tier(points, rewards):
     length = len(rewards) - 1
     rewards = sorted(rewards, key=lambda x: x['points'])
 
+    # checks user points against sorts rewards table
     for i in range(0, length):
         j = i + 1
         if rewards[i]['points'] <= points < rewards[j]['points']:

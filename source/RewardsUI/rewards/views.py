@@ -38,6 +38,7 @@ class RewardsView(TemplateView):
                 user_data = self.rewards_service_client.get_user_rewards(email)
                 context['customer_data'] = user_data
             except json.decoder.JSONDecodeError:
+                # returns error message is user not found
                 messages.error(request, 'User not found')
 
         return TemplateResponse(

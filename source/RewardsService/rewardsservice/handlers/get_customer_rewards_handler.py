@@ -19,6 +19,7 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
 
         if email_is_valid(email):
             customer_rewards = list(db.customerdata.find({"email": email}, {"_id": 0}))
+            # checks if data is found for specific email
             if len(customer_rewards) < 1:
                 self.send_error(404)
             else:
