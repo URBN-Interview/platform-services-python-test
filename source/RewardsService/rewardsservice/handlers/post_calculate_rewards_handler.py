@@ -31,7 +31,8 @@ class CalculateRewardsHandler(tornado.web.RequestHandler):
                                                                        "rewardTierName": tier["reward_name"],
                                                                        "rewardTier": tier["tier"],
                                                                        "nextTier": tier["next_tier"],
-                                                                       "nextTierName": tier["next_tier_name"]}})
+                                                                       "nextTierName": tier["next_tier_name"],
+                                                                       "nextTierProgress": tier["next_tier_progress"]}})
             else:
                 tier = get_tier(points, rewards)
                 db.customerdata.insert_one({"email": email,
@@ -39,7 +40,8 @@ class CalculateRewardsHandler(tornado.web.RequestHandler):
                                             "rewardTierName": tier["reward_name"],
                                             "rewardTier": tier["tier"],
                                             "nextTier": tier["next_tier"],
-                                            "nextTierName": tier["next_tier_name"]})
+                                            "nextTierName": tier["next_tier_name"],
+                                            "nextTierProgress": tier["next_tier_progress"]})
         else:
             self.clear()
             self.set_status(400)
@@ -64,20 +66,28 @@ def get_tier(points, rewards):
                 "tier": rewards[i]['tier'],
                 "reward_name": rewards[i]['rewardName'],
                 "next_tier": rewards[j]['tier'],
-                "next_tier_name": rewards[j]['rewardName']}
+                "next_tier_name": rewards[j]['rewardName'],
+                "next_tier_progress": get_next_tier_progress(points, rewards[j]['points'])}
 
         elif points < rewards[0]['points']:
             tier_dict = {
                 "tier": "",
                 "reward_name": "",
                 "next_tier": rewards[0]['tier'],
-                "next_tier_name": rewards[0]['rewardName']}
+                "next_tier_name": rewards[0]['rewardName'],
+                "next_tier_progress": get_next_tier_progress(points, rewards[0]['points'])}
 
         elif points >= rewards[length]['points']:
             tier_dict = {
                 "tier": rewards[length]['tier'],
                 "reward_name": rewards[length]['rewardName'],
                 "next_tier": "",
-                "next_tier_name": ""}
+                "next_tier_name": "",
+                "next_tier_progress": ""}
 
     return tier_dict
+
+
+def get_next_tier_progress(points, next_tier_points):
+    progress = round((points / next_tier_points) * 100, 2)
+    return "{0} %".format(progress)

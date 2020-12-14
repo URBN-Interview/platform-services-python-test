@@ -1,9 +1,11 @@
 import logging
 
+from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 from django.views.generic.base import TemplateView
 
 from rewards.clients.rewards_service_client import RewardsServiceClient
+from rewards.forms import OrderForm, UserRewardsForm
 
 
 class RewardsView(TemplateView):
@@ -19,8 +21,35 @@ class RewardsView(TemplateView):
         rewards_data = self.rewards_service_client.get_rewards()
         context['rewards_data'] = rewards_data
 
+        customer_data = self.rewards_service_client.get_all_customer_data()
+        context['customer_data'] = customer_data
+
+        form = OrderForm(request.GET)
+        context['order_form'] = form
+
+        user_rewards_form = UserRewardsForm(request.GET)
+        context['user_rewards_form'] = user_rewards_form
+
+        if user_rewards_form.is_valid():
+            email = user_rewards_form.cleaned_data.get("email_filter")
+            user_data = self.rewards_service_client.get_user_rewards(email)
+            context['customer_data'] = user_data
+
         return TemplateResponse(
             request,
             self.template_name,
             context
         )
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+
+        form = OrderForm(request.POST)
+        context['order_form'] = form
+
+        if form.is_valid():
+            email = form.cleaned_data.get("email")
+            order_total = form.cleaned_data.get("order_total")
+            self.rewards_service_client.post_calculate_rewards(email, order_total)
+        return HttpResponseRedirect('/rewards/')
+
