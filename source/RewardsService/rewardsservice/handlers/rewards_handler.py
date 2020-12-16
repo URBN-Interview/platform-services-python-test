@@ -6,7 +6,6 @@ from tornado.gen import coroutine
 
 
 class RewardsHandler(tornado.web.RequestHandler):
-
     @coroutine
     def get(self):
         client = MongoClient("mongodb", 27017)
