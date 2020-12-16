@@ -8,7 +8,7 @@
 * Install the [Dependencies](#dependencies) below.
 * Follow the instructions in these 2 projects in the following order:
     1. [RewardsService](https://github.com/URBN-Interview/platform-services-python-test/tree/master/source/RewardsService)
-    2. [RewardsUI](https://github.com/URBN-Interview/platform-services-python-test/tree/master/source/RewardsService)
+    2. [RewardsUI](https://github.com/URBN-Interview/platform-services-python-test/tree/master/source/RewardsUI)
 * Use incremental commits on a story branch to show how you arrived at your solutions.
 * Push your story branch to your fork.
 * [Issue a pull request](https://help.github.com/articles/using-pull-requests/) against the master branch of this repo.
