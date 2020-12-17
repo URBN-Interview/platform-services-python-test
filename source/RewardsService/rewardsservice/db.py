@@ -37,7 +37,7 @@ class Database():
     def new_customer_record(self, email_address, points):
         return {
             "email_address": email_address,
-            **self.new_reward_data_for_points(points)
+            **self.reward_data_for_points(points)
         }
 
 
@@ -45,11 +45,11 @@ class Database():
         total_points = customer.get("reward_points") + points_from_order
         return {
             "email_address": customer.get("email_address"),
-            **self.new_reward_data_for_points(total_points)
+            **self.reward_data_for_points(total_points)
         }
 
 
-    def new_reward_data_for_points(self, points):
+    def reward_data_for_points(self, points):
         current_tier = self.get_current_tier_by_points(points)
         next_tier = self.get_next_tier_by_points(points)
 
@@ -57,9 +57,9 @@ class Database():
             "reward_points": points,
             "reward_tier": current_tier.get("tier", ""),
             "reward_tier_name": current_tier.get("rewardName", ""),
-            "next_reward_tier": next_tier.get("points", ""),
-            "next_reward_tier_name": next_tier.get("tier", ""),
-            "next_reward_tier_progress": next_tier.get("rewardName", "")
+            "next_reward_tier": next_tier.get("tier", ""),
+            "next_reward_tier_name": next_tier.get("rewardName", ""),
+            "next_reward_tier_progress": points / next_tier.get("points", "")
         }
 
 
