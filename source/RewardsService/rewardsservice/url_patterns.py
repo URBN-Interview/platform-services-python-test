@@ -4,5 +4,5 @@ from db import Database
 
 url_patterns = [
     (r'/rewards', RewardsHandler),
-    (r'/customers', CustomersHandler, dict(db=Database()))
+    (r'/customers', CustomersHandler, dict(db=Database())),
 ]

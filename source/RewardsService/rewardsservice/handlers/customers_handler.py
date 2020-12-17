@@ -8,6 +8,19 @@ class CustomersHandler(tornado.web.RequestHandler):
     def initialize(self, db):
         self.db = db
 
+    # Endpoints 2 and 3
+    @coroutine
+    def get(self):
+        emails = self.get_arguments("email_address")
+        if len(emails) == 0:
+            all_customers = self.db.get_all_customers()
+            self.write(str(all_customers))
+            return
+
+        customer = self.db.get_customer_by_email_address(emails[0])
+        self.write(str(customer))
+
+    # Endpoint 1
     @coroutine
     def post(self):
         try:

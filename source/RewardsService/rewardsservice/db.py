@@ -81,7 +81,17 @@ class Database():
 
     def get_customer_by_email_address(self, email_address):
         db = self.client["Customers"]
-        customers_list = list(db.customers.find({'email_address': email_address}))
-        if len(customers_list) == 0:
+        customers = list(db.customers.find({'email_address': email_address}))
+        if len(customers) == 0:
             return None
-        return json.loads(json_util.dumps(customers_list[0]))
+        customer = customers[0]
+        del customer['_id'] # don't return Mongo internal IDs
+        return json.loads(json_util.dumps(customer))
+
+
+    def get_all_customers(self):
+        db = self.client["Customers"]
+        customers = list(db.customers.find({}))
+        for customer in customers:
+             del customer['_id'] # don't return Mongo internal IDs
+        return json.loads(json_util.dumps(customers))
