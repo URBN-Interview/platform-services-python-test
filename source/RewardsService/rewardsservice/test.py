@@ -80,27 +80,27 @@ class PostCustomersTests(AsyncHTTPTestCase):
         self.assertEqual(response.code, 400)
         self.assertEqual(response.body, bytes("'order_total' must be a number with no more than two values after the decimal point", "utf-8"))
 
-    @gen_test
-    def test_success_have_all_fields_order_total_is_int(self):
-        client = AsyncHTTPClient()
-        response = yield client.fetch(
-            self.get_url("/customers"),
-            raise_error=False,
-            method="POST",
-            body='{"email_address":"loma@sas.upenn.edu", "order_total": 100}'
-            )
-        self.assertEqual(response.code, 200)
-        self.assertEqual(response.body, bytes("email_address: loma@sas.upenn.edu, order_total: 100.00", "utf-8"))
+    # @gen_test
+    # def test_success_have_all_fields_order_total_is_int(self):
+    #     client = AsyncHTTPClient()
+    #     response = yield client.fetch(
+    #         self.get_url("/customers"),
+    #         raise_error=False,
+    #         method="POST",
+    #         body='{"email_address":"loma@sas.upenn.edu", "order_total": 100}'
+    #         )
+    #     self.assertEqual(response.code, 200)
+    #     self.assertEqual(response.body, bytes("email_address: loma@sas.upenn.edu, order_total: 100.00", "utf-8"))
 
-    @gen_test
-    def test_success_have_all_fields_order_total_is_float(self):
-        client = AsyncHTTPClient()
-        response = yield client.fetch(
-            self.get_url("/customers"),
-            raise_error=False,
-            method="POST",
-            body='{"email_address":"loma@sas.upenn.edu", "order_total": 100.00}'
-            )
-        self.assertEqual(response.code, 200)
-        self.assertEqual(response.body, bytes("email_address: loma@sas.upenn.edu, order_total: 100.00", "utf-8"))
+    # @gen_test
+    # def test_success_have_all_fields_order_total_is_float(self):
+    #     client = AsyncHTTPClient()
+    #     response = yield client.fetch(
+    #         self.get_url("/customers"),
+    #         raise_error=False,
+    #         method="POST",
+    #         body='{"email_address":"loma@sas.upenn.edu", "order_total": 100.00}'
+    #         )
+    #     self.assertEqual(response.code, 200)
+    #     self.assertEqual(response.body, bytes("email_address: loma@sas.upenn.edu, order_total: 100.00", "utf-8"))
 

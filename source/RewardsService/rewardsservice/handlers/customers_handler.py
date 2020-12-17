@@ -5,6 +5,8 @@ from tornado.gen import coroutine
 
 
 class CustomersHandler(tornado.web.RequestHandler):
+    def initialize(self, db):
+        self.db = db
 
     @coroutine
     def post(self):
@@ -31,7 +33,8 @@ class CustomersHandler(tornado.web.RequestHandler):
             self.write(error.get("message"))
             return
 
-        self.write(f"email_address: {email_address}, order_total: {'{:.2f}'.format(order_total)}")
+        upserted_customer = self.db.upsert_customer(email_address, order_total)
+        self.write(json.dumps(upserted_customer))
 
 
     def validate_email_address(self, request_body):
@@ -70,4 +73,4 @@ class CustomersHandler(tornado.web.RequestHandler):
 
 
     def missing_field_error_message(self, missing_field):
-        return f"Missing required field '{missing_field}'"
+        return "Missing required field '{}'".format(missing_field)
