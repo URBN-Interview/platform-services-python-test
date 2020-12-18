@@ -1,70 +1,154 @@
 <html>
 
 <head>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 25px;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .stack {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section {
+            margin: 1em;
+        }
+
+        td,
+        th {
+            padding: 1em;
+            text-align: center;
+        }
+
+        .rewards td,
+        .rewards th {
+            padding: .5em;
+        }
+
+        th {
+            background-color: lightgray;
+        }
+
+        h1 {
+            margin-bottom: 1em;
+        }
+
+        input {
+            margin-bottom: 5px;
+        }
+
+        input[type="submit"],
+        input[type="button"] {
+            background-color: darkblue;
+            color: white;
+            transition: all .3s;
+            border: 2px solid darkblue;
+        }
+
+        input[type="submit"]:hover,
+        input[type="button"]:hover {
+            background-color: blue;
+            border-color: blue;
+        }
+
+        form {
+            display: flex;
+        }
+
+        form#order-form {
+            flex-direction: column;
+            max-width: 350px;
+        }
+
+        form#filter-form {
+            flex-direction: column;
+        }
+
+        .input-and-button {
+            display: flex;
+        }
+    </style>
 </head>
 
 <body>
     <h1>Welcome to the Rewards Dashboard</h1>
-    <div>
-        <h2>Reward Tiers</h2>
-        <table border="1">
-            <tr>
-                <th>Rewards Tier
-                <th>
-                <th>Reward Points</th>
-                <th>Rewards Tier Name</th>
-            </tr>
-            {% for reward in rewards_data %}
-            <tr>
-                <td>{{ reward.tier }}
-                <td>
-                <td>{{ reward.points }}</td>
-                <td>{{ reward.rewardName }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-        <hr>
-    </div>
-    <div>
-        <h2>Add orders</h2>
-        <form id="order-form">
-            <label>Enter email address: </label><input type="text" id="order-form-email" /><br>
-            <label>Enter order total: </label><input type="text" id="order-form-total" />
-            <input type="submit" value="Submit Order" />
-        </form ac>
-        <hr>
-    </div>
-    <div>
-        <h2>User Rewards</h2>
-        <form>
-            <label>Email address: </label><input type="text" /><input type="button" value="Search" />
-        </form>
-        <table border="1">
-            <thead>
+    <div class='wrapper'>
+        <div class='section'>
+            <h2>Reward Tiers</h2>
+            <table border="1">
                 <tr>
-                    <th>Email Address</th>
+                    <th>Rewards Tier</th>
                     <th>Reward Points</th>
-                    <th>Reward Tier</th>
-                    <th>Reward Tier Name</th>
-                    <th>Next Reward Tier</th>
-                    <th>Next Reward Tier Name</th>
-                    <th>Next Reward Tier Progress</th>
+                    <th>Rewards Tier Name</th>
                 </tr>
-            </thead>
-            <tbody>
-                {% for customer in customers_data %}
+                {% for reward in rewards_data %}
                 <tr>
-                    <td>{{ customer.email_address }}</td>
-                    <td>{{ customer.reward_points }}</td>
-                    <td>{{ customer.reward_tier }}</td>
-                    <td>{{ customer.reward_tier_name }}</td>
-                    <td>{{ customer.next_reward_tier }}</td>
-                    <td>{{ customer.next_reward_tier_name }}</td>
-                    <td>{{ customer.next_reward_tier_progress }}</td>
+                    <td>{{ reward.tier }}</td>
+                    <td>{{ reward.points }}</td>
+                    <td>{{ reward.rewardName }}</td>
                 </tr>
                 {% endfor %}
-            </tbody>
-        </table>
+            </table>
+            <hr>
+        </div>
+        <div class='stack'>
+            <div class='section'>
+                <h2>Add orders</h2>
+                <form id="order-form">
+                    <label>Enter email address: </label><input type="text" id="order-form-email" /><br>
+                    <label>Enter order total: </label><input type="text" id="order-form-total" />
+                    <input type="submit" value="Submit Order" />
+                </form>
+                <hr>
+            </div>
+            <div class='section'>
+                <h2>User Rewards</h2>
+                <form id='filter-form'>
+                    <label>Email address: </label>
+                    <div class='input-and-button'><input type="text" /><input type="button" value="Search" /></div>
+                </form>
+                <table border="1" class='rewards'>
+                    <thead>
+                        <tr>
+                            <th>Email Address</th>
+                            <th>Reward Points</th>
+                            <th>Reward Tier</th>
+                            <th>Reward Tier Name</th>
+                            <th>Next Reward Tier</th>
+                            <th>Next Reward Tier Name</th>
+                            <th>Next Reward Tier Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in customers_data %}
+                        <tr>
+                            <td>{{ customer.email_address }}</td>
+                            <td>{{ customer.reward_points }}</td>
+                            <td>{{ customer.reward_tier }}</td>
+                            <td>{{ customer.reward_tier_name }}</td>
+                            <td>{{ customer.next_reward_tier }}</td>
+                            <td>{{ customer.next_reward_tier_name }}</td>
+                            <td>{{ customer.next_reward_tier_progress }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
     <script type="text/javascript">
         const form = document.getElementById('order-form');
