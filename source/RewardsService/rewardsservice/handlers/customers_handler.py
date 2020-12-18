@@ -8,6 +8,9 @@ class CustomersHandler(tornado.web.RequestHandler):
     def initialize(self, db):
         self.db = db
 
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+
     # Endpoints 2 and 3
     @coroutine
     def get(self):

@@ -1,50 +1,55 @@
 <html>
+
 <head>
 </head>
+
 <body>
     <h1>Welcome to the Rewards Dashboard</h1>
     <div>
         <h2>Reward Tiers</h2>
         <table border="1">
             <tr>
-                <th>Rewards Tier<th>
+                <th>Rewards Tier
+                <th>
                 <th>Reward Points</th>
                 <th>Rewards Tier Name</th>
             </tr>
             {% for reward in rewards_data %}
-                <tr>
-                    <td>{{ reward.tier }}<td>
-                    <td>{{ reward.points }}</td>
-                    <td>{{ reward.rewardName }}</td>
-                </tr>
+            <tr>
+                <td>{{ reward.tier }}
+                <td>
+                <td>{{ reward.points }}</td>
+                <td>{{ reward.rewardName }}</td>
+            </tr>
             {% endfor %}
         </table>
         <hr>
     </div>
     <div>
         <h2>Add orders</h2>
-        <form>
-            <label>Enter email address: </label><input type="text"/><br>
-            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order"/>
-        </form>
+        <form id="order-form">
+            <label>Enter email address: </label><input type="text" id="order-form-email" /><br>
+            <label>Enter order total: </label><input type="text" id="order-form-total" />
+            <input type="submit" value="Submit Order" />
+        </form ac>
         <hr>
     </div>
     <div>
         <h2>User Rewards</h2>
         <form>
-            <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
+            <label>Email address: </label><input type="text" /><input type="button" value="Search" />
         </form>
         <table border="1">
             <thead>
-            <tr>
-                <th>Email Address</th>
-                <th>Reward Points</th>
-                <th>Reward Tier</th>
-                <th>Reward Tier Name</th>
-                <th>Next Reward Tier</th>
-                <th>Next Reward Tier Name</th>
-                <th>Next Reward Tier Progress</th>
-            </tr>
+                <tr>
+                    <th>Email Address</th>
+                    <th>Reward Points</th>
+                    <th>Reward Tier</th>
+                    <th>Reward Tier Name</th>
+                    <th>Next Reward Tier</th>
+                    <th>Next Reward Tier Name</th>
+                    <th>Next Reward Tier Progress</th>
+                </tr>
             </thead>
             <tbody>
                 <tr>
@@ -59,5 +64,30 @@
             </tbody>
         </table>
     </div>
+    <script type="text/javascript">
+        const form = document.getElementById('order-form');
+        const emailInput = document.getElementById('order-form-email');
+        const orderInput = document.getElementById('order-form-total');
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            let data = {
+                "email_address": emailInput.value,
+                "order_total": orderInput.value
+            }
+            let domain = window.location.origin;
+            if (domain.substring(domain.length - 5) === ":8000") {
+                domain = domain.substring(0, domain.length - 5);
+            }
+            let port = 7050;
+            fetch(`${domain}:${port}/customers`, {
+                method: "POST",
+                body: JSON.stringify(data)
+            }).then(res => {
+                form.reset();
+                console.log("Request complete! response:", res);
+            });
+        });
+    </script>
 </body>
+
 </html>
