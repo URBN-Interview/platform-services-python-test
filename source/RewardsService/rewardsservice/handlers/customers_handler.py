@@ -17,11 +17,11 @@ class CustomersHandler(tornado.web.RequestHandler):
         emails = self.get_arguments("email_address")
         if len(emails) == 0:
             all_customers = self.db.get_all_customers()
-            self.write(str(all_customers))
+            self.write(json.dumps(all_customers))
             return
 
         customer = self.db.get_customer_by_email_address(emails[0])
-        self.write(str(customer))
+        self.write(json.dumps(customer))
 
     # Endpoint 1
     @coroutine

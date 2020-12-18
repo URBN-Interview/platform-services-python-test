@@ -52,15 +52,17 @@
                 </tr>
             </thead>
             <tbody>
+                {% for customer in customers_data %}
                 <tr>
-                    <td>customer01@gmail.com</td>
-                    <td>100</td>
-                    <td>A</td>
-                    <td>5% off purchase</td>
-                    <td>B</td>
-                    <td>10% off purchase</td>
-                    <td>50%</td>
+                    <td>{{ customer.email_address }}</td>
+                    <td>{{ customer.reward_points }}</td>
+                    <td>{{ customer.reward_tier }}</td>
+                    <td>{{ customer.reward_tier_name }}</td>
+                    <td>{{ customer.next_reward_tier }}</td>
+                    <td>{{ customer.next_reward_tier_name }}</td>
+                    <td>{{ customer.next_reward_tier_progress }}</td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
@@ -84,7 +86,7 @@
                 body: JSON.stringify(data)
             }).then(res => {
                 form.reset();
-                console.log("Request complete! response:", res);
+                location.reload();
             });
         });
     </script>
