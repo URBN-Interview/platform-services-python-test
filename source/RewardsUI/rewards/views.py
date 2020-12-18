@@ -19,7 +19,21 @@ class RewardsView(TemplateView):
         rewards_data = self.rewards_service_client.get_rewards()
         context['rewards_data'] = rewards_data
 
-        customers_data = self.rewards_service_client.get_customers(request.GET.get('email_address'))
+        email_address = request.GET.get('email_address')
+        if email_address:
+            customers_data = [self.rewards_service_client.get_customer(email_address)]
+        else:
+            customers_data = self.rewards_service_client.get_customers()
+
+        context['customers_data'] = self.format_customers_data(customers_data)
+
+        return TemplateResponse(
+            request,
+            self.template_name,
+            context
+        )        
+
+    def format_customers_data(self, customers_data):
         for customer in customers_data:
             if customer is None:
                 continue
@@ -30,10 +44,4 @@ class RewardsView(TemplateView):
                 if not value:
                     customer[key] = 'N/A'
 
-        context['customers_data'] = customers_data
-
-        return TemplateResponse(
-            request,
-            self.template_name,
-            context
-        )
+        return customers_data

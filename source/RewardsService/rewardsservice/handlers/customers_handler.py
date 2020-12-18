@@ -11,17 +11,11 @@ class CustomersHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
 
-    # Endpoints 2 and 3
+    # Endpoint 3
     @coroutine
     def get(self):
-        emails = self.get_arguments("email_address")
-        if len(emails) == 0:
-            all_customers = self.db.get_all_customers()
-            self.write(json.dumps(all_customers))
-            return
-
-        customer = self.db.get_customer_by_email_address(emails[0])
-        self.write(json.dumps([customer]))
+        all_customers = self.db.get_all_customers()
+        self.write(json.dumps(all_customers))
 
     # Endpoint 1
     @coroutine
