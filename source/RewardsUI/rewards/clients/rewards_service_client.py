@@ -11,8 +11,9 @@ class RewardsServiceClient:
         response = requests.get(self.rewards_url)
         return response.json()
     
-    def get_customers(self):
-        response = requests.get(self.customers_url)
-        print("HERE")
-        print(response)
+    def get_customers(self, email_address):
+        url = self.customers_url
+        if email_address:
+            url += '?email_address={}'.format(email_address)
+        response = requests.get(url)
         return response.json()

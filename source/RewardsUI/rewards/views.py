@@ -19,8 +19,10 @@ class RewardsView(TemplateView):
         rewards_data = self.rewards_service_client.get_rewards()
         context['rewards_data'] = rewards_data
 
-        customers_data = self.rewards_service_client.get_customers()
+        customers_data = self.rewards_service_client.get_customers(request.GET.get('email_address'))
         for customer in customers_data:
+            if customer is None:
+                continue
             customer['next_reward_tier_progress'] = "{0:.0%}".format(customer['next_reward_tier_progress'])
         context['customers_data'] = customers_data
 
