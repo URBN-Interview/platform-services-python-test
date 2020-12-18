@@ -60,7 +60,6 @@ class CustomersHandler(tornado.web.RequestHandler):
                 "status_code": 400
             }
 
-        # TODO: add validation here if not performed on client side
         return request_body["email_address"], None
 
 

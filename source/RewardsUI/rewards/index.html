@@ -81,6 +81,10 @@
         .input-and-button {
             display: flex;
         }
+
+        .warning {
+            border-color: red;
+        }
     </style>
 </head>
 
@@ -109,7 +113,7 @@
             <div class='section'>
                 <h2>Add orders</h2>
                 <form id="order-form">
-                    <label>Enter email address: </label><input type="text" id="order-form-email" /><br>
+                    <label id='email-label'>Enter email address: </label><input type="text" id="order-form-email" /><br>
                     <label>Enter order total: </label><input type="text" id="order-form-total" />
                     <input type="submit" value="Submit Order" />
                 </form>
@@ -156,9 +160,24 @@
         (function () {
             const form = document.getElementById('order-form');
             const emailInput = document.getElementById('order-form-email');
+            const emailLabel = document.getElementById('email-label');
             const orderInput = document.getElementById('order-form-total');
+            const emailRegex =
+                /(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/;
+            const emailLabelDefaultHTML = 'Enter email address: '
+            const emailLabelErrorHTML = '<span style="color:red">Error:</span> Must enter a valid email address'
+
             form.addEventListener('submit', e => {
                 e.preventDefault();
+
+                if (!emailRegex.test(emailInput.value)) {
+                    emailInput.classList.add('warning');
+                    emailLabel.innerHTML = emailLabelErrorHTML;
+                    return
+                }
+                emailInput.classList.remove('warning');
+                emailLabel.innerHTML = emailLabelDefaultHTML;
+
                 let data = {
                     "email_address": emailInput.value,
                     "order_total": orderInput.value
