@@ -53,13 +53,15 @@ class Database():
         current_tier = self.get_current_tier_by_points(points)
         next_tier = self.get_next_tier_by_points(points)
 
+        progress = points / next_tier.get("points") if "points" in next_tier else 0
+
         return {
             "reward_points": points,
             "reward_tier": current_tier.get("tier", ""),
             "reward_tier_name": current_tier.get("rewardName", ""),
             "next_reward_tier": next_tier.get("tier", ""),
             "next_reward_tier_name": next_tier.get("rewardName", ""),
-            "next_reward_tier_progress": points / next_tier.get("points", "")
+            "next_reward_tier_progress": progress
         }
 
 
