@@ -23,7 +23,13 @@ class RewardsView(TemplateView):
         for customer in customers_data:
             if customer is None:
                 continue
+
             customer['next_reward_tier_progress'] = "{0:.0%}".format(customer['next_reward_tier_progress'])
+
+            for key, value in customer.items():
+                if not value:
+                    customer[key] = 'N/A'
+
         context['customers_data'] = customers_data
 
         return TemplateResponse(
