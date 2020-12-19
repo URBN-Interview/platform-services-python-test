@@ -61,9 +61,14 @@ class RewardsView(TemplateView):
         else:
             email = request.POST.get('email')
             user_data = self.rewards_service_client.get_user(email)
-            user_data['nextProgress'] = stringifyPercent(user_data['nextProgress'])
-            users_data = [] # users_data context must be a list
-            users_data.append(user_data)
+            # check if user was found or not
+            if user_data:
+                user_data['nextProgress'] = stringifyPercent(user_data['nextProgress'])
+                users_data = [] # users_data context must be a list
+                users_data.append(user_data)
+            else:
+                context['error_message'] = "User with email address " + email + " was not found."
+                users_data = self.rewards_service_client.get_allusers()
 
         rewards_data = self.rewards_service_client.get_rewards()
         context['rewards_data'] = rewards_data
