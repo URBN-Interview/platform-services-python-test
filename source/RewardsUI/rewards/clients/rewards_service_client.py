@@ -7,6 +7,7 @@ class RewardsServiceClient:
         self.rewards_url = "http://rewardsservice:7050/rewards"
         self.submit_url = "http://rewardsservice:7050/endpoint1"
         self.allusers_url = "http://rewardsservice:7050/endpoint3"
+        self.user_url = "http://rewardsservice:7050/endpoint2"
 
     def get_rewards(self):
         response = requests.get(self.rewards_url)
@@ -18,5 +19,9 @@ class RewardsServiceClient:
 
     def get_allusers(self):
         response = requests.get(self.allusers_url)
+        return response.json()
+
+    def get_user(self, email):
+        response = requests.get(self.user_url, {'email': email})
         return response.json()
 

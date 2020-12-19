@@ -34,8 +34,10 @@
     </div>
     <div>
         <h2>User Rewards</h2>
-        <form>
-            <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
+        <form method="post">
+            {% csrf_token %}
+            <label>Email address: </label><input name="email" type="text" id="email"/>
+            <input type="submit" value="Search"/>
         </form>
         <table border="1">
             <thead>
