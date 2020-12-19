@@ -23,10 +23,13 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <form>
-            <label>Enter email address: </label><input type="text"/><br>
-            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order"/>
+        <form method="post">
+            {% csrf_token %}
+            <label for="email">Enter email address: </label><input name="email" type="text" id="email"><br>
+            <label for="amount">Enter order total: </label><input name="amount" type="text" id="amount"/>
+            <input type="submit" value="Submit Order"/>
         </form>
+        <p>{{ order_message }}</p>
         <hr>
     </div>
     <div>
