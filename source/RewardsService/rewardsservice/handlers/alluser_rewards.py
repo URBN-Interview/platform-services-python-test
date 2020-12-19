@@ -2,6 +2,7 @@
 import json
 import tornado.web
 
+from bson.json_util import dumps
 from pymongo import MongoClient
 from tornado.gen import coroutine
 
@@ -11,4 +12,4 @@ class AllUserRewards(tornado.web.RequestHandler):
         client = MongoClient("mongodb", 27017)
         db = client["Users"]
         users = list(db.users.find({}))
-        self.write(str(users))
+        self.write(dumps(users))
