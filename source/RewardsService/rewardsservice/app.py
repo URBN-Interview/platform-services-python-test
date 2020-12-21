@@ -7,8 +7,8 @@ import tornado.web
 
 from tornado.options import options
 
-from settings import settings
-from url_patterns import url_patterns
+from source.RewardsService.rewardsservice.settings import settings
+from source.RewardsService.rewardsservice.url_patterns import url_patterns
 
 
 class App(tornado.web.Application):
