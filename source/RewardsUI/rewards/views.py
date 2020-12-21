@@ -61,6 +61,7 @@ class RewardsView(TemplateView):
         else:
             email = request.POST.get('email')
             user_data = self.rewards_service_client.get_user(email)
+            
             # check if user was found or not
             if user_data:
                 user_data['nextProgress'] = stringifyPercent(user_data['nextProgress'])
