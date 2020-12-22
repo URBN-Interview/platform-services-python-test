@@ -23,16 +23,18 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <form>
-            <label>Enter email address: </label><input type="text"/><br>
-            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order"/>
+        <form action="/rewards/" method="post">
+            <label for="email_address">Enter email address: </label><input name="email_address" type="email" id="email_address"/><br>
+            <label for="amount">Enter order total: </label><input name="amount" type="text" id="amount"/>
+            <input type="button" value="Submit Order"/>
         </form>
+        <p>{{ message }}</p>
         <hr>
     </div>
     <div>
         <h2>User Rewards</h2>
         <form>
-            <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
+            <label>Email address: </label><input type="text" id="customer_email"/><input type="button" value="Search"/>
         </form>
         <table border="1">
             <thead>
@@ -57,6 +59,20 @@
                     <td>50%</td>
                 </tr>
             </tbody>
+
+<!--             <tbody>-->
+<!--            {% for customer in customer_data %}-->
+<!--                <tr>-->
+<!--                    <td>{{ customer.emailAddress }}<td>-->
+<!--                    <td>{{ customer.points }}</td>-->
+<!--                    <td>{{ customer.tier }}</td>-->
+<!--                    <td>{{ customer.rewardTierName }}<td>-->
+<!--                    <td>{{ customer.nextTier }}</td>-->
+<!--                    <td>{{ customer.rewardTierName }}</td>-->
+<!--                    <td>{{ customer.progress }}</td>-->
+<!--                </tr>-->
+<!--            {% endfor %}-->
+<!--            </tbody>-->
         </table>
     </div>
 </body>

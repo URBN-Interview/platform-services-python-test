@@ -3,7 +3,7 @@ from bson.json_util import dumps
 
 from tornado.gen import coroutine
 
-from source.RewardsService.rewardsservice.handlers import validate_email, validate_order_total, BaseHandler
+from handlers import validate_email, BaseHandler, validate_order_total
 
 
 class RewardsHandler(BaseHandler):

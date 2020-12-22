@@ -1,5 +1,4 @@
-from source.RewardsService.rewardsservice.handlers.rewards_handler import RewardsHandler, CustomerRewardHandler, \
-    ListCustomerRewardHandler
+from handlers.rewards_handler import RewardsHandler, CustomerRewardHandler, ListCustomerRewardHandler
 
 url_patterns = [
     (r'/rewards', RewardsHandler),

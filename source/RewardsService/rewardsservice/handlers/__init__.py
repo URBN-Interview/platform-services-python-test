@@ -21,5 +21,5 @@ def validate_order_total(order_total):
 
 class BaseHandler(tornado.web.RequestHandler):
     def initialize(self):
-        client = MongoClient("localhost", 27017)
+        client = MongoClient("mongodb", 27017)
         self.db = client["Rewards"]
