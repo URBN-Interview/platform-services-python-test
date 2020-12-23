@@ -1,4 +1,6 @@
 import requests
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
+from django.utils.decorators import method_decorator
 
 
 class RewardsServiceClient:
@@ -12,8 +14,9 @@ class RewardsServiceClient:
         return response.json()
 
     def post_rewards(self, email_address, amount):
+        method_decorator(csrf_protect)
         response = requests.post(self.rewards_url,
-                                 params={"email_address": email_address, "amount": amount})
+                                 params={"email_address": email_address, "order_total": amount})
         return response.json()
 
 

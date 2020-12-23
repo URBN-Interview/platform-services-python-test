@@ -24,17 +24,10 @@
     <div>
         <h2>Add orders</h2>
         <form action="/rewards/" method="post">
+            {% csrf_token %}
             <label for="email_address">Enter email address: </label><input name="email_address" type="email" id="email_address"/><br>
             <label for="amount">Enter order total: </label><input name="amount" type="text" id="amount"/>
-            <input type="button" value="Submit Order"/>
-        </form>
-        <p>{{ message }}</p>
-        <hr>
-    </div>
-    <div>
-        <h2>User Rewards</h2>
-        <form>
-            <label>Email address: </label><input type="text" id="customer_email"/><input type="button" value="Search"/>
+            <input type="submit" value="Submit Order"/>
         </form>
         <table border="1">
             <thead>
@@ -44,35 +37,65 @@
                 <th>Reward Tier</th>
                 <th>Reward Tier Name</th>
                 <th>Next Reward Tier</th>
-                <th>Next Reward Tier Name</th>
                 <th>Next Reward Tier Progress</th>
             </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>customer01@gmail.com</td>
-                    <td>100</td>
-                    <td>A</td>
-                    <td>5% off purchase</td>
-                    <td>B</td>
-                    <td>10% off purchase</td>
-                    <td>50%</td>
+                    <td>{{ message.emailAddress }}</td>
+                    <td>{{ message.points }}</td>
+                    <td>{{ message.tier }}</td>
+                    <td>{{ message.rewardTierName }}</td>
+                    <td>{{ message.nextTier }}</td>
+                    <td>{{ message.progress }}</td>
                 </tr>
             </tbody>
-
-<!--             <tbody>-->
-<!--            {% for customer in customer_data %}-->
+        </table>
+        <hr>
+    </div>
+    <div>
+        <h2>User Rewards</h2>
+        <form action="/customers/" method="get">
+            {% csrf_token %}
+            <label>Email address: </label><input type="text" id="customer_email"/>
+            <input type="submit" value="Search"/>
+        </form>
+        <table border="1">
+            <thead>
+<!--            <tr>-->
+<!--                <th>Email Address</th>-->
+<!--                <th>Reward Points</th>-->
+<!--                <th>Reward Tier</th>-->
+<!--                <th>Reward Tier Name</th>-->
+<!--                <th>Next Reward Tier</th>-->
+<!--                <th>Next Reward Tier Name</th>-->
+<!--                <th>Next Reward Tier Progress</th>-->
+<!--            </tr>-->
+            </thead>
+<!--            <tbody>-->
 <!--                <tr>-->
-<!--                    <td>{{ customer.emailAddress }}<td>-->
-<!--                    <td>{{ customer.points }}</td>-->
-<!--                    <td>{{ customer.tier }}</td>-->
-<!--                    <td>{{ customer.rewardTierName }}<td>-->
-<!--                    <td>{{ customer.nextTier }}</td>-->
-<!--                    <td>{{ customer.rewardTierName }}</td>-->
-<!--                    <td>{{ customer.progress }}</td>-->
+<!--                    <td>customer01@gmail.com</td>-->
+<!--                    <td>100</td>-->
+<!--                    <td>A</td>-->
+<!--                    <td>5% off purchase</td>-->
+<!--                    <td>B</td>-->
+<!--                    <td>10% off purchase</td>-->
+<!--                    <td>50%</td>-->
 <!--                </tr>-->
-<!--            {% endfor %}-->
 <!--            </tbody>-->
+                 <tbody>
+                {% for customer in customer_data %}
+                    <tr>
+                        <td>{{ customer.emailAddress }}<td>
+                        <td>{{ customer.points }}</td>
+                        <td>{{ customer.tier }}</td>
+                        <td>{{ customer.rewardTierName }}<td>
+                        <td>{{ customer.nextTier }}</td>
+                        <td>{{ customer.rewardTierName }}</td>
+                        <td>{{ customer.progress }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
         </table>
     </div>
 </body>
