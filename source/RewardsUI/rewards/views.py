@@ -20,7 +20,15 @@ class RewardsView(TemplateView):
 
         rewards_data = self.rewards_service_client.get_rewards()
         context["rewards_data"] = rewards_data
-        customers_data = self.rewards_service_client.get_customers()
+
+        email = request.GET.get("search")
+        if email is None:
+            customers_data = self.rewards_service_client.get_customers()
+            
+        else:
+            customerSearchArr = []
+            customerSearchArr.append(self.rewards_service_client.get_customer(email))
+            customers_data = customerSearchArr
         context["customers_data"] = customers_data
 
         return TemplateResponse(

@@ -76,8 +76,8 @@ class CustomerHandler(tornado.web.RequestHandler):
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
         customers = db["Customers"]
-        email = self.get_argument("email")
-        customer = list(customers.find_one({"email": email}))
+        email = self.get_argument("email", "")
+        customer = customers.find_one({"email": email}, {"_id": 0})
         self.write(json.dumps(customer))
       
 class AllCustomersHandler(tornado.web.RequestHandler):
