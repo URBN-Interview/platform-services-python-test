@@ -23,52 +23,105 @@ class CustomerOrderHandler(tornado.web.RequestHandler):
         orderTotal = self.get_argument("orderTotal", "")
         #calc the rewardspoints based off orderTotal - aka round the total to the nearest int
         rewardsPoints = int(orderTotal)
+        
+        try:
+            returningCustomer = customers.find_one({"email": email}, {"_id": 0})
+            if(returningCustomer):
+                rewardsPoints += returningCustomer["points"]
 
+                if(rewardsPoints > 0):
+                    if(rewardsPoints < 1000):
+                        for rt in rewards:
+                            if(rewardsPoints >= rt["points"]):
+                                customerReward = rt
+                            elif(rewardsPoints < rt["points"]):
+                                nextTier = rt
+                                break
 
+                        if(rewardsPoints < 100):
+                            customerReward = {"rewardName" : "No reward available", "tier" : "Not Enough Rewards Points Accumulated"}    
+                        calculation = 100 *( (rewardsPoints / nextTier["points"]) )
+                        nextTierProgress = str(calculation) + "%"
+
+                        customerOrder = {
+                        
+                            "email": email, 
+                            "points": rewardsPoints, 
+                            "rewardName": customerReward["rewardName"], 
+                            "tier": customerReward["tier"],
+                            "nextTier" : nextTier["tier"],
+                            "nextRewardName" : nextTier["rewardName"],
+                            "progressToNextTier" : nextTierProgress
+
+                        }
+
+                        customers.update({"email": email}, customerOrder)
+
+                    else:
+                        customerReward = {"rewardName" : "50% off purchase", "tier" : "J"}   
+                        customerOrder = {
+                            "email": email, 
+                            "points": 1000, 
+                            "rewardName": customerReward["rewardName"], 
+                            "tier": customerReward["tier"],
+                            "nextTier" : "Reached highest tier.",
+                            "nextRewardName" : "Reached highest tier.",
+                            "progressToNextTier" : "NA"
+                        }
+
+                        customers.update({"email": email}, customerOrder)
+                   
     #calculates rewards tier if less than 1000 points
-        if(rewardsPoints < 1000):
-            for rewardTier in rewards:
-                if(rewardsPoints>=rewardTier["points"]):
-                    customerReward = rewardTier
-                elif(rewardsPoints < rewardTier["points"]):
-                    nextTier = rewardTier   
-                    break
-    #if user has less than 100 points then they do not qualify for rewards    
-            if(rewardsPoints < 100):
-                customerReward = {"rewardName" : "No reward available", "tier" : "Not Enough Rewards Points Accumulated"}
-            calculation = 100 * ( (rewardsPoints / nextTier ["points"]) )  
-            nextTierProgress = str(calculation) + "%"  
-       
-    
-        #creating customerOrder to store data
-            customerOrder = {
-                "email": email, 
-                "points": rewardsPoints, 
-                "rewardName": customerReward["rewardName"], 
-                "tier": customerReward["tier"],
-                "nextTier" : nextTier["tier"],
-                "nextRewardName" : nextTier["rewardName"],
-                "progressToNextTier" : nextTierProgress
+            else:
 
-            }
-        
-        #adding customerOrder data to customers collection
-            customers.insert_one(customerOrder)
-        
-        #set variables if highest tier is reached
-        else:
-            customerReward = {"rewardName" : "50% off purchase", "tier" : "J"}   
-            customerOrder = {
-                "email": email, 
-                "points": rewardsPoints, 
-                "rewardName": customerReward["rewardName"], 
-                "tier": customerReward["tier"],
-                "nextTier" : "Reached highest tier.",
-                "nextRewardName" : "Reached highest tier.",
-                "progressToNextTier" : "NA"
-            }
+                if(rewardsPoints>0):
+            
+                    if(rewardsPoints < 1000):
+                        for rewardTier in rewards:
+                            if(rewardsPoints>=rewardTier["points"]):
+                                customerReward = rewardTier
+                            elif(rewardsPoints < rewardTier["points"]):
+                                nextTier = rewardTier   
+                                break
+                #if user has less than 100 points then they do not qualify for rewards    
+                        if(rewardsPoints < 100):
+                            customerReward = {"rewardName" : "No reward available", "tier" : "Not Enough Rewards Points Accumulated"}
+                        calculation = 100 * ( (rewardsPoints / nextTier ["points"]) )  
+                        nextTierProgress = str(calculation) + "%"  
+                
+                
+                    #creating customerOrder to store data
+                        customerOrder = {
+                            "email": email, 
+                            "points": rewardsPoints, 
+                            "rewardName": customerReward["rewardName"], 
+                            "tier": customerReward["tier"],
+                            "nextTier" : nextTier["tier"],
+                            "nextRewardName" : nextTier["rewardName"],
+                            "progressToNextTier" : nextTierProgress
 
-            customers.insert_one(customerOrder)
+                        }
+                    
+                    #adding customerOrder data to customers collection
+                        customers.insert(customerOrder)
+                    
+                    #set variables if highest tier is reached
+                    else:
+                        customerReward = {"rewardName" : "50% off purchase", "tier" : "J"}   
+                        customerOrder = {
+                            "email": email, 
+                            "points": 1000, 
+                            "rewardName": customerReward["rewardName"], 
+                            "tier": customerReward["tier"],
+                            "nextTier" : "Reached highest tier.",
+                            "nextRewardName" : "Reached highest tier.",
+                            "progressToNextTier" : "NA"
+                        }
+
+                        customers.insert(customerOrder)
+                else:
+                    print("Invalid amount entered.")        
+        except Exception as e: print(e)            
 
 class CustomerHandler(tornado.web.RequestHandler):
     @coroutine
@@ -79,7 +132,7 @@ class CustomerHandler(tornado.web.RequestHandler):
         email = self.get_argument("email", "")
         customer = customers.find_one({"email": email}, {"_id": 0})
         self.write(json.dumps(customer))
-      
+
 class AllCustomersHandler(tornado.web.RequestHandler):
     @coroutine
     def get(self):
@@ -88,3 +141,4 @@ class AllCustomersHandler(tornado.web.RequestHandler):
         customers = db["Customers"]
         allCustomers = list(customers.find({}, {"_id": 0}))
         self.write(json.dumps(allCustomers))
+ 
