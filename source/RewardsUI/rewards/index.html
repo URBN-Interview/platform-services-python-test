@@ -55,7 +55,7 @@
     </div>
     <div>
         <h2>User Rewards</h2>
-        <form action="/customers/" method="get">
+        <form action="/customers/" method="post">
             {% csrf_token %}
             <label>Email address: </label><input type="text" id="customer_email"/>
             <input type="submit" value="Search"/>

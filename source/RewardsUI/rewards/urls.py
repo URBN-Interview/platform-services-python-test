@@ -1,8 +1,8 @@
 from django.conf.urls import url
 
-from . import views
+from . import views, customer_views
 
 urlpatterns = [
     url(r'^$', views.RewardsView.as_view(), name='rewards'),
-    url(r'^$', views.CustomerRewardsView.as_view(), name='customers')
+    url(r'^$', customer_views.CustomerRewardsView.as_view(), name='customers')
 ]

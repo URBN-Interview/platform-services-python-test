@@ -27,37 +27,38 @@ class RewardsHandler(BaseHandler):
             if not validate_order_total(order_total):
                 self.write_error(status_code=500)
 
+            check_existing = self.db.customer_rewards.find_one({"emailAddress": email_address})
             points = int(float(order_total))
 
-            tier = None
-            if points < 100:
-                reward_tier_name = "A"
-                progress = points / 100
-                next_tier = "B"
+            if not check_existing:
+                if points < 100:
+                    reward_tier_name = "A"
+                    progress = points / 100
+                    next_tier = "B"
+                else:
+                    reward = self.db.rewards.find({}, {"_id": 0})
+                    calculate_points = self.calculate_points(email_address, reward, points)
+                    email_address = calculate_points.get("emailAddress")
+                    points = calculate_points.get("points")
+                    tier = calculate_points.get("tier")
+                    reward_tier_name = calculate_points.get("rewardTierName")
+                    progress = calculate_points.get("progress")
+                    next_tier = calculate_points.get("nextTier")
+
+                response = {"emailAddress": email_address, "points": points, "tier": tier,
+                            "rewardTierName": reward_tier_name, "progress": progress,
+                            "nextTier": next_tier}
+
+                self.db.customer_rewards.insert(response)
+                self.write(dumps(response))
+
             else:
+                updated_points = check_existing.get("points") + points
                 reward = self.db.rewards.find({}, {"_id": 0})
+                response = self.calculate_points(email_address, reward, updated_points)
 
-                for t in reward:
-                    previous_tier = t.get("points", 0)
-
-                    if previous_tier > points:
-                        next_tier = t.get("tier")
-                        progress = points / previous_tier
-                        break
-
-                    elif points > previous_tier and tier is not None:
-                        next_tier = None
-                        progress = 0
-
-                    tier = t.get("tier", "")
-                    reward_tier_name = t.get("rewardName", "")
-
-            response = {"emailAddress": email_address, "points": points, "tier": tier,
-                        "rewardTierName": reward_tier_name, "progress": progress,
-                        "nextTier": next_tier}
-
-            self.db.customer_rewards.insert(response)
-            self.write(dumps(response))
+                self.db.customer_rewards.update_one({"emailAddress": email_address}, {"$set": response})
+                self.write(dumps(response))
 
         except Exception as e:
             self.write(e)

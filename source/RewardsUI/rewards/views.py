@@ -2,7 +2,6 @@ import logging
 
 from django.template.response import TemplateResponse
 from django.views.generic.base import TemplateView
-from django.shortcuts import render
 
 from rewards.clients.rewards_service_client import RewardsServiceClient, CustomerRewardsClient
 
@@ -25,6 +24,9 @@ class RewardsView(TemplateView):
     def post(self, request, **kwargs):
         context = self.get_context_data(**kwargs)
 
+        email = ""
+        amount = 0
+
         if request.POST.get("email_address") is not None:
             email = request.POST.get('email_address')
             amount = request.POST.get('amount')
@@ -33,21 +35,4 @@ class RewardsView(TemplateView):
         context['message'] = post_rewards
 
         self.get(request, **kwargs)
-        return TemplateResponse(request, self.template_name, context)
-
-
-class CustomerRewardsView(TemplateView):
-    template_name = 'index.html'
-
-    def __init__(self, logger=logging.getLogger(__name__),customer_rewards_client=CustomerRewardsClient()):
-        self.logger = logger
-        self.customer_rewards_client = customer_rewards_client
-
-    def get(self, request, **kwargs):
-        context = self.get_context_data(**kwargs)
-
-        customer_email = request.POST.get("customer_email")
-        customer_data = self.customer_rewards_client.get_customers(customer_email)
-        context['customer_data'] = customer_data
-
         return TemplateResponse(request, self.template_name, context)

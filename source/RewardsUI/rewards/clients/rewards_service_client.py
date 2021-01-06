@@ -23,7 +23,7 @@ class RewardsServiceClient:
 class CustomerRewardsClient:
 
     def __init__(self):
-        self.customer_rewards_url = "http://rewardsservice:7050/rewards/customers"
+        self.customer_rewards_url = "http://rewardsservice:7050/me/rewards"
 
     def get_customers(self, email_address):
         response = requests.get(self.customer_rewards_url, params={"email_address": email_address})

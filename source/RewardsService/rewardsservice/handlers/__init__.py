@@ -23,3 +23,25 @@ class BaseHandler(tornado.web.RequestHandler):
     def initialize(self):
         client = MongoClient("mongodb", 27017)
         self.db = client["Rewards"]
+
+    def calculate_points(self, email_address, reward, points):
+        tier = None
+
+        for t in reward:
+            previous_tier = t.get("points", 0)
+
+            if previous_tier > points:
+                next_tier = t.get("tier")
+                progress = points / previous_tier
+                break
+
+            elif points > previous_tier and tier is not None:
+                next_tier = None
+                progress = 0
+
+            tier = t.get("tier", "")
+            reward_tier_name = t.get("rewardName", "")
+
+        response = {"emailAddress": email_address, "points": points, "tier": tier,
+                    "rewardTierName": reward_tier_name, "progress": progress, "nextTier": next_tier}
+        return response
