@@ -6,7 +6,7 @@ from tornado.gen import coroutine
 
 class CustomerOrderHandler(tornado.web.RequestHandler):
     @coroutine
-    #accepts order data - email address and order total - create new table/collection? 
+    
     def post(self):
         client = MongoClient("mongodb", 27017)
         
@@ -21,8 +21,8 @@ class CustomerOrderHandler(tornado.web.RequestHandler):
         #set email and orderTotal to user inputs
         email = self.get_argument("email", "")
         orderTotal = self.get_argument("orderTotal", "")
-        #calc the rewardspoints based off orderTotal - aka round the total to the nearest int
-        rewardsPoints = int(orderTotal)
+        
+        rewardsPoints = int(float(orderTotal))
         
         try:
             returningCustomer = customers.find_one({"email": email}, {"_id": 0})
@@ -41,7 +41,8 @@ class CustomerOrderHandler(tornado.web.RequestHandler):
                         if(rewardsPoints < 100):
                             customerReward = {"rewardName" : "No reward available", "tier" : "Not Enough Rewards Points Accumulated"}    
                         calculation = 100 *( (rewardsPoints / nextTier["points"]) )
-                        nextTierProgress = str(calculation) + "%"
+                        formattedCalc = '%.2f' % calculation
+                        nextTierProgress =  str(formattedCalc) + "%"
 
                         customerOrder = {
                         
@@ -86,8 +87,9 @@ class CustomerOrderHandler(tornado.web.RequestHandler):
                 #if user has less than 100 points then they do not qualify for rewards    
                         if(rewardsPoints < 100):
                             customerReward = {"rewardName" : "No reward available", "tier" : "Not Enough Rewards Points Accumulated"}
-                        calculation = 100 * ( (rewardsPoints / nextTier ["points"]) )  
-                        nextTierProgress = str(calculation) + "%"  
+                        calculation = 100 *( (rewardsPoints / nextTier["points"]) )
+                        formattedCalc = '%.2f' % calculation
+                        nextTierProgress =  str(formattedCalc) + "%"
                 
                 
                     #creating customerOrder to store data
