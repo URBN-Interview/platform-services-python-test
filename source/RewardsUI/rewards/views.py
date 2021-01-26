@@ -3,7 +3,7 @@ import logging
 from django.template.response import TemplateResponse
 from django.views.generic.base import TemplateView
 
-from rewards.clients.rewards_service_client import RewardsServiceClient, CustomerRewardsClient
+from rewards.clients.rewards_service_client import RewardsServiceClient
 
 
 class RewardsView(TemplateView):

@@ -16,6 +16,5 @@ Including another URLconf
 from django.conf.urls import include, url
 
 urlpatterns = [
-    url(r'^rewards/', include('rewards.urls')),
-    url(r'^customers/', include('rewards.urls')),
+    url(r'^rewards/', include('rewards.urls'))
 ]

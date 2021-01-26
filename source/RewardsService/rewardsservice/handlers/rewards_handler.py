@@ -58,7 +58,7 @@ class RewardsHandler(BaseHandler):
                 response = self.calculate_points(email_address, reward, updated_points)
 
                 self.db.customer_rewards.update_one({"emailAddress": email_address}, {"$set": response})
-                self.write(dumps(response))
+                self.write(dumps(response).encode("utf-8"))
 
         except Exception as e:
             self.write(e)
@@ -70,7 +70,7 @@ class CustomerRewardHandler(BaseHandler):
     def get(self):
         email_address = self.get_argument("email_address")
         rewards = self.db.customer_rewards.find_one({"emailAddress": email_address})
-        self.write(dumps(rewards))
+        self.write(dumps(rewards).encode("utf-8"))
 
 
 class ListCustomerRewardHandler(BaseHandler):
