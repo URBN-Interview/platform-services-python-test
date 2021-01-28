@@ -23,68 +23,69 @@
             </table>
             <hr>
         </div>
+
         <div class="row justify-content-md-center">
-        <div class="col col-lg-6">
-            <h2>Add orders</h2>
-            <form action="/rewards/" method="post">
-                <div class="form-group">
-                    {% csrf_token %}
-                    <label for="email_address">Enter email address: </label><input class="form-control" name="email_address" type="email" id="email_address"/><br>
-                    <label for="amount">Enter order total: </label><input class="form-control" name="amount" type="text" id="amount"/><br>
-                    <input type="submit" class="btn btn-primary" value="Submit Order"/>
+            <div class="col col-lg-6">
+                <h1>Add Rewards</h1>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_table }}
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Email Address</th>
+                                <th scope="col">Reward Points</th>
+                                <th scope="col">Reward Tier</th>
+                                <th scope="col">Reward Tier Name</th>
+                                <th scope="col">Next Reward Tier</th>
+                                <th scope="col">Next Reward Tier Progress</th>
+                            </tr>
+                            </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ data.emailAddress }}</td>
+                                <td>{{ data.points }}</td>
+                                <td>{{ data.tier }}</td>
+                                <td>{{ data.rewardTierName }}</td>
+                                <td>{{ data.nextTier }}</td>
+                                <td>{{ data.progress }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </form>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th scope="col">Email Address</th>
-                    <th scope="col">Reward Points</th>
-                    <th scope="col">Reward Tier</th>
-                    <th scope="col">Reward Tier Name</th>
-                    <th scope="col">Next Reward Tier</th>
-                    <th scope="col">Next Reward Tier Progress</th>
-                </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{ message.emailAddress }}</td>
-                        <td>{{ message.points }}</td>
-                        <td>{{ message.tier }}</td>
-                        <td>{{ message.rewardTierName }}</td>
-                        <td>{{ message.nextTier }}</td>
-                        <td>{{ message.progress }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <hr>
-        </div>
-        <div class="col col-lg-6">
-            <h2>User Rewards</h2>
-            <form action="/rewards/" method="post">
-                <div class="form-group">
-                    {% csrf_token %}
-                    <label>Email address: </label>
-                    <input class="form-control" type="email" name="customer_email" id="customer_email"/><br>
-                    <input class="btn btn-primary" type="submit" value="Search"/>
-                </div>
-            </form>
-            <table border="1">
-                <thead>
-                     <tbody>
-                    {% for customer in customer_data %}
+
+            <div class="col col-lg-6">
+                <h1>Search Customer Reward</h1>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ customer_form.as_table }}
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td>{{ customer.emailAddress }}<td>
-                            <td>{{ customer.points }}</td>
-                            <td>{{ customer.tier }}</td>
-                            <td>{{ customer.rewardTierName }}<td>
-                            <td>{{ customer.nextTier }}</td>
-                            <td>{{ customer.rewardTierName }}</td>
-                            <td>{{ customer.progress }}</td>
+                            <th scope="col">Email Address</th>
+                            <th scope="col">Reward Points</th>
+                            <th scope="col">Reward Tier</th>
+                            <th scope="col">Reward Tier Name</th>
+                            <th scope="col">Next Reward Tier</th>
+                            <th scope="col">Next Reward Tier Progress</th>
                         </tr>
-                    {% endfor %}
+                        </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ customer_reward.emailAddress }}</td>
+                            <td>{{ customer_reward.points }}</td>
+                            <td>{{ customer_reward.tier }}</td>
+                            <td>{{ customer_reward.rewardTierName }}</td>
+                            <td>{{ customer_reward.nextTier }}</td>
+                            <td>{{ customer_reward.progress }}</td>
+                        </tr>
                     </tbody>
-            </table>
-        </div>
+                </table>
+            </div>
         </div>
     </div>
 </body>

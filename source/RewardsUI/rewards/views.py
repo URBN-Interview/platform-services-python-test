@@ -1,9 +1,11 @@
 import logging
 
+from django.shortcuts import render
 from django.template.response import TemplateResponse
 from django.views.generic.base import TemplateView
 
 from rewards.clients.rewards_service_client import RewardsServiceClient
+from rewards.forms import RewardForm, CustomerForm
 
 
 class RewardsView(TemplateView):
@@ -13,26 +15,40 @@ class RewardsView(TemplateView):
         self.logger = logger
         self.rewards_service_client = rewards_service_client
 
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
+    def get(self, request, **kwargs):
+        form = RewardForm()
+        customer_form = CustomerForm()
 
+        context = self.get_context_data(**kwargs)
         rewards_data = self.rewards_service_client.get_rewards()
         context['rewards_data'] = rewards_data
+        context['form'] = form
+        context['customer_form'] = customer_form
 
-        return TemplateResponse(request, self.template_name, context)
+        return render(request, self.template_name, context)
 
     def post(self, request, **kwargs):
         context = self.get_context_data(**kwargs)
 
-        email = ""
+        email_address = ""
         amount = 0
 
-        if request.POST.get("email_address") is not None:
-            email = request.POST.get('email_address')
-            amount = request.POST.get('amount')
+        if request.method == 'POST':
+            form = RewardForm(request.POST)
+            if form.is_valid():
+                email_address = form.cleaned_data['email_address']
+                amount = form.cleaned_data["amount"]
 
-        post_rewards = self.rewards_service_client.post_rewards(email, amount)
-        context['message'] = post_rewards
+                post_rewards = self.rewards_service_client.post_rewards(email_address, amount)
+                context['data'] = post_rewards
 
-        self.get(request, **kwargs)
-        return TemplateResponse(request, self.template_name, context)
+        if request.method == 'POST' and not form.is_valid():
+            customer_form = CustomerForm(request.POST)
+
+            if customer_form.is_valid():
+                email_address = customer_form.cleaned_data['email']
+
+                get_customer = self.rewards_service_client.get_customers(email_address)
+                context['customer_reward'] = get_customer
+
+        return render(request, self.template_name, context)
