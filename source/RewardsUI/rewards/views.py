@@ -24,11 +24,15 @@ class RewardsView(TemplateView):
         context['rewards_data'] = rewards_data
         context['form'] = form
         context['customer_form'] = customer_form
+        context['table_1_visibility'] = "invisible"
+        context['table_2_visibility'] = "invisible"
 
         return render(request, self.template_name, context)
 
     def post(self, request, **kwargs):
         context = self.get_context_data(**kwargs)
+        form = RewardForm()
+        customer_form = CustomerForm()
 
         email_address = ""
         amount = 0
@@ -40,7 +44,11 @@ class RewardsView(TemplateView):
                 amount = form.cleaned_data["amount"]
 
                 post_rewards = self.rewards_service_client.post_rewards(email_address, amount)
+                context['table_1_visibility'] = "visible"
+                context['table_2_visibility'] = "invisible"
                 context['data'] = post_rewards
+                context['message'] = "Successfully added rewards!"
+                context['modal_color'] = "col col-lg-12 alert alert-success"
 
         if request.method == 'POST' and not form.is_valid():
             customer_form = CustomerForm(request.POST)
@@ -49,6 +57,19 @@ class RewardsView(TemplateView):
                 email_address = customer_form.cleaned_data['email']
 
                 get_customer = self.rewards_service_client.get_customers(email_address)
+                context['table_2_visibility'] = "visible"
+                context['table_1_visibility'] = "invisible"
                 context['customer_reward'] = get_customer
+                context['message'] = "Successfully search for customer rewards!"
+                context['modal_color'] = "col col-lg-12 alert alert-success"
+
+        if request.method == 'POST' and not form.is_valid() and not customer_form.is_valid():
+            context['message'] = "Form is invalid, please try again"
+            context['modal_color'] = "col col-lg-12 alert alert-danger"
+
+        rewards_data = self.rewards_service_client.get_rewards()
+        context['rewards_data'] = rewards_data
+        context['form'] = form
+        context['customer_form'] = customer_form
 
         return render(request, self.template_name, context)

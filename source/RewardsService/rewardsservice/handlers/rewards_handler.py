@@ -18,24 +18,15 @@ class RewardsHandler(BaseHandler):
             email_address = self.get_argument("email_address")
             order_total = self.get_argument("order_total")
 
-            if not email_address or not order_total:
-                self.write_error(status_code=500)
-
-            if not validate_email(email_address):
-                self.write_error(status_code=500)
-
-            if not validate_order_total(order_total):
-                self.write_error(status_code=500)
-
             check_existing = self.db.customer_rewards.find_one({"emailAddress": email_address})
             points = int(float(order_total))
 
             if not check_existing:
                 if points < 100:
                     progress = points / 100
-                    next_tier = "B"
-                    tier = "A"
-                    reward_tier_name = "5% off purchase"
+                    next_tier = "A"
+                    tier = None
+                    reward_tier_name = None
 
                 else:
                     reward = self.db.rewards.find({}, {"_id": 0})
@@ -56,8 +47,20 @@ class RewardsHandler(BaseHandler):
 
             else:
                 updated_points = check_existing.get("points") + points
-                reward = self.db.rewards.find({}, {"_id": 0})
-                response = self.calculate_points(email_address, reward, updated_points)
+
+                if updated_points < 100:
+                    progress = updated_points / 100
+                    next_tier = "A"
+                    tier = None
+                    reward_tier_name = None
+
+                    response = {"emailAddress": email_address, "points": updated_points, "tier": tier,
+                            "rewardTierName": reward_tier_name, "progress": progress,
+                            "nextTier": next_tier}
+
+                else:
+                    reward = self.db.rewards.find({}, {"_id": 0})
+                    response = self.calculate_points(email_address, reward, updated_points)
 
                 self.db.customer_rewards.update_one({"emailAddress": email_address}, {"$set": response})
                 self.write(dumps(response).encode("utf-8"))
