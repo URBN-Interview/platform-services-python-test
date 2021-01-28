@@ -32,9 +32,11 @@ class RewardsHandler(BaseHandler):
 
             if not check_existing:
                 if points < 100:
-                    reward_tier_name = "A"
                     progress = points / 100
                     next_tier = "B"
+                    tier = "A"
+                    reward_tier_name = "5% off purchase"
+
                 else:
                     reward = self.db.rewards.find({}, {"_id": 0})
                     calculate_points = self.calculate_points(email_address, reward, points)
