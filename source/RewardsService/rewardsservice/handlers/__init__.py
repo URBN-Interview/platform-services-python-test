@@ -2,22 +2,6 @@ import re
 import tornado.web
 from pymongo import MongoClient
 
-email_regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-
-
-def validate_email(email):
-    if re.search(email_regex, email):
-        return True
-    else:
-        return False
-
-
-def validate_order_total(order_total):
-    if re.match(r'^-?\d+(?:\.\d+)?$', order_total) is not None:
-        return True
-    else:
-        return False
-
 
 class BaseHandler(tornado.web.RequestHandler):
     def initialize(self):
@@ -45,3 +29,20 @@ class BaseHandler(tornado.web.RequestHandler):
         response = {"emailAddress": email_address, "points": points, "tier": tier,
                     "rewardTierName": reward_tier_name, "progress": progress, "nextTier": next_tier}
         return response
+
+    def status_code_and_reason(self, status_code, message, code):
+        self.set_status(status_code)
+        self.finish({"message": message, "code": code})
+
+    def check_order_total_type(self, order_total):
+        try:
+            int(float(order_total))
+        except ValueError:
+            self.status_code_and_reason(400, "Order total must be number(s)", "VALIDATION_ERROR")
+
+    def check_email_address(self, email):
+        email_regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+        if re.search(email_regex, email):
+            return
+        else:
+            self.status_code_and_reason(400, "Email Address has to be in email format", "VALIDATION_ERROR")

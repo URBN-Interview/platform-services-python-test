@@ -1,9 +1,11 @@
 import json
+
 from bson.json_util import dumps
 
 from tornado.gen import coroutine
+from tornado.web import MissingArgumentError
 
-from handlers import validate_email, BaseHandler, validate_order_total
+from handlers import BaseHandler
 
 
 class RewardsHandler(BaseHandler):
@@ -15,8 +17,14 @@ class RewardsHandler(BaseHandler):
     @coroutine
     def post(self):
         try:
-            email_address = self.get_argument("email_address")
-            order_total = self.get_argument("order_total")
+            try:
+                email_address = self.get_argument("email_address")
+                order_total = self.get_argument("order_total")
+            except MissingArgumentError:
+                self.status_code_and_reason(400, "Please provide email address and order total", "VALIDATION_ERROR")
+
+            self.check_order_total_type(order_total)
+            self.check_email_address(email_address)
 
             check_existing = self.db.customer_rewards.find_one({"emailAddress": email_address})
             points = int(float(order_total))
@@ -73,7 +81,12 @@ class RewardsHandler(BaseHandler):
 class CustomerRewardHandler(BaseHandler):
     @coroutine
     def get(self):
-        email_address = self.get_argument("email_address")
+        try:
+            email_address = self.get_argument("email_address")
+        except MissingArgumentError:
+            self.status_code_and_reason(400, "Please provide email address", "VALIDATION_ERROR")
+
+        self.check_email_address(email_address)
         rewards = self.db.customer_rewards.find_one({"emailAddress": email_address})
         self.write(dumps(rewards).encode("utf-8"))
 
