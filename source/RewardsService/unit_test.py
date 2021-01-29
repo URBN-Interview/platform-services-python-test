@@ -48,11 +48,15 @@ class RewardServiceTest(unittest.TestCase):
 
     def test_post_rewards_without_email_address_params(self):
         response = requests.post(self.rewards_url, params={"order_total": self.order_total})
-        self.assertEqual(500, response.status_code)
+        response_body = ast.literal_eval(response.content.decode("utf-8"))
+        self.assertEqual(400, response.status_code)
+        self.assertDictEqual(response_body, {'message': 'Please provide email address and order total', 'code': 'VALIDATION_ERROR'})
 
     def test_post_rewards_without_order_total_params(self):
         response = requests.post(self.rewards_url, params={"email_address": self.email_address})
-        self.assertEqual(500, response.status_code)
+        response_body = ast.literal_eval(response.content.decode("utf-8"))
+        self.assertEqual(400, response.status_code)
+        self.assertDictEqual(response_body, {'message': 'Please provide email address and order total', 'code': 'VALIDATION_ERROR'})
 
     def test_get_customers(self):
         requests.post(self.rewards_url,
