@@ -12,4 +12,5 @@ class RewardsHandler(tornado.web.RequestHandler):
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
         rewards = list(db.rewards.find({}, {"_id": 0}))
+        print("rewards", rewards)
         self.write(json.dumps(rewards))
