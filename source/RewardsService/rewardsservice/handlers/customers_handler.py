@@ -5,13 +5,12 @@ from pymongo import MongoClient
 from tornado.gen import coroutine
 
 
-class RewardsHandler(tornado.web.RequestHandler):
+class CustomersHandler(tornado.web.RequestHandler):
 
     @coroutine
     def get(self):
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
-        rewards = list(db.rewards.find({}, {"_id": 0}))
-        # print("rewards", rewards)
-        self.write(json.dumps(rewards))
-
+        customersList = list(db.customers.finds({}))
+        print("all customers: ", customersList)
+        self.write(json.dumps(customersList))
