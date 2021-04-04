@@ -9,8 +9,12 @@ class CustomersHandler(tornado.web.RequestHandler):
 
     @coroutine
     def get(self):
-        client = MongoClient("mongodb", 27017)
-        db = client["Rewards"]
-        customersList = list(db.customers.finds({}))
-        print("all customers: ", customersList)
-        self.write(json.dumps(customersList))
+        try:
+            client = MongoClient("mongodb", 27017)
+            db = client["Rewards"]
+            customersList = list(db.customers.find({},{"_id": 0}))
+            
+            self.write(json.dumps(customersList))
+
+        except Exception as e:
+            self.write(json.dumps({'status':'error','error':str(e)}))
