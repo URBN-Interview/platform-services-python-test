@@ -1,9 +1,10 @@
 import json
 import tornado.web
 
+
 from pymongo import MongoClient
 from tornado.gen import coroutine
-
+from rewardsservice.customer_utils import to_reward_points, get_tier, is_email_valid
 
 class SingleCustomerHandler(tornado.web.RequestHandler):
 
@@ -14,6 +15,7 @@ class SingleCustomerHandler(tornado.web.RequestHandler):
             db = client["Rewards"]
             customerEmail = self.get_argument("email")
             customer = list(db.customers.find({"email": customerEmail}, {"_id": 0}))
+
 
             if customer:
                 self.write(json.dumps(customer))
@@ -30,22 +32,36 @@ class SingleCustomerHandler(tornado.web.RequestHandler):
         try:
             client = MongoClient("mongodb", 27017)
             db = client["Rewards"]
-
             email = self.get_argument("email")
             orderTotal = self.get_argument("orderTotal")
 
-             
-            #TO DO util funcs: 
-                # is_email: Validate email as email
-                # to_reward_points: convert orderTotal to reward points 
-                # get_next_tier: calcuate percent to next tier, next tier and name 
             
+            if is_email_valid(email):
+
+                customer = list(db.customers.find({"email": email }, {"id": 0}))
+                points = to_reward_points(orderTotal)
+                customerData = get_tier(points, email)
+
+                
 
 
-            points = to_reward_points(orderTotal)
-            reward = db.rewards.find({"points": points}, {"_id": 0})    #python object destructuring? (dictionaries)
-            
-            db.customer.insert({"email": email, "rewardPoints": orderTotal})
-    
+                # if customer:
+                #     db.customer.update_one(customer, {"email": email, "rewardPoints": points, })
+                # else:
+                #     db.customer.insert({"email": email, "rewardPoints": orderTotal})
+        
+
+                #move to get_tier
+                # if points >= 100:
+                #     tier = get_tier(points, email)
+                #     db.customer.update_one(customer, {*tier})
+                # else:
+                #     db.customer.update_one(customer, {"rewardPoints": points})
+
+                self.write(json.dumps({'status':204}))
+
+            else:
+                self.write(json.dumps("<html><body>Please enter a valid email</body></html>")) 
+
         except Exception as e:
             self.write(json.dumps({'status':'error','error':str(e)}))
