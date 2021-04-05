@@ -20,7 +20,7 @@ class SingleCustomerHandler(tornado.web.RequestHandler):
             if customer:
                 self.write(json.dumps(customer))
             else:
-                self.write(json.dumps("<html><body>Sorry, that email was not recognized</body></html>"))
+                self.write(json.dumps("<html><body>Sorry, that email was not recognized</body></html>", 404))
 
         except Exception as e:
             self.write(json.dumps({'status':'error','error':str(e)}))
@@ -82,7 +82,7 @@ def get_tier(rewards, points, email):
             customerTier = {
                 "email": email,
                 "points": points,
-                "rewardTier": rewards[i]["tier"],
+                "tier": rewards[i]["tier"],
                 "rewardTierName": rewards[i]["rewardName"],
                 "nextTier": rewards[i+1]["tier"],
                 "nextTierName": rewards[i+1]["rewardName"], 
@@ -95,7 +95,7 @@ def get_tier(rewards, points, email):
             customerTier = {
                 "email": email,
                 "points": points,
-                "rewardTier": "",
+                "tier": "",
                 "rewardTierName": "",
                 "nextTier": rewards[i]["tier"],
                 "nextTierName": rewards[i]["rewardName"], 
@@ -107,8 +107,8 @@ def get_tier(rewards, points, email):
             customerTier = {
                 "email": email,
                 "points": points,
-                "rewardTier": rewards[i]["tier"],
-                "rewardTierName": rewards[i]["rewardName"],
+                "tier": rewards[length]["tier"],
+                "rewardTierName": rewards[length]["rewardName"],
                 "nextTier": "",
                 "nextTierName": "", 
                 "nextTierProgress": ""
