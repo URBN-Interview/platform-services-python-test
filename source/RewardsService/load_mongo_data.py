@@ -2,17 +2,17 @@
 from pymongo import MongoClient
 
 
-customersArr = [
-    {   
-        "email": "customer01@gmail.com", "rewardPoints": 100, "tier": "A"
-    },
-    {
-        "email": "customer02@gmail.com", "rewardPoints": 200, "tier": "B"
-    },
-    {
-        "email": "customer03@gmail.com", "rewardPoints": 300, "tier": "C"
-    }
-]
+# customersArr = [
+#     {   
+#         "email": "customer01@gmail.com", "points": 100, "tier": "A"
+#     },
+#     {
+#         "email": "customer02@gmail.com", "points": 200, "tier": "B"
+#     },
+#     {
+#         "email": "customer03@gmail.com", "points": 300, "tier": "C"
+#     }
+# ]
 
 
 def main():
@@ -34,9 +34,9 @@ def main():
     print("Rewards loaded in mongo")
 
 
-    db.customers.remove()
-    db.customers.insert_many(customersArr)
-    print("Dummy Customer data loaded in mongo")
+    # db.customers.remove()
+    # db.customers.insert_many(customersArr)
+    # print("Dummy Customer data loaded in mongo")
 
 if __name__ == "__main__":
     main()
