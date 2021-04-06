@@ -21,6 +21,5 @@ class RewardsServiceClient:
         return response.json()
     
     def post_customer(self, email, orderTotal):
-        response = requests.get(self.single_customers_url, data=({"email": email, "orderTotal": orderTotal}))
-        print("Get_post_ response: ", response.json)
+        response = requests.post(self.single_customers_url, params=({"email": email, "orderTotal": orderTotal}))
         return response.json()
