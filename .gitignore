@@ -1,2 +1,8 @@
 urbn-env/
 temp.py
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+db/
+*.py[cod]
+*$py.class
