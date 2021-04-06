@@ -22,17 +22,22 @@
         <hr>
     </div>
     <div>
-        <h2>Add orders</h2>
+        <h2>Add Order</h2>
         <form method="POST">
-            <label>Enter email address: </label><input type="text"/><br>
-            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order"/>
+            {% csrf_token %}
+            <label>Enter email address: </label><br>
+            {{ order_form.email }}
+            <br>
+            <label>Enter order total: </label><br>
+            {{ order_form.total }}
+            <button type="submit" class="submit btn btn-default">Submit</button>
         </form>
         <hr>
     </div>
     <div>
         <h2>User Rewards</h2>
-        <form action="/rewards" method="GET">
-            <label>Email address: </label><input id="email" type="text"/>
+        <form action="" method="GET">
+            {{ filter_form.email_filter }}
             <input type="submit" value="Search"/>
         </form>
         <table border="1">
@@ -49,15 +54,21 @@
             </thead>
             <tbody>
                 {% for customer in customers_data %}
-                <tr>
-                    <td>{{ customer.email }}</td>
-                    <td>{{ customer.points }}</td>
-                    <td>{{ customer.tier }}</td>
-                    <td>{{ customer.rewardTierName }}</td>
-                    <td>{{ customer.nextTier }}</td>
-                    <td>{{ customer.nextTierName }}</td>
-                    <td>{{ customer.nextTierProgress }}</td>
-                </tr>
+                    {% if customer.email == "none" %}
+                        <tr>
+                            <td>Sorry, that email was not recognized</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td>{{ customer.email }}</td>
+                            <td>{{ customer.points }}</td>
+                            <td>{{ customer.tier }}</td>
+                            <td>{{ customer.rewardTierName }}</td>
+                            <td>{{ customer.nextTier }}</td>
+                            <td>{{ customer.nextTierName }}</td>
+                            <td>{{ customer.nextTierProgress }}</td>
+                        </tr>
+                    {% endif %}
                 {% endfor %}
             </tbody>
         </table>
