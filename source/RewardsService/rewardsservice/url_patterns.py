@@ -5,6 +5,6 @@ from handlers.all_customers import AllCustomerRequests
 url_patterns = [
     (r'/rewards', RewardsHandler),
     (r'/customers', CustomerOrder), 
-    (r'/customer', CustomerRequest),
+    (r'/customer/(.*)', CustomerRequest),
     (r'/allcustomers', AllCustomerRequests)
 ]
