@@ -8,7 +8,7 @@ from rewards.clients.rewards_service_client import RewardsServiceClient
 
 from django.shortcuts import render
 
-from .forms import OrderForm
+from .forms import OrderForm, SearchForm
 
 class RewardsView(TemplateView):
     template_name = 'index.html'
@@ -17,6 +17,7 @@ class RewardsView(TemplateView):
         self.logger = logger
         self.rewards_service_client = rewards_service_client
 
+    #GET request to get data from MongoDB
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
 
@@ -33,12 +34,23 @@ class RewardsView(TemplateView):
         form=OrderForm()
         context["form"] = form
         
+        search_form = SearchForm(request.GET)
+        if search_form.is_valid():
+            email = search_form.cleaned_data['user_email']
+            search_result = self.rewards_service_client.get_customer_data(email)
+            context['search_result'] = search_result
+
+            print(search_result)
+        search_form = SearchForm()
+        context["search_form"] = search_form
+
         return TemplateResponse(
             request,
             self.template_name,
             context
         )
-    
+
+    #POST request to create validate forms and add data to MongoDB
     def post(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
 
@@ -51,9 +63,10 @@ class RewardsView(TemplateView):
             order = form.cleaned_data['user_order']
 
             post_status = self.rewards_service_client.send_customer_data(email, order)
-            context["order_status"] = "test"
+            #context["order_status"] = "test"
 
-        return HttpResponseRedirect('/rewards/', context)
+        return HttpResponseRedirect('/rewards/')
+
 
 
 
