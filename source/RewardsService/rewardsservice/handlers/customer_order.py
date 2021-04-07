@@ -39,33 +39,33 @@ class CustomerOrder(tornado.web.RequestHandler):
         #greater_vals = rewards_db.rewards.find({"points":{"$lte":total_points}}).distinct("points")
         
         #Calculting the value of the current and next tier 
-        curr_teir_val = (total_points//100)*100
-        next_teir_val = curr_teir_val + 100
+        curr_tier_val = (total_points//100)*100
+        next_tier_val = curr_tier_val + 100
 
-        percentage_next_teir = (total_points%100)/100
+        percentage_next_tier = (total_points % 100)/100
 
         #Special case - assigns N/A to values out of scope
         
-        if curr_teir_val > 1000:
-            cust_dic["reward_teir_name"] = "N/A"
-            cust_dic["reward_teir"] = "N/A"
-            cust_dic["next_reward_teir_name"] = "N/A"
-            cust_dic["next_reward_teir"] = "N/A"
-            cust_dic["next_reward_teir_progress"] = "N/A"
+        if curr_tier_val > 1000:
+            cust_dic["reward_tier_name"] = "N/A"
+            cust_dic["reward_tier"] = "N/A"
+            cust_dic["next_reward_tier_name"] = "N/A"
+            cust_dic["next_reward_tier"] = "N/A"
+            cust_dic["next_reward_tier_progress"] = "N/A"
         else:
-            if curr_teir_val < 100:
-                cust_dic["reward_teir_name"] = "N/A"
-                cust_dic["reward_teir"] = "N/A"
+            if curr_tier_val < 100:
+                cust_dic["reward_tier_name"] = "N/A"
+                cust_dic["reward_tier"] = "N/A"
             else:
                 #Connecting with the Rewards database and getting all the data associated reward points
-                current_teir_dic = rewards_db.rewards.find_one({"points": curr_teir_val})
-                cust_dic["reward_teir"] = current_teir_dic["tier"]
-                cust_dic["reward_teir_name"] = current_teir_dic["rewardName"]
+                current_tier_dic = rewards_db.rewards.find_one({"points": curr_tier_val})
+                cust_dic["reward_tier"] = current_tier_dic["tier"]
+                cust_dic["reward_tier_name"] = current_tier_dic["rewardName"]
 
-            next_teir_dic = rewards_db.rewards.find_one({"points":next_teir_val})
-            cust_dic["next_reward_teir_name"] = next_teir_dic["rewardName"]
-            cust_dic["next_reward_teir"] = next_teir_dic["tier"]
-            cust_dic["next_reward_teir_progress"] = str(percentage_next_teir)
+            next_tier_dic = rewards_db.rewards.find_one({"points":next_tier_val})
+            cust_dic["next_reward_tier_name"] = next_tier_dic["rewardName"]
+            cust_dic["next_reward_tier"] = next_tier_dic["tier"]
+            cust_dic["next_reward_tier_progress"] = str(percentage_next_tier)
 
         #Update the collection on the database
         if cust_flag is False:
