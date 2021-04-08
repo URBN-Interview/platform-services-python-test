@@ -23,9 +23,10 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <form>
-            <label>Enter email address: </label><input type="text"/><br>
-            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order"/>
+        <form action="http://localhost:7050/user_info" method="POST">
+            <label>Enter email address: </label><input name="username" id="username" type="text"/><br>
+            <label>Enter order total: </label><input name="total" id="total" type="text"/>
+            <input type="submit" value="Submit Order"/>
         </form>
         <hr>
     </div>
