@@ -19,6 +19,8 @@ class RewardsView(TemplateView):
         rewards_data = self.rewards_service_client.get_rewards()
         context['rewards_data'] = rewards_data
 
+        
+
         return TemplateResponse(
             request,
             self.template_name,
