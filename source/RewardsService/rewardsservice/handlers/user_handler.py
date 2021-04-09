@@ -75,5 +75,4 @@ class UserHandler(tornado.web.RequestHandler):
         amount_spent = float(amount_spent)
         self.add_to_db(user_email, amount_spent, db)
         rewards = list(db.user_info.find({}, {"_id": 0}))
-        self.write(json.dumps(rewards))
-        # self.redirect("http://localhost:8000/rewards")
+        self.redirect("http://localhost:8000/rewards")
