@@ -32,8 +32,9 @@
     </div>
     <div>
         <h2>User Rewards</h2>
-        <form>
-            <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
+        <form action="http://localhost:7050/retrieve_user_info" method="POST">
+            <label>Email address: </label><input name="username" id="username" type="text"/>
+            <input type="submit" value="Search"/>
         </form>
         <table border="1">
             <thead>

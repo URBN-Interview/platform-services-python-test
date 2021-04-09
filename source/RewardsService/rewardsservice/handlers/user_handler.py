@@ -16,7 +16,6 @@ class UserHandler(tornado.web.RequestHandler):
         #Calculate points tier and search database for tier letter
         points_floor = (rewards_points - (rewards_points % 100))
         document = db.rewards.find_one({"points": points_floor})
-        #null check
         if document is None:
             return None
         #Return appropriate tier letter and reward type
@@ -32,7 +31,6 @@ class UserHandler(tornado.web.RequestHandler):
         #Calculate next points tier and search database for tier letter
         points_cieling = (rewards_points + (100 - (rewards_points % 100)))
         document = db.rewards.find_one({"points": points_cieling})
-        #null check
         if document is None:
             return None
         #Return appropriate tier letter and reward type
@@ -59,7 +57,7 @@ class UserHandler(tornado.web.RequestHandler):
         
 
 
-    #@coroutine    
+    @coroutine    
     def post(self):
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
@@ -68,6 +66,8 @@ class UserHandler(tornado.web.RequestHandler):
         self.add_to_db(user_email, amount_spent, db)
         rewards = list(db.user_info.find({}, {"_id": 0}))
         self.write(json.dumps(rewards))
+        #self.redirect("http://localhost:8000/rewards")
+        
 
     
     
