@@ -13,4 +13,3 @@ class AllUsersRetrieveHandler(tornado.web.RequestHandler):
         db = client["Rewards"]
         all_user_info = list(db.user_info.find({}, {"_id": 0}))
         self.write(json.dumps(all_user_info))
-       

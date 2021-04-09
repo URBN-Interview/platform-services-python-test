@@ -1,4 +1,3 @@
-import json
 import tornado.web
 import math
 import re
@@ -9,16 +8,18 @@ from tornado.gen import coroutine
 
 class UserHandler(tornado.web.RequestHandler):
 
+    # Funciton to verify that email is in the correct format
     def is_email(self, user_email):
         email_regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
         if (re.search(email_regex, user_email)):
             return True
-    
+
+    # Function to verify that dollar amount is in the correct format
     def is_dollar_amount(self, amount_spent):
         dollar_regex = '^[1-9]\d*(\.\d{1,2})?$'
         if (re.search(dollar_regex, amount_spent)):
             return True
-    
+
     def get_current_tier(self, rewards_points, db):
         # Check if customer is in the final tier
         if (rewards_points >= 1000):
@@ -54,10 +55,9 @@ class UserHandler(tornado.web.RequestHandler):
         return (rewards_points % 100) / 100
 
     def add_to_db(self, user_email, amount_spent, db):
-        # TODO remove this next line, find better place to clear the database when new server is loaded
-        db.user_info.remove()
         rewards_points = math.trunc(amount_spent)
         user_progress = self.calculate_percent(rewards_points)
+        current_tier = self.get_current_tier(rewards_points, db)
         current_tier, current_tier_reward = self.get_current_tier(
             rewards_points, db)
         next_tier, next_tier_reward = self.get_next_tier(rewards_points, db)
@@ -69,8 +69,8 @@ class UserHandler(tornado.web.RequestHandler):
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
         amount_spent = self.get_body_argument("total")
-        user_email = self.get_body_argument("username")
-        if (not self.is_email(user_email) or  not self.is_dollar_amount(amount_spent)):
+        user_email = self.get_body_argument("username").lower()
+        if (not self.is_email(user_email) or not self.is_dollar_amount(amount_spent)):
             self.redirect("http://localhost:8000/rewards")
         amount_spent = float(amount_spent)
         self.add_to_db(user_email, amount_spent, db)

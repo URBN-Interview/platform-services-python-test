@@ -24,6 +24,7 @@ class RewardsView(TemplateView):
 
         all_user_data = self.all_user_info_service_client.get_all_user_info()
         context['all_user_data'] = all_user_data
+        
 
         return TemplateResponse(
             request,
