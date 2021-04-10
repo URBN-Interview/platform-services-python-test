@@ -38,9 +38,12 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
         else:
             # Adds the new points to the customer data and updates the entry to reflect the 
             # new total
-            totalpoints = calculateTotalPoints(db, orderTotal, email)
-            updateCustomerPoints(db, email, totalpoints)
+            if (orderTotal):
+                totalpoints = calculateTotalPoints(db, orderTotal, email)
+                updateCustomerPoints(db, email, totalpoints)
+            
             customer = list(db.customers.find({"email":email}, {"_id": 0}))
+            totalpoints= customer[0]['rewardpoints']
             payload = composeCustomerData(
                 customer[0]["email"],
                 totalpoints,
