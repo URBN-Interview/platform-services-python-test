@@ -1,0 +1,5 @@
+/source/RewardsService/data
+/.vscode
+/source/RewardsService/rewardsservice/handlers/__pycache__
+/source/RewardsService/rewardsservice/utils/__pycache__
+/source/RewardsService/rewardsservice/__pycache__
