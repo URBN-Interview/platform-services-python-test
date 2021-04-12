@@ -28,8 +28,8 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
                     totalpoints,
                     calculateCurrentRewardTierName(db,totalpoints),
                     calculateCurrentPointsTier(db,totalpoints),
-                    calculateNextPointsTier(db,totalpoints),
                     calculateNextRewardTierName(db,totalpoints),
+                    calculateNextPointsTier(db,totalpoints),
                     calculateNextRewardTierProgress(db,totalpoints)
                 )
                 payload.append(customerData)

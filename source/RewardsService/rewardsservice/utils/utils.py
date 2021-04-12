@@ -63,12 +63,12 @@ def calculateNextRewardTierProgress(db, totalpoints):
 
 def composeCustomerData(email, rewardpoints, rewardtier, rewardtiername, nextrewardtier, nextrewardtiername,  nextrewardtierprogress):
     customerData = {
-            "Email Address": email,
-            "Reward Points": rewardpoints,
-            "Reward Tier": rewardtier,
-            "Reward Tier Name": rewardtiername,
-            "Next Reward Tier:": nextrewardtier,
-            "Next Reward Tier Name": nextrewardtiername,
-            "Next Reward Tier Progress":nextrewardtierprogress,
+            "EmailAddress": email,
+            "RewardPoints": rewardpoints,
+            "RewardTier": rewardtier,
+            "RewardTierName": rewardtiername,
+            "NextRewardTier": nextrewardtier,
+            "NextRewardTierName": nextrewardtiername,
+            "NextRewardTierProgress":nextrewardtierprogress,
         }
     return customerData

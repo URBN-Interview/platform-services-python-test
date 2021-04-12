@@ -12,6 +12,10 @@ class RewardsServiceClient:
         response = requests.get(self.rewards_url)
         return response.json()
 
+    def get_all_customers(self):
+        response = requests.get(self.customer_rewards_url, params=None)
+        return response.json()
+
     def get_customer_rewards(self):
         parsed = urlparse.urlparse(self.customer_rewards_url)
         email = parse_qs(parsed.query, keep_blank_values=True)['email']
