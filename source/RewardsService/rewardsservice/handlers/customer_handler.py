@@ -3,7 +3,6 @@ from bson import json_util
 import tornado.web
 from tornado.escape import json_decode
 import math
-
 from pymongo import MongoClient, ReturnDocument
 from tornado.gen import coroutine
 
@@ -16,7 +15,8 @@ class CustomerHandler(tornado.web.RequestHandler):
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
         req_data = json_decode(self.request.body)
-        document = db.customers.find_one({"email": req_data["email"]})
+        document = db.customers.find_one(
+            {"email": req_data["email"]}, {"_id": 0})
         # json.dumps would not parse this because it was ObjectId
         self.write(json_util.dumps(document))
 
@@ -47,8 +47,9 @@ class CustomerHandler(tornado.web.RequestHandler):
             "nextTierProgress": None
         }
         if document["points"] < 100:
-            # I am calculating this as progress relative to current level so 100 is 0% to 200 because the user would see different percentages for the same progress as different levels (i should change this later but i will leave the calculation commented out)
-            # maybe i can make this into a visual experience bar on the front which would justify this decision as it would be better for an exp bar to start at 0
+            ###
+            # See Engineering note 1 in log.md
+            ###
             update["nextTierProgress"] = str(
                 document["points"] - (math.floor(document["points"]/100)*100)) + "%"
         elif document["points"] < 1000:
