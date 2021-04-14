@@ -1,4 +1,5 @@
 import json
+from bson import json_util
 import tornado.web
 from tornado.escape import json_decode
 import math
@@ -12,12 +13,14 @@ class CustomerHandler(tornado.web.RequestHandler):
     # this get function will parse the request body that comes from the front end, it will use a handler that will seek the entry in mongoDB and then return the result
     @coroutine
     def get(self):
-        # client = MongoClient("mongodb", 27017)
-        # db = client["Rewards"]
-        req_data = self.request.body
-        string = req_data.decode('utf-8')
-        self.write(json.dumps(string[5:]))
+        client = MongoClient("mongodb", 27017)
+        db = client["Rewards"]
+        req_data = json_decode(self.request.body)
+        document = db.customers.find_one({"email": req_data["email"]})
+        # json.dumps would not parse this because it was ObjectId
+        self.write(json_util.dumps(document))
 
+    @coroutine
     def post(self):
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
