@@ -17,6 +17,7 @@ class App(tornado.web.Application):
 
         tornado.web.Application.__init__(self, urls, **settings)
 
+
 app = App(url_patterns)
 
 
@@ -26,7 +27,8 @@ def main():
     http_server = tornado.httpserver.HTTPServer(app, xheaders=True)
     http_server.listen(options.port)
 
-    logger.info('Tornado server started on port {}'.format(options.port))
+    logger.info(
+        'Tornado server has been started at {}'.format(options.port))
 
     try:
         tornado.ioloop.IOLoop.instance().start()
