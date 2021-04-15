@@ -2,10 +2,19 @@
 from pymongo import MongoClient
 
 
-def main():
-    client = MongoClient("mongodb", 27017)
-    db = client["Rewards"]
+def generate_rewards(db):
+    print("Removing and reloading customers in mongo")
+    db.customers.remove()
+    db.customers.insert(
+        {"emailAddress": "christian.lomboy@icloud.com", "points": 100, "tier": "A", "rewardName": "5% off purchase",
+         "nextTier": "B", "nextRewardName": "10% off purchase", "nextTierProgress": 0.5})
+    db.customers.insert(
+        {"emailAddress": "john.appleseed@icloud.com", "points": 300, "tier": "C", "rewardName": "15% off purchase",
+         "nextTier": "D", "nextRewardName": "20% off purchase", "nextTierProgress": 0.7})
+    print("Customers loaded in mongo")
 
+
+def generate_customers(db):
     print("Removing and reloading rewards in mongo")
     db.rewards.remove()
     db.rewards.insert({"points": 100, "rewardName": "5% off purchase", "tier": "A"})
@@ -19,6 +28,15 @@ def main():
     db.rewards.insert({"points": 900, "rewardName": "45% off purchase", "tier": "I"})
     db.rewards.insert({"points": 1000, "rewardName": "50% off purchase", "tier": "J"})
     print("Rewards loaded in mongo")
+
+
+def main():
+    client = MongoClient("mongodb", 27017)
+    db = client["Rewards"]
+
+    generate_rewards(db)
+    generate_customers(db)
+
 
 if __name__ == "__main__":
     main()
