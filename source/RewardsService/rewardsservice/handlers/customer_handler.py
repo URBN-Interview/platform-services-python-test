@@ -12,16 +12,19 @@ class CustomerHandler(tornado.web.RequestHandler):
     # this get function will parse the request body that comes from the front end, it will use a handler that will seek the entry in mongoDB and then return the result
     @coroutine
     def get(self):
+        print(self.request.body)
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
         req_data = json_decode(self.request.body)
         document = db.customers.find_one(
             {"email": req_data["email"]}, {"_id": 0})
         # json.dumps would not parse this because it was ObjectId
-        self.write(json_util.dumps(document))
+        # switched this back to json from json_utils because i forced it into an array so that django can iterate through it in the html doc
+        self.write(json.dumps([document]))
 
     @coroutine
     def post(self):
+        print(self.request.body)
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
         req_data = json_decode(self.request.body)

@@ -24,11 +24,8 @@ customerPost = {
 ThankYouString = "Thank you for your purchase mickannese@gmail.com!!!!! Your new point total is 551 points!!!"
 
 
-# GET /admin with input JSON object
+# GET /admin response array of objects:
 
-adminBody = {
-    "email": "mickannese@gmail.com",
-}
 
 # response array of objects:
 
