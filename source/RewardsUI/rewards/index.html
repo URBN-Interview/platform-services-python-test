@@ -31,12 +31,27 @@
             </table>
         </div>
         <div id="add-orders-panel">
-            <form action="/rewards/" method="POST" id="new-purchase-form">
-                <h2>Add orders</h2>
-                {% csrf_token %}
-                {{ new_purchase_form}}
-                <input type="submit" value="Submit" id="submit-new-purchase">
-            </form>
+            <div>
+                <form action="/rewards/" method="POST" id="new-purchase-form">
+                    <h2>Add orders</h2>
+                    {% csrf_token %}
+                    {{ new_purchase_form}}
+                    <input type="submit" value="Submit" id="submit-new-purchase">
+                </form>
+                <div id="chatter-box">
+                    {% if last_email %}
+                    <div id="last-email">
+                        {% csrf_token %}
+                        {{last_points}} points added to {{last_email}}
+                    </div>
+                    {% elif error_text %}
+                    <div id="error-text">
+                        {{error_text}}
+                    </div>
+                    {% endif %}
+                </div>
+
+            </div>
         </div>
         <div id="user-container-panel">
             <!-- this logic looks ugly but my linter prefers it that way at this time -->

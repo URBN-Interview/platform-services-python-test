@@ -1,4 +1,5 @@
 import logging
+import math
 
 from django.template.response import TemplateResponse
 from django.views.generic.base import TemplateView
@@ -36,6 +37,8 @@ class RewardsView(TemplateView):
             customer_data = self.customer_rewards_client.get_one(reqObj)
             context['customer_data'] = customer_data
             context['new_customer_data'] = customer_data
+            if customer_data[0]['email'] == 'Invalid Email':
+                context['error_text'] = 'The email you submitted was not in the database'
 
         return TemplateResponse(
             request,
@@ -54,12 +57,13 @@ class RewardsView(TemplateView):
                 # update database
                 context['new_customer_data'] = [
                     self.customer_rewards_client.update_record(updateObj)]
-
                 context = self.updateContext(context)
-
+                context['last_email'] = form.cleaned_data['email']
+                context['last_points'] = math.floor(form.cleaned_data['order'])
             # handle bad form
             else:
                 context = self.updateContext(context)
+                context['error_text'] = "The form you submitted was invalid"
 
             return TemplateResponse(
                 request,
