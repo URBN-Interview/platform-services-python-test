@@ -45,6 +45,13 @@
 
  - created user interface, emulating a dashboard that some could use to interact regularly with the rewards database
  - a section reponds to POST and search requests with an easy to read card that shows core information, this can be clicked to make it disappear (as a means of privacy of customer information on a screen)
+ - added system dialogue to provide explanation for reload (bad form, bad email)
+
+# Feature possibilities
+
+- email customer their total
+- undo add a sale
+- daily cache to review and rollback activity
 
 
 # Tornado Links
