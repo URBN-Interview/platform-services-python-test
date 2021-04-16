@@ -16,15 +16,19 @@ class RewardsView(TemplateView):
         self.rewards_service_client = rewards_service_client
         self.customer_rewards_client = customer_rewards_client
 
+    def updateContext(self, context):
+        rewards_data = self.rewards_service_client.get_rewards()
+        context['rewards_data'] = rewards_data
+        customer_data = self.customer_rewards_client.get_all()
+        context['customer_data'] = customer_data
+        context['new_purchase_form'] = NewPurchaseForm()
+        context['email_lookup_form'] = EmailLookupForm()
+        return context
+
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
 
-        rewards_data = self.rewards_service_client.get_rewards()
-        context['rewards_data'] = rewards_data
-        context['new_purchase_form'] = NewPurchaseForm()
-        context['email_lookup_form'] = EmailLookupForm()
-        customer_data = self.customer_rewards_client.get_all()
-        context['customer_data'] = customer_data
+        context = self.updateContext(context)
 
         if request.GET:
             reqStr = request.GET['email'].replace('%40', '@')
@@ -51,13 +55,11 @@ class RewardsView(TemplateView):
                 context['new_customer_data'] = [
                     self.customer_rewards_client.update_record(updateObj)]
 
-                # request updated information -> adding a note to engineering log about this
-                rewards_data = self.rewards_service_client.get_rewards()
-                context['rewards_data'] = rewards_data
-                customer_data = self.customer_rewards_client.get_all()
-                context['customer_data'] = customer_data
-                context['new_purchase_form'] = NewPurchaseForm()
-                context['email_lookup_form'] = EmailLookupForm()
+                context = self.updateContext(context)
+
+            # handle bad form
+            else:
+                context = self.updateContext(context)
 
             return TemplateResponse(
                 request,

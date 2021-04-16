@@ -5,6 +5,7 @@ from tornado.escape import json_decode
 import math
 from pymongo import MongoClient, ReturnDocument
 from tornado.gen import coroutine
+from handlers.handler_util import processDocument
 
 
 class CustomerHandler(tornado.web.RequestHandler):
@@ -17,7 +18,18 @@ class CustomerHandler(tornado.web.RequestHandler):
         req_data = json_decode(self.request.body)
         document = db.customers.find_one(
             {"email": req_data["email"]}, {"_id": 0})
-        # see engineering notes on this
+
+        # handle bad lookup
+        if not document:
+            document = {
+                "email": "Invalid Email",
+                "points": "N/A",
+                "tier": "N/A",
+                "rewardName": "N/A",
+                "nextTier": "N/A",
+                "nextTierRewardName": "N/A",
+                "nextTierProgress": "N/A"
+            }
         self.write(json.dumps([document]))
 
     @coroutine
@@ -38,33 +50,7 @@ class CustomerHandler(tornado.web.RequestHandler):
         RelevantTiers = list(db.rewards.find(
             {"points": {"$gte": CurrentLevel}}))
 
-        # create update object for rewards information
-        update = {
-            "tier": None,
-            "rewardName": None,
-            "nextTier": "A",
-            "nextTierRewardName": "5% off purchase",
-            "nextTierProgress": None
-        }
-        if document["points"] < 100:
-            ###
-            # See Engineering note 1 in log.md
-            ###
-            update["nextTierProgress"] = str(
-                document["points"] - (math.floor(document["points"]/100)*100)) + "%"
-        elif document["points"] < 1000:
-            update["tier"] = RelevantTiers[0]["tier"]
-            update["rewardName"] = RelevantTiers[0]["rewardName"]
-            update["nextTier"] = RelevantTiers[1]["tier"]
-            update["nextTierRewardName"] = RelevantTiers[1]["rewardName"]
-            update["nextTierProgress"] = str(
-                document["points"] - (math.floor(document["points"]/100)*100)) + "%"
-        else:
-            update["tier"] = "J"
-            update["rewardName"] = "50% off purchase"
-            update["nextTier"] = "Top Tier!!!"
-            update["nextTierRewardName"] = "Top Tier!!!"
-            update["nextTierProgress"] = "100%"
+        update = processDocument(document, RelevantTiers)
 
         # finally we update the record with these calculated details
 
@@ -72,10 +58,5 @@ class CustomerHandler(tornado.web.RequestHandler):
             {"email": req_data["email"]},
             {"$set": update},
             return_document=ReturnDocument.AFTER)
-
-        # thankYouMessage = "Thank you for your purchase " + \
-        #     fullDocument["email"] + \
-        #     "!!!!! Your new point total is " + \
-        #     str(fullDocument["points"]) + " points!!!"
 
         self.write(json_util.dumps(fullDocument))
