@@ -1,54 +1,75 @@
 <html>
 
 <head>
+    {% load static %}
+    <link rel="stylesheet" href="{%  static  'css/style.css'  %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 
 <body>
-    <h1>Welcome to the Rewards Dashboard</h1>
-    <div>
-        <h2>Reward Tiers</h2>
-        <table border="1">
-            <tr>
-                <th>Rewards Tier
-                <th>
-                <th>Reward Points</th>
-                <th>Rewards Tier Name</th>
-            </tr>
-            {% for reward in rewards_data %}
-            <tr>
-                <td>{{ reward.tier }}
-                <td>
-                <td>{{ reward.points }}</td>
-                <td>{{ reward.rewardName }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-        <hr>
+    <div id="header-container">
+        <h1>Welcome to the Rewards Dashboard</h1>
     </div>
-    <div>
-        <h2>Add orders</h2>
-        <form action="/rewards/" method="POST">
-            {% csrf_token %}
-            {{ new_purchase_form}}
-            <input type="submit" value="Submit Order">
-        </form>
-        <!-- <form>
-            <label>Enter email address: </label><input type="text" name="email"/><br>
-            <label>Enter order total: </label><input type="text" name="cost"/><input type="button" value="Submit Order" />
-        </form> -->
-        <hr>
+    <div id="top-console">
+        <div id="rewards-tier-panel">
+            <h2>Reward Tiers</h2>
+            <table border="1">
+                <tr>
+                    <th>Rewards Tier
+                    <th>
+                    <th>Reward Points</th>
+                    <th>Rewards Tier Name</th>
+                </tr>
+                {% for reward in rewards_data %}
+                <tr>
+                    <td>{{ reward.tier }}
+                    <td>
+                    <td>{{ reward.points }}</td>
+                    <td>{{ reward.rewardName }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div id="add-orders-panel">
+            <form action="/rewards/" method="POST" id="new-purchase-form">
+                <h2>Add orders</h2>
+                {% csrf_token %}
+                {{ new_purchase_form}}
+                <input type="submit" value="Submit" id="submit-new-purchase">
+            </form>
+        </div>
+        <div id="user-container-panel">
+            <!-- this logic looks ugly but my linter prefers it that way at this time -->
+            <div id="user-info-container">
+                <div id="c-data-box">
+                    {% if new_customer_data %} <div>
+                        {% for customer in new_customer_data %}
+                        <p>Email Address: {{customer.email}}</p>
+                        <p>Point Total: {{ customer.points }}</p>
+                        <p>Current Tier: {{ customer.tier }}</p>
+                        <p>Current Reward {{ customer.rewardName }}</p>
+                        <p>Next Tier: {{ customer.nextTier }}</p>
+                        <p>Next Tier Reward: {{ customer.nextTierRewardName }}</p>
+                        <p>Progress To Next Tier: {{customer.nextTierProgress}}</p>
+                        <p class="focus-text">Click this window to close it</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div id="user-rewards-container">
+                <h2>User Rewards Lookup</h2>
+                <form action='/rewards/' method="GET">
+                    {{email_lookup_form}}
+                    <input type="submit" value="Search" />
+                </form>
+                <form action="/rewards/">
+                    <input type="submit" value="Reset Page" />
+                </form>
+            </div>
+        </div>
     </div>
-    <div>
-        <h2>User Rewards</h2>
-        <form action='/rewards/' method="GET">
-            <!-- <label>Email address: </label><input type="text" /> -->
-            {{email_lookup_form}}
-            <input type="button" value="Search" />
-        </form>
-        <form action="/rewards/">
-            <input type="submit" value="View All" />
-        </form>
-
+    <div id="rewards-list-panel">
         <table border="1">
             <thead>
                 <tr>
@@ -76,6 +97,11 @@
             </tbody>
         </table>
     </div>
+    <script>
+        $('#c-data-box').on('click', function () {
+            $('#c-data-box').css('opacity', 0);
+        });
+    </script>
 </body>
 
 </html>

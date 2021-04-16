@@ -31,6 +31,7 @@ class RewardsView(TemplateView):
             reqObj = {'email': reqStr}
             customer_data = self.customer_rewards_client.get_one(reqObj)
             context['customer_data'] = customer_data
+            context['new_customer_data'] = customer_data
 
         return TemplateResponse(
             request,
@@ -47,7 +48,8 @@ class RewardsView(TemplateView):
                              "cost": form.cleaned_data['order']}
 
                 # update database
-                self.customer_rewards_client.update_record(updateObj)
+                context['new_customer_data'] = [
+                    self.customer_rewards_client.update_record(updateObj)]
 
                 # request updated information -> adding a note to engineering log about this
                 rewards_data = self.rewards_service_client.get_rewards()

@@ -32,16 +32,19 @@
 
 **4** POST request endpoint return
 
-  - In its current form, the post request returns a string that shares the most recent updated points for the customer that was updated
-  - the post request on the view makes another request to the database to get the newest information
-  - At scale, if the desired user experience is that the page refreshes after updating this information, we could make it so the endpoint returns a fully updated output of the database
-  - this would minimize the amount of requests to the db, BUT the ideal experience may also be to be able to prevent default on this field and not rerender automatically
+  - thought we could make it so the endpoint returns a fully updated output of the database would minimize the amount of requests to the db, BUT the ideal experience may also be to be able to prevent default on this field and not rerender automatically
   - in-person example of this is if an employee was bulk adding transactions at the end of the day or a customer brought in receipts after the fact and wanted to add their transactions to their account, it would take a really long time to reload the whole customer list on render every time you submit
+  - going to return the customers updated data instead and display it on the page
 
 **5** datatype on get method in the customer handlers
 
   - intiially had to switch this to json_utils to send a single ObjectId object through the response
   - switched it back to json so that i could force the document into an array so that Django can iterate through it in the html doc
+
+**6** Interface
+
+ - created user interface, emulating a dashboard that some could use to interact regularly with the rewards database
+ - a section reponds to POST and search requests with an easy to read card that shows core information, this can be clicked to make it disappear (as a means of privacy of customer information on a screen)
 
 
 # Tornado Links

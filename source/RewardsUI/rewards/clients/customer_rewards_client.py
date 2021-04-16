@@ -18,4 +18,5 @@ class CustomerRewardsClient:
         return response.json()
 
     def update_record(self, data):
-        requests.post(self.customers_url, json=data)
+        response = requests.post(self.customers_url, json=data)
+        return response.json()

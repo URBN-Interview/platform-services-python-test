@@ -12,19 +12,16 @@ class CustomerHandler(tornado.web.RequestHandler):
     # this get function will parse the request body that comes from the front end, it will use a handler that will seek the entry in mongoDB and then return the result
     @coroutine
     def get(self):
-        print(self.request.body)
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
         req_data = json_decode(self.request.body)
         document = db.customers.find_one(
             {"email": req_data["email"]}, {"_id": 0})
-        # json.dumps would not parse this because it was ObjectId
-        # switched this back to json from json_utils because i forced it into an array so that django can iterate through it in the html doc
+        # see engineering notes on this
         self.write(json.dumps([document]))
 
     @coroutine
     def post(self):
-        print(self.request.body)
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
         req_data = json_decode(self.request.body)
@@ -65,8 +62,8 @@ class CustomerHandler(tornado.web.RequestHandler):
         else:
             update["tier"] = "J"
             update["rewardName"] = "50% off purchase"
-            update["nextTier"] = "You have reached the highest tier!!! You're my hero!!!"
-            update["nextTierRewardName"] = "You have the highest rewards tier at 50% off!!!"
+            update["nextTier"] = "Top Tier!!!"
+            update["nextTierRewardName"] = "Top Tier!!!"
             update["nextTierProgress"] = "100%"
 
         # finally we update the record with these calculated details
@@ -76,8 +73,9 @@ class CustomerHandler(tornado.web.RequestHandler):
             {"$set": update},
             return_document=ReturnDocument.AFTER)
 
-        thankYouMessage = "Thank you for your purchase " + \
-            fullDocument["email"] + \
-            "!!!!! Your new point total is " + \
-            str(fullDocument["points"]) + " points!!!"
-        self.write(thankYouMessage)
+        # thankYouMessage = "Thank you for your purchase " + \
+        #     fullDocument["email"] + \
+        #     "!!!!! Your new point total is " + \
+        #     str(fullDocument["points"]) + " points!!!"
+
+        self.write(json_util.dumps(fullDocument))
