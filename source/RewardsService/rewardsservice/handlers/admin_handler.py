@@ -10,5 +10,6 @@ class AdminHandler(tornado.web.RequestHandler):
     def get(self):
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
-        resObject = list(db.customers.find({}, {"_id": 0}))
+        resObject = list(db.customers.find({}, {"_id": 0}).sort(
+            "points", -1))
         self.write(json.dumps(resObject))
