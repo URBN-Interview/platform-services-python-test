@@ -6,10 +6,10 @@ def generate_rewards(db):
     print("Removing and reloading customers in mongo")
     db.customers.remove()
     db.customers.insert(
-        {"emailAddress": "christian.lomboy@icloud.com", "points": 100, "tier": "A", "rewardName": "5% off purchase",
+        {"emailAddress": "christian.lomboy@icloud.com", "points": 150, "tier": "A", "rewardName": "5% off purchase",
          "nextTier": "B", "nextRewardName": "10% off purchase", "nextTierProgress": 0.5})
     db.customers.insert(
-        {"emailAddress": "john.appleseed@icloud.com", "points": 300, "tier": "C", "rewardName": "15% off purchase",
+        {"emailAddress": "john.appleseed@icloud.com", "points": 370, "tier": "C", "rewardName": "15% off purchase",
          "nextTier": "D", "nextRewardName": "20% off purchase", "nextTierProgress": 0.7})
     print("Customers loaded in mongo")
 
