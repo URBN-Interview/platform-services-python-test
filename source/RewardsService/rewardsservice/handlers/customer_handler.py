@@ -25,7 +25,13 @@ class CustomerHandler(tornado.web.RequestHandler):
                 client = MongoClient("mongodb", 27017)
                 db = client["Rewards"]
                 customer_data = list(db.customers.find({"emailAddress": email_address}, {"_id": 0}))
-                self.write(json.dumps(customer_data))
+
+                # check if customer exists in DB, show error if not
+                existing_customer = True if len(list(customer_data)) else False
+                if existing_customer:
+                    self.write(json.dumps(customer_data))
+                else:
+                    logger.error("Customer %s not found", email_address)
 
             except Exception as e:
                 logger.error("Can't connect to server. Exception: %s", e)
