@@ -1,7 +1,9 @@
 from handlers.rewards_handler import RewardsHandler
-from handlers.customers_handler import CustomersHandler
+from handlers.order_handler import OrderHandler
+from handlers.customer_handler import CustomerHandler
 
 url_patterns = [
     (r'/rewards', RewardsHandler),
-    (r'/customers', CustomersHandler)
+    (r'/order', OrderHandler),
+    (r'/customer', CustomerHandler)
 ]

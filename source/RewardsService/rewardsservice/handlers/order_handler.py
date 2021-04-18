@@ -8,13 +8,13 @@ from pymongo import MongoClient
 from tornado.gen import coroutine
 
 
-class CustomersHandler(tornado.web.RequestHandler):
+class OrderHandler(tornado.web.RequestHandler):
 
     @coroutine
     def get(self):
 
         logger = logging.getLogger()
-        logger.info("/customers endpoint hit")
+        logger.info("/order endpoint hit")
 
         email_address = self.get_argument("emailAddress")
         order_total = float(self.get_argument("orderTotal"))
