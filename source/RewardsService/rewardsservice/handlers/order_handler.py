@@ -3,6 +3,7 @@ import math
 
 import tornado.web
 from pymongo import MongoClient
+from tornado.escape import json_decode
 from tornado.gen import coroutine
 from tornado.web import MissingArgumentError
 
@@ -10,15 +11,16 @@ from tornado.web import MissingArgumentError
 class OrderHandler(tornado.web.RequestHandler):
 
     @coroutine
-    def get(self):
+    def post(self):
         # set up logging
         logger = logging.getLogger()
         logger.info("/order endpoint hit")
 
         # try to retrieve email query param, throw MissingArgumentError if unable to
         try:
-            email_address = self.get_argument("emailAddress")
-            order_total = float(self.get_argument("orderTotal"))
+            request = json_decode(self.request.body)
+            email_address = request['emailAddress']
+            order_total = request['orderTotal']
 
             # calculate points earned from order total
             points_earned = math.floor(order_total)
@@ -28,14 +30,13 @@ class OrderHandler(tornado.web.RequestHandler):
             try:
                 client = MongoClient("mongodb", 27017)
                 db = client["Rewards"]
-
-                old_points = db.customers.find_one({"emailAddress": email_address})["points"]
-
-                # check if customer already exists, set old_points to 0 if they don't (create new record)
-                existing_customer = True if len(list(old_points)) else False
-                if not existing_customer:
-                    logger.info("customer with email %s not yet in DB, creating...", email_address)
+                logger.info("connected to DB.")
+                try:
+                    old_points = db.customers.find_one({"emailAddress": email_address})["points"]
+                    logger.info("found customer")
+                except Exception as e:
                     old_points = 0
+                    logger.info("customer with email %s not yet in DB, creating...", email_address)
 
                 # check if customer has reached max points, if so - don't add any more points
                 if old_points < 1000:
