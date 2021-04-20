@@ -17,14 +17,16 @@ class updateCustomer(tornado.web.RequestHandler):
         user = db.find({"email": email})
         totalPoints = 0
         if(user):
-            currentPoints = user["points"]
+            currentPoints = user["rewardPoints"]
             totalPoints = math.floor(orderTotal) + currentPoints
-            db.Customer.update({"$set": {"points": totalPoints}})
+            db.Customer.update({"$set": {"rewardPoints": totalPoints}})
         else:
             totalPoints = math.floor(orderTotal)
             db.Customer.insert({email: email, points: math.floor(orderTotal)})
 
-        rewards = {
+        updatedUser = {
+            "email": email,
+            "rewardPoints": totalPoints,
             "tier": "",
             "tierName": "",
             "nextTier": "",
@@ -33,26 +35,31 @@ class updateCustomer(tornado.web.RequestHandler):
         }
 
         if(totalPoints > 1000):
-            rewards["tier"] = "J"
-            rewards["tierName"] = "50% off purchase"
-            rewards["nextIter"] = "N/A"
-            rewards["nextTierName"] = "N/A"
-            rewards["progress"] = "N/A"
+            updatedUser["tier"] = "J"
+            updatedUser["tierName"] = "50% off purchase"
+            updatedUser["nextIter"] = "N/A"
+            updatedUser["nextTierName"] = "N/A"
+            updatedUser["progress"] = "N/A"
 
         elif(totalPoints < 100):
-            rewards["tier"] = "N/A"
-            rewards["tierName"] = "N/A"
-            rewards["nextIter"] = "A"
-            rewards["nextTierName"] = "5% off purchase"
-            rewards["progress"] = str((100-totalPoints/100))*100 + "%")
+            updatedUser["tier"] = "N/A"
+            updatedUser["tierName"] = "N/A"
+            updatedUser["nextIter"] = "A"
+            updatedUser["nextTierName"] = "5% off purchase"
+            updatedUser["progress"] = str((totalPoints % 100)/100)+"%"
 
         else:
-            dbRewards=client["Rewards"]
+            dbupdatedUser = client["updatedUser"]
             # Finding flooredPoints to find equivalent points in 100s to find appropriate category
-            flooredPoints=(totalPoints//100)*100
-            currentData=dbRewards.rewards.find({points: flooredPoints})
-            rewards["tier"]=currentData["tier"]
-            rewards["tierName"]=currentData["tierName"]
-            rewards["nextTier"]=currentData["nextTier"]
-            rewards["nextTierName"]=currentData["nextTierName"]
-            rewards["progress"]=str((100-totalPoints/100))*100 + "%")
+            flooredPoints = (totalPoints//100)*100
+            currentData = dbupdatedUser.updatedUser.find(
+                {points: flooredPoints})
+            updatedUser["tier"] = currentData["tier"]
+            updatedUser["tierName"] = currentData["tierName"]
+            updatedUser["nextTier"] = currentData["nextTier"]
+            updatedUser["nextTierName"] = currentData["nextTierName"]
+            updatedUser["progress"] = (100-totalPoints/100)
+
+        db.Customer.update({'email': email}, updatedUser, {upsert: True})
+        print("Updated")
+        # self.write("Updated")
