@@ -27,6 +27,6 @@ services:
   init_data:
     build: .
     image: rewardsservice
-    command: python load_mongo_data.py
+    command: python3 load_mongo_data.py
     depends_on:
       - rewardsservice

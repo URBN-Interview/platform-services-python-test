@@ -2,4 +2,5 @@ from django.apps import AppConfig
 
 
 class RewardsuiConfig(AppConfig):
-    name = 'rewardsui'
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'rewards'

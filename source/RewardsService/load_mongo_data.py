@@ -1,11 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from pymongo import MongoClient
 
 
 def main():
     client = MongoClient("mongodb", 27017)
     db = client["Rewards"]
-
     print("Removing and reloading rewards in mongo")
     db.rewards.remove()
     db.rewards.insert({"points": 100, "rewardName": "5% off purchase", "tier": "A"})
@@ -19,6 +18,7 @@ def main():
     db.rewards.insert({"points": 900, "rewardName": "45% off purchase", "tier": "I"})
     db.rewards.insert({"points": 1000, "rewardName": "50% off purchase", "tier": "J"})
     print("Rewards loaded in mongo")
+
 
 if __name__ == "__main__":
     main()
