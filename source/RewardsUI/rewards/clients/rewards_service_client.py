@@ -1,6 +1,5 @@
 import requests
 
-
 class RewardsServiceClient:
 
     def __init__(self):
