@@ -24,3 +24,8 @@ class RewardsView(TemplateView):
             self.template_name,
             context
         )
+
+# def index(request):
+#         return render(request, "network/index.html", {
+
+#     })
