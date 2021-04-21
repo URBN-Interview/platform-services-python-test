@@ -52,33 +52,26 @@ class MyFormHandler(tornado.web.RequestHandler):
 	
     def post(self):
         
-        customer_submitteddata= {"email": self.get_body_argument("email"),"OrderTotal":self.get_body_argument("ordertotal") } #for Endpoint 1 requirement 3
+        customer_data= {"email": self.get_body_argument("email"),"OrderTotal":self.get_body_argument("ordertotal") } #for Endpoint 1 requirement 3
     
-        customer_fulldata=[] #making an empty list 
-        customer_fulldata.append(customer_submitteddata.copy()) #storing dict into list 
-       
-
         client = MongoClient("mongodb",27017)
         db = client["Rewards"]
-        querycustomerrewards= list(db.rewards.find( { "points": self.customer_rewardcalc(self.get_body_argument("ordertotal"))}, { "tier" : 1, "rewardName" : 1, "_id":0 } ))#for Endpoint 1 requirement 4
-        self.write(dumps((self.customer_rewardcalc(self.get_body_argument("ordertotal")))))
-        self.write('<br>')
-
-        customer_fulldata.append(querycustomerrewards) #storing into list 
-        querryfuturerewards=  list(db.rewards.find( { "points": self.customer_rewardcalc(self.get_body_argument("ordertotal"))*1000}, { "tier" : 1, "rewardName" : 1, "_id":0 } )) #for Endpoint 1 requirement 5,6,7
-        self.write(dumps(self.customer_rewardcalc(self.get_body_argument("ordertotal"))+100))
-
-
-        customer_fulldata.append(querryfuturerewards)
+        querycustomerrewards= db.rewards.find( { "points": self.customer_rewardcalc(self.get_body_argument("ordertotal"))}, { "tier" : 1, "rewardName" : 1, "_id":0 } )#for Endpoint 1 requirement 4
+        for x in  querycustomerrewards: 
+            customer_data.update(x)
+        querryfuturerewards = db.rewards.find( { "points": self.customer_rewardcalc(self.get_body_argument("ordertotal"))+ 100}, { "tier" : 1, "rewardName" : 1, "_id":0 } )
+        temp={}  #storing  this query in a temporary dict to extract the data
+        for x in  querryfuturerewards: 
+            temp.update(x)
+        futurerewards=  { "NextPoints": (self.customer_rewardcalc(self.get_body_argument("ordertotal"))+100),  "NextTier" : temp["tier"], "NextRewardName" : temp["rewardName"]}   #append the temporary data into our customer collection
+        customer_data.update(futurerewards)
         customer_PercentProgress = {"NextTierProgress": self.customer_RewardProgress(self.get_body_argument("ordertotal"))} #for Endpoint 1 requirement 8
-        customer_fulldata.append(customer_PercentProgress.copy())
-        self.write('<br>')
-        self.write(dumps(self.customer_RewardProgress(self.get_body_argument("ordertotal"))))
-        #self.write(dumps(customer_fulldata))
+        customer_data.update(customer_PercentProgress)
 
-
-
-        #mongoinsert = db.customer.insert(customer_dict)
-        #mongoretrieve = list(db.customer.find({}, {"_id": 0}))
-        #self.write(json.dumps(mongoretrieve))
+        self.write(dumps(customer_data))
+        self.write("<br>")
+        self.write("<br>")
+        mongoinsert = db.customer.insert_one(customer_data)
+        mongoretrieve = list(db.customer.find({}, {"_id": 0}))
+        self.write(json.dumps(mongoretrieve))
 
