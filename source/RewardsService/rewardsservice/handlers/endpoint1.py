@@ -7,24 +7,34 @@ from tornado.gen import coroutine
 
 # accept customer email and order total
 class Endpoint1(tornado.web.RequestHandler):
-    # def get(self):
-    #     # get all rewards
-    #     client = MongoClient("mongodb", 27017)
-    #     db = client["Rewards"]
-    #     rewards = list(db.rewards.find({}, {"_id": 0}))
-    #     self.write(json.dumps(rewards))
-    
     @coroutine
     def post(self, email, order_total):
         client = MongoClient("mongodb", 27017)
 
+        # grab all rewards
+        db = client["Rewards"]
+        rewards = list(db.rewards.find({}, {"_id": 0}))
+        
+        # create user collection if its not already there
+        if 'users' in db.list_collection_names():
+            pass
+        else:
+            db.create_collection('users')
+            # db.createCollection( <users>,
+            # {
+            #     "email": <string>, 
+            #     "rewardPoints": <number>, 
+            #     "rewardTier": <string>,
+            #     "rewardTierName": <string>,
+            #     "nextRewardTier": <string>,
+            #     "nextRewardTierName": <string>,
+            #     "nextRewardTierProgress": <float>
+            # })
+
         # grab all users
-        db = client["Users"]
+        new_column = db["Users"]
         users = list(db.users.find({}, {"_id": 0}))
 
-        # grab all rewards
-        db2 = client["Rewards"]
-        rewards = list(db.rewards.find({}, {"_id": 0}))
 
         # if user list not empty
             # code goes here
@@ -76,6 +86,7 @@ class Endpoint1(tornado.web.RequestHandler):
             "nextRewardTierName": next_reward_tier_name,
             "nextRewardTierProgress": next_reward_tier_progress
             })
+        self.write(json.dumps(users))
 
     def existing_user(self, email, reward_points, rewards, users):
         for reward in rewards:
@@ -109,3 +120,4 @@ class Endpoint1(tornado.web.RequestHandler):
             "nextRewardTierName": next_reward_tier_name,
             "nextRewardTierProgress": next_reward_tier_progress
             })
+        self.write(json.dumps(users))

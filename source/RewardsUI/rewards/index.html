@@ -23,7 +23,7 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <form action="{% url 'add_order' email=email order_total=order_total %}" method=post>
+        <form action="{% url 'add_order' %}" method=post>
             {% csrf_token %}
             <label>Enter email address: </label><input name="email" type="email" required/><br>
             <label>Enter order total: </label><input name="order_total" type="number" required/>
