@@ -7,5 +7,5 @@ url_patterns = [
     (r'/rewards', RewardsHandler),
     (r'/endpoint1', Endpoint1),
     # (r'/endpoint2', Endpoint2),
-    (r'/endpoint3', Endpoint3),
+    (r'/endpoint3', Endpoint3)
 ]
