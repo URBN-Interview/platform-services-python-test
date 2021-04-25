@@ -7,9 +7,6 @@ from tornado.gen import coroutine
 
 # accept customer email and order total
 class Endpoint1(tornado.web.RequestHandler):
-    # __init__(self, params=None)
-    #     self.params=params
-
     @coroutine
     def post(self):
         client = MongoClient("mongodb", 27017)
@@ -27,24 +24,21 @@ class Endpoint1(tornado.web.RequestHandler):
         # grab all users
         users = list(db.users.find({}, {"_id": 0}))
 
-
+        # get email and order_total
         email = self.get_body_argument('email')
         order_total = self.get_body_argument('order_total')
         order_total = float(order_total)
 
-        # check if user is in db, if so get their reward points total
+        # check if user is in db, if so get their reward points total. else create new user
         user_emails = [user['email'] for user in users]
         if email in user_emails:
             for user in users:
                 for key in user:
                     if user['email'] == email: 
-                        # return self.write(json.dumps(user))
-                        # user_email = user['email']
                         prev_reward_points = user['rewardPoints']
                         reward_points = math.floor(order_total)
                         reward_total = prev_reward_points + reward_points
             self.existing_user(email, reward_total, rewards, users, db)
-            # else if user doesnt exist in db continue with below
         else:
             reward_points = math.floor(order_total)
             self.new_user(email, reward_points, rewards, users, db)
@@ -92,7 +86,8 @@ class Endpoint1(tornado.web.RequestHandler):
                         })
                         break
                 break
-
+    
+    # existing user code
     def existing_user(self, email, reward_points, rewards, users, db):
         for reward in rewards:
             if reward['points'] < reward_points:

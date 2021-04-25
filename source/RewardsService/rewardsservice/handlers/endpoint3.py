@@ -25,7 +25,7 @@ class Endpoint3(tornado.web.RequestHandler):
         #     "nextRewardTierName": "10% off purchase",
         #     "nextRewardTierProgress": "75%"
         # })
-        email = "philbedddrt@example.com"
+        email = "philbert@example.com"
         users = list(db.users.find({}, {"_id": 0}))
 
         # for user in users:
@@ -36,7 +36,11 @@ class Endpoint3(tornado.web.RequestHandler):
         #         else:
         #             self.write("no user found")
         #             break
+
+
         self.write(json.dumps(users))
+        
+        
                 # break
             # return user
 
