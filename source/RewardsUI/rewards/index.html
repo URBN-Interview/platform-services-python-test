@@ -26,7 +26,7 @@
         <form action="{% url 'add_order' %}" method=post>
             {% csrf_token %}
             <label>Enter email address: </label><input name="email" type="email" required/><br>
-            <label>Enter order total: </label><input name="order_total" type="number" required/>
+            <label>Enter order total: </label><input name="order_total" type=number step=0.01 required/>
             <input type="submit" value="Submit Order"/>
         </form>
         <hr>
@@ -36,7 +36,7 @@
         <form>
             <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
         </form>
-        <table border="1">
+        <!-- <table border="1">
             <thead>
             <tr>
                 <th>Email Address</th>
@@ -59,7 +59,7 @@
                     <td>50%</td>
                 </tr>
             </tbody>
-        </table>
+        </table> -->
         <br>
         <table border="1">
             <thead>
@@ -80,9 +80,9 @@
                     <td>{{ user.rewardPoints }}</td>
                     <td>{{ user.rewardTier }}</td>
                     <td>{{ user.rewardTierName }}</td>
-                    <td>{{ user.newtRewardTier }}</td>
-                    <td>{{ user.newtRewardTierName }}</td>
-                    <td>{{ user.newtRewardTierProgress }}</td>
+                    <td>{{ user.nextRewardTier }}</td>
+                    <td>{{ user.nextRewardTierName }}</td>
+                    <td>{{ user.nextRewardTierProgress }}</td>
                 </tr>
             {% endfor %}
             </tbody>

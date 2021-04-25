@@ -14,6 +14,6 @@ class Endpoint1Client:
             'order_total': order_total
         }
         # endpoint1_url = "http://127.0.0.1:7050/endpoint1/" + f"{email}" + "/" + f"{order_total}"
-        r = requests.post(self.endpoint1_url, data=params)
-        response = r.text
-        return response
+        requests.post(self.endpoint1_url, data=params)
+        # response = r.text
+        # return response

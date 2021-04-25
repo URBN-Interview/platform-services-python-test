@@ -10,19 +10,23 @@ from rewards.clients.rewards_service_client import RewardsServiceClient
 from rewards.clients.endpoint1_client import Endpoint1Client
 from rewards.clients.endpoint3_client import Endpoint3Client
 
-# grab all rewards
+# grab all rewards, get all users
 class RewardsView(TemplateView):
     template_name = 'index.html'
 
-    def __init__(self, logger=logging.getLogger(__name__), rewards_service_client=RewardsServiceClient()):
+    def __init__(self, logger=logging.getLogger(__name__), rewards_service_client=RewardsServiceClient(), endpoint3_client=Endpoint3Client()):
         self.logger = logger
         self.rewards_service_client = rewards_service_client
+        self.endpoint3_client = endpoint3_client
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
 
         rewards_data = self.rewards_service_client.get_rewards()
+        user_data = self.endpoint3_client.get_all_users()
+
         context['rewards_data'] = rewards_data
+        context['user_data'] = user_data
 
         return TemplateResponse(
             request,
@@ -68,23 +72,23 @@ class SearchForUserView(TemplateView):
     template_name = 'index.html'
 
 # get all users
-class UsersView(TemplateView):
-    template_name = 'index.html'
+# class UsersView(TemplateView):
+#     template_name = 'index.html'
 
-    def __init__(self, logger=logging.getLogger(__name__), rewards_service_client=Endpoint3Client()):
-        self.logger = logger
-        self.rewards_service_client = rewards_service_client
+#     def __init__(self, logger=logging.getLogger(__name__), endpoint3_client=Endpoint3Client()):
+#         self.logger = logger
+#         self.endpoint3_client = endpoint3_client
 
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
+#     def get(self, request, *args, **kwargs):
+#         context = self.get_context_data(**kwargs)
 
-        user_data = self.rewards_service_client.get_all_users()
-        context['user_data'] = user_data
+#         user_data = self.endpoint3_client.get_all_users()
+#         context['user_data'] = user_data
 
-        return TemplateResponse(
-            request,
-            self.template_name,
-            context
-        )
+#         return TemplateResponse(
+#             request,
+#             self.template_name,
+#             context
+#         )
 
 

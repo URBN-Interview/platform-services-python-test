@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 from pymongo import MongoClient
 
-
 def main():
     client = MongoClient("mongodb", 27017)
     db = client["Rewards"]
     
     mycol = db["Users"] # add users
+    users = list(db.users.find({}, {"_id": 0}))
 
     print("Removing and reloading rewards in mongo")
     db.rewards.remove()
+    db.users.remove()
     db.rewards.insert({"points": 100, "rewardName": "5% off purchase", "tier": "A"})
     db.rewards.insert({"points": 200, "rewardName": "10% off purchase", "tier": "B"})
     db.rewards.insert({"points": 300, "rewardName": "15% off purchase", "tier": "C"})
@@ -20,15 +21,15 @@ def main():
     db.rewards.insert({"points": 800, "rewardName": "40% off purchase", "tier": "H"})
     db.rewards.insert({"points": 900, "rewardName": "45% off purchase", "tier": "I"})
     db.rewards.insert({"points": 1000, "rewardName": "50% off purchase", "tier": "J"})
-    db.rewards.users.insert({
-            "email": 'test@email.com', 
-            "rewardPoints": 150, 
-            "rewardTier": 'A',
-            "rewardTierName": "5% off purchase",
-            "nextRewardTier": "B",
-            "nextRewardTierName": "10% off purchase",
-            "nextRewardTierProgress": .75
-    })
+    # db.users.insert({
+    #         "email": 'test@email.com', 
+    #         "rewardPoints": 150, 
+    #         "rewardTier": 'A',
+    #         "rewardTierName": "5% off purchase",
+    #         "nextRewardTier": "B",
+    #         "nextRewardTierName": "10% off purchase",
+    #         "nextRewardTierProgress": "75%"
+    # })
     print("Rewards loaded in mongo")
 
 if __name__ == "__main__":
