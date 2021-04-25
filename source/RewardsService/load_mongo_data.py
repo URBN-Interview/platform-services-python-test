@@ -10,7 +10,7 @@ def main():
 
     print("Removing and reloading rewards in mongo")
     db.rewards.remove()
-    db.users.remove()
+    # db.users.remove()
     db.rewards.insert({"points": 100, "rewardName": "5% off purchase", "tier": "A"})
     db.rewards.insert({"points": 200, "rewardName": "10% off purchase", "tier": "B"})
     db.rewards.insert({"points": 300, "rewardName": "15% off purchase", "tier": "C"})

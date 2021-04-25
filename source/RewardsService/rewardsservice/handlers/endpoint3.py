@@ -25,9 +25,20 @@ class Endpoint3(tornado.web.RequestHandler):
         #     "nextRewardTierName": "10% off purchase",
         #     "nextRewardTierProgress": "75%"
         # })
+        email = "philbedddrt@example.com"
         users = list(db.users.find({}, {"_id": 0}))
 
+        # for user in users:
+        #     for key in user:
+        #         if user['email'] == email:
+        #             self.write(json.dumps(email))
+        #             break
+        #         else:
+        #             self.write("no user found")
+        #             break
         self.write(json.dumps(users))
+                # break
+            # return user
 
     # def get(self):
     #     client = MongoClient("mongodb", 27017)

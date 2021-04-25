@@ -33,20 +33,22 @@ class Endpoint1(tornado.web.RequestHandler):
         order_total = float(order_total)
 
         # check if user is in db, if so get their reward points total
-        for user in users:
-            if user['email'] == email:
-                return self.write(json.dumps(user))
-                user_email = user['email']
-                prev_reward_points = user['rewardPoints']
-                reward_points = math.floor(order_total)
-                reward_total = prev_reward_points + reward_points
-                self.existing_user(user_email, reward_total, rewards, users)
+        user_emails = [user['email'] for user in users]
+        if email in user_emails:
+            for user in users:
+                for key in user:
+                    if user['email'] == email: 
+                        # return self.write(json.dumps(user))
+                        # user_email = user['email']
+                        prev_reward_points = user['rewardPoints']
+                        reward_points = math.floor(order_total)
+                        reward_total = prev_reward_points + reward_points
+            self.existing_user(email, reward_total, rewards, users, db)
             # else if user doesnt exist in db continue with below
-            else:
-                reward_points = math.floor(order_total)
-                self.new_user(email, reward_points, rewards, users, db)
-                break
-
+        else:
+            reward_points = math.floor(order_total)
+            self.new_user(email, reward_points, rewards, users, db)
+    # new user -> loop through rewards and compare rewards_points to rewardPoints, return if latter is greater than former
     def new_user(self, email, reward_points, rewards, users, db):
         for reward in rewards:
             if reward['points'] < reward_points:
@@ -68,19 +70,13 @@ class Endpoint1(tornado.web.RequestHandler):
                     "nextRewardTierProgress": next_reward_tier_progress
                 })
                 break
-            elif reward['points'] > reward_points: # this one doesnt work
-                # try:
+            elif reward['points'] > reward_points: # this one works
                 reward_index = rewards.index(reward)
-                # res = [i for i in rewards if (rewards.index(i) == reward_index)]
-                # res.pop()
-                # finally:
                 next_reward_tier = reward['tier']
                 next_reward_tier_name = reward['rewardName']
                 next_reward_tier_progress = reward_points/reward['points']
                 next_reward_tier_progress = "{:.0%}".format(next_reward_tier_progress)
                 reward_index -= 1
-                # self.write(json.dumps(reward_index))
-                # break
                 for reward in rewards:
                     if rewards.index(reward) == reward_index:
                         reward_tier = reward['tier']
@@ -96,18 +92,8 @@ class Endpoint1(tornado.web.RequestHandler):
                         })
                         break
                 break
-        # db.users.insert({
-        #     "email": email, 
-        #     "rewardPoints": reward_points, 
-        #     "rewardTier": reward_tier,
-        #     "rewardTierName": reward_tier_name,
-        #     "nextRewardTier": next_reward_tier,
-        #     "nextRewardTierName": next_reward_tier_name,
-        #     "nextRewardTierProgress": next_reward_tier_progress
-        #     })
-        # self.write(json.dumps(users))
 
-    def existing_user(self, email, reward_points, rewards, users):
+    def existing_user(self, email, reward_points, rewards, users, db):
         for reward in rewards:
             if reward['points'] < reward_points:
                 continue
@@ -117,26 +103,41 @@ class Endpoint1(tornado.web.RequestHandler):
                 next_reward_tier = reward['tier']
                 next_reward_tier_name = reward['rewardName']
                 next_reward_tier_progress = reward_points/100
+                next_reward_tier_progress = "{:.0%}".format(next_reward_tier_progress)
+                db.users.update_one(
+                    {"email": email}, 
+                        {"$set": {
+                            "rewardPoints": reward_points, 
+                            "rewardTier": reward_tier,
+                            "rewardTierName": reward_tier_name,
+                            "nextRewardTier": next_reward_tier,
+                            "nextRewardTierName": next_reward_tier_name,
+                            "nextRewardTierProgress": next_reward_tier_progress
+                        }}
+                    )
+                break
             elif reward['points'] > reward_points:
-                # break
                 reward_index = rewards.index(reward)
-                return self.write(json.dumps(reward_index))
                 next_reward_tier = reward['tier']
                 next_reward_tier_name = reward['rewardName']
                 next_reward_tier_progress = reward_points/reward['points']
+                next_reward_tier_progress = "{:.0%}".format(next_reward_tier_progress)
                 reward_index -= 1
                 for reward in rewards:
                     if rewards.index(reward) == reward_index:
-                        # break
                         reward_tier = reward['tier']
                         reward_tier_name = reward['rewardName']
-        db.users.update({
-            "email": email, 
-            "rewardPoints": reward_points, 
-            "rewardTier": reward_tier,
-            "rewardTierName": reward_tier_name,
-            "nextRewardTier": next_reward_tier,
-            "nextRewardTierName": next_reward_tier_name,
-            "nextRewardTierProgress": next_reward_tier_progress
-            })
-        self.write(json.dumps(users))
+                        db.users.update_one(
+                            {"email": email}, 
+                                {"$set": {
+                                    "rewardPoints": reward_points, 
+                                    "rewardTier": reward_tier,
+                                    "rewardTierName": reward_tier_name,
+                                    "nextRewardTier": next_reward_tier,
+                                    "nextRewardTierName": next_reward_tier_name,
+                                    "nextRewardTierProgress": next_reward_tier_progress
+                                }}
+                            )
+                        break
+                break
+        # self.write(json.dumps(users))
