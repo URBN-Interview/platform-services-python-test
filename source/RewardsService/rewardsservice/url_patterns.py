@@ -1,7 +1,7 @@
 from handlers.rewards_handler import RewardsHandler
 from handlers.endpoint1 import Endpoint1
-from handlers.endpoint3 import Endpoint3
 from handlers.endpoint2 import Endpoint2
+from handlers.endpoint3 import Endpoint3
 
 url_patterns = [
     (r'/rewards', RewardsHandler),

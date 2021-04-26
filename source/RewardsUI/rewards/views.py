@@ -65,41 +65,38 @@ class SearchUserView(TemplateView):
         self.user_data = self.endpoint3_client.get_all_users()
 
 
+    # def get(self, request, *args, **kwargs):
+    #     context = self.get_context_data(**kwargs)
+
+    #     # rewards_data = self.rewards_service_client.get_rewards()
+    #     # user_data = self.endpoint3_client.get_all_users()
+
+    #     context['rewards_data'] = self.rewards_data
+    #     context['user_data'] = self.user_data
+
+    #     return TemplateResponse(
+    #         request,
+    #         self.template_name,
+    #         context
+    #     )
+
     def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
+        if request.method == 'GET':
+            email = request.GET["email"]
 
-        rewards_data = self.rewards_service_client.get_rewards()
-        user_data = self.endpoint3_client.get_all_users()
+            search_result = self.endpoint2_client.search_user(email).json
 
-        context['rewards_data'] = rewards_data
-        context['user_data'] = user_data
-
-        return TemplateResponse(
-            request,
-            self.template_name,
-            context
-        )
-
-    def post(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        if request.method == 'POST':
-            email = request.POST["email"]
-
-            self.endpoint2_client.search_user(email)
-
+            context = self.get_context_data(**kwargs)
             # user_data = self.endpoint3_client.get_all_users()
             context['rewards_data'] = self.rewards_data
-            context['user_data'] = self.user_data
-
-            # for user in user_data:
-            #     if user['email'] != email
+            context['user_data'] = search_result
 
             # return HttpResponseRedirect(reverse("rewards"))
 
             return TemplateResponse(
-            request,
-            self.template_name,
-            context
-        )
+                request,
+                self.template_name,
+                context
+            )
 
 
