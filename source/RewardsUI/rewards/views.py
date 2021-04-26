@@ -64,22 +64,6 @@ class SearchUserView(TemplateView):
         self.rewards_data = self.rewards_service_client.get_rewards()
         self.user_data = self.endpoint3_client.get_all_users()
 
-
-    # def get(self, request, *args, **kwargs):
-    #     context = self.get_context_data(**kwargs)
-
-    #     # rewards_data = self.rewards_service_client.get_rewards()
-    #     # user_data = self.endpoint3_client.get_all_users()
-
-    #     context['rewards_data'] = self.rewards_data
-    #     context['user_data'] = self.user_data
-
-    #     return TemplateResponse(
-    #         request,
-    #         self.template_name,
-    #         context
-    #     )
-
     def get(self, request, *args, **kwargs):
         if request.method == 'GET':
             email = request.GET["email"]
@@ -87,11 +71,9 @@ class SearchUserView(TemplateView):
             search_result = self.endpoint2_client.search_user(email).json
 
             context = self.get_context_data(**kwargs)
-            # user_data = self.endpoint3_client.get_all_users()
+
             context['rewards_data'] = self.rewards_data
             context['user_data'] = search_result
-
-            # return HttpResponseRedirect(reverse("rewards"))
 
             return TemplateResponse(
                 request,

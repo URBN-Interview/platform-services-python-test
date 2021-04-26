@@ -63,7 +63,7 @@ class Endpoint1(tornado.web.RequestHandler):
                 break
             elif reward['points'] < reward_points:
                 continue
-            elif reward['points'] > reward_points and reward['points'] == 100: # this block works
+            elif reward['points'] > reward_points and reward['points'] == 100:
                 reward_tier = 'N/A'
                 reward_tier_name = 'N/A'
                 next_reward_tier = reward['tier']
@@ -80,7 +80,7 @@ class Endpoint1(tornado.web.RequestHandler):
                     "nextRewardTierProgress": next_reward_tier_progress
                 })
                 break
-            elif reward['points'] > reward_points: # this one works
+            elif reward['points'] > reward_points:
                 reward_index = rewards.index(reward)
                 next_reward_tier = reward['tier']
                 next_reward_tier_name = reward['rewardName']
@@ -169,4 +169,3 @@ class Endpoint1(tornado.web.RequestHandler):
                             )
                         break
                 break
-        # self.write(json.dumps(users))

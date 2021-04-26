@@ -10,7 +10,5 @@ urlpatterns = [
     url(r'^search_user/$', views.SearchUserView.as_view(), name='search_user'),
 ] 
 
-# + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
