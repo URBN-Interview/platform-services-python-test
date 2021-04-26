@@ -45,7 +45,23 @@ class Endpoint1(tornado.web.RequestHandler):
     # new user -> loop through rewards and compare rewards_points to rewardPoints, return if latter is greater than former
     def new_user(self, email, reward_points, rewards, users, db):
         for reward in rewards:
-            if reward['points'] < reward_points:
+            if reward['points'] < reward_points and reward_points > 1000:
+                reward_tier = 'J'
+                reward_tier_name = '50% off purchase'
+                next_reward_tier = "N/A"
+                next_reward_tier_name = "N/A"
+                next_reward_tier_progress = "N/A"
+                db.users.insert({
+                    "email": email, 
+                    "rewardPoints": reward_points, 
+                    "rewardTier": reward_tier,
+                    "rewardTierName": reward_tier_name,
+                    "nextRewardTier": next_reward_tier,
+                    "nextRewardTierName": next_reward_tier_name,
+                    "nextRewardTierProgress": next_reward_tier_progress
+                })
+                break
+            elif reward['points'] < reward_points:
                 continue
             elif reward['points'] > reward_points and reward['points'] == 100: # this block works
                 reward_tier = 'N/A'
@@ -90,7 +106,25 @@ class Endpoint1(tornado.web.RequestHandler):
     # existing user code
     def existing_user(self, email, reward_points, rewards, users, db):
         for reward in rewards:
-            if reward['points'] < reward_points:
+            if reward['points'] < reward_points and reward_points > 1000:
+                reward_tier = 'J'
+                reward_tier_name = '50% off purchase'
+                next_reward_tier = "N/A"
+                next_reward_tier_name = "N/A"
+                next_reward_tier_progress = "N/A"
+                db.users.update_one(
+                    {"email": email}, 
+                        {"$set": {
+                            "rewardPoints": reward_points, 
+                            "rewardTier": reward_tier,
+                            "rewardTierName": reward_tier_name,
+                            "nextRewardTier": next_reward_tier,
+                            "nextRewardTierName": next_reward_tier_name,
+                            "nextRewardTierProgress": next_reward_tier_progress
+                        }}
+                    )
+                break
+            elif reward['points'] < reward_points:
                 continue
             elif reward['points'] > reward_points and reward['points'] == 100:
                 reward_tier = 'N/A'

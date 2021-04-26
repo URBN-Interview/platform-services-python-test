@@ -1,19 +1,32 @@
-<html>
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
+    <title>{% block title %}Rewards Dashboard{% endblock %}</title>
+    <link rel="shortcut icon" href="#" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link  rel="stylesheet" href="{% static 'rewards/index.css' %}">
+    {% block script %}
+    {% endblock %}
 </head>
 <body>
     <h1>Welcome to the Rewards Dashboard</h1>
     <div>
         <h2>Reward Tiers</h2>
-        <table border="1">
-            <tr>
-                <th>Rewards Tier<th>
-                <th>Reward Points</th>
-                <th>Rewards Tier Name</th>
-            </tr>
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">Rewards Tier</th>
+                    <th scope="col">Reward Points</th>
+                    <th scope="col">Rewards Tier Name</th>
+                </tr>
+            </thead>
             {% for reward in rewards_data %}
                 <tr>
-                    <td>{{ reward.tier }}<td>
+                    <td>{{ reward.tier }}</td>
                     <td>{{ reward.points }}</td>
                     <td>{{ reward.rewardName }}</td>
                 </tr>
@@ -25,9 +38,13 @@
         <h2>Add orders</h2>
         <form action="{% url 'add_order' %}" method=post>
             {% csrf_token %}
-            <label>Enter email address: </label><input name="email" type="email" required/><br>
-            <label>Enter order total: </label><input name="order_total" type=number step=0.01 required/>
-            <input type="submit" value="Submit Order"/>
+            <div class="form-group">
+                <input autofocus class="form-control" name="email" type="email" placeholder="Email address" required/><br>
+            </div>
+            <div class="form-group">
+                <input autofocus class="form-control" name="order_total" type=number step=0.01 placeholder="Order total" required/>
+            </div>
+            <input class="btn btn-primary" type="submit" value="Submit Order"/>
         </form>
         <hr>
     </div>
@@ -35,45 +52,24 @@
         <h2>User Rewards</h2>
         <form action="{% url 'search_user' %}" method=get>
             <!-- {% csrf_token %} -->
-            <label>Email address: </label><input name="email" type="email" required/>
-            <input type="submit" value="Search"/>
+            <div class="form-group">
+                <input autofocus class="form-control" name="email" type="email" placeholder="Email address" required/>
+            </div>
+            <div class="form-group">
+                <input class="btn btn-primary" type="submit" value="Search"/>
+            </div>
         </form>
-        <!-- <table border="1">
-            <thead>
-            <tr>
-                <th>Email Address</th>
-                <th>Reward Points</th>
-                <th>Reward Tier</th>
-                <th>Reward Tier Name</th>
-                <th>Next Reward Tier</th>
-                <th>Next Reward Tier Name</th>
-                <th>Next Reward Tier Progress</th>
-            </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>customer01@gmail.com</td>
-                    <td>100</td>
-                    <td>A</td>
-                    <td>5% off purchase</td>
-                    <td>B</td>
-                    <td>10% off purchase</td>
-                    <td>50%</td>
-                </tr>
-            </tbody>
-        </table> -->
         <br>
-        <!-- {{user_data}} -->
-        <table border="1">
+        <table class="table table-striped table-bordered">
             <thead>
                 <tr>
-                    <th>Email Address</th>
-                    <th>Reward Points</th>
-                    <th>Reward Tier</th>
-                    <th>Reward Tier Name</th>
-                    <th>Next Reward Tier</th>
-                    <th>Next Reward Tier Name</th>
-                    <th>Next Reward Tier Progress</th>
+                    <th scope="col">Email Address</th>
+                    <th scope="col">Reward Points</th>
+                    <th scope="col">Reward Tier</th>
+                    <th scope="col">Reward Tier Name</th>
+                    <th scope="col">Next Reward Tier</th>
+                    <th scope="col">Next Reward Tier Name</th>
+                    <th scope="col">Next Reward Tier Progress</th>
                 </tr>
             </thead>
             <tbody>
