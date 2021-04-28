@@ -12,8 +12,9 @@ class CustomerHandler(tornado.web.RequestHandler):
         db = client["Rewards"]
         col = db["Customers"]
 
-        email = self.get_arguments("email")[0]
+        email = self.get_arguments("email")
         print('emailArg: {}'.format(email))
+        email = email[0] if isinstance(email, list) else email
         cursor = col.find({"email": email})
         matches = list(cursor)
         if(len(matches)==0):

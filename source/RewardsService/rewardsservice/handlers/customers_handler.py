@@ -16,11 +16,10 @@ class CustomersHandler(tornado.web.RequestHandler):
         if(len(matches)==0):
             self.write("No Users Exist in the DB")
         else:
-            self.write(str(matches))
+            self.write(self.encodeList(matches))
 
     def encodeList(self, d):
-        print(d)
         for item in d:
             if '_id' in item:
                 item['_id'] = str(item['_id'])
-        return d
+        return json.dumps(d)

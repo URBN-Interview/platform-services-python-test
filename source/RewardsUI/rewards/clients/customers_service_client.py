@@ -1,5 +1,5 @@
 import requests
-
+import json
 
 class CustomersServiceClient:
 
@@ -9,6 +9,7 @@ class CustomersServiceClient:
         self.process_order_url = "http://rewardsservice:7050/processOrder/"
 
     def get_customer(self, emailPassed):
+        print("INSIDE GETCUSTOMER")
         response = requests.get(self.get_customer_url, param={"email": emailPassed})
         return response.json()
 
