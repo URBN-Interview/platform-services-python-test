@@ -5,9 +5,9 @@ from handlers.customers_handler import CustomersHandler
 from handlers.processOrder_handler import ProcessOrderHandler
 
 url_patterns = [
-    ('/rewards', RewardsHandler),
-    ('/', IndexHandler),
-    ('/customer', CustomerHandler),
-    ('/customers', CustomersHandler),
-    ('/processOrder', ProcessOrderHandler),
+    (r'/rewards', RewardsHandler),
+    (r'/', IndexHandler),
+    (r'/customer', CustomerHandler),
+    (r'/customers', CustomersHandler),
+    (r'/processOrder/', ProcessOrderHandler)
 ]
