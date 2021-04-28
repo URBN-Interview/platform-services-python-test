@@ -4,6 +4,7 @@ from django.template.response import TemplateResponse
 from django.views.generic.base import TemplateView
 
 from rewards.clients.rewards_service_client import RewardsServiceClient
+from rewards.clients.customers_service_client import CustomersServiceClient
 
 
 class RewardsView(TemplateView):

@@ -2,3 +2,4 @@
 __pycache__/
 **/.DS_Store
 /source/RewardsService/data/
+/source/RewardsUI/db.sqlite3
