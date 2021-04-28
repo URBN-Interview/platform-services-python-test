@@ -8,7 +8,6 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 
 STATIC_ROOT = path(ROOT, 'static')
 TEMPLATE_ROOT = path(ROOT, 'templates')
-
 define("port", default=7050, help="run on the given port", type=int)
 
 settings = {
