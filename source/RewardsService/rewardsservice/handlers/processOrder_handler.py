@@ -25,13 +25,17 @@ class ProcessOrderHandler(tornado.web.RequestHandler):
         description: returns None
         url: /processOrder
         parameters:
-            - email adress (string)
-            - order total (float)
+            - email (string)
+            - order_total (float)
         responses:
-            200:
-                Incomplete/Incorrect parameters
-            404:
-                Connection error with DB or python error
+            500:
+                Internal Server Error (default) 
+            400 (Bad Request):
+                email not provided
+                email is invalid (missing @)
+                negative order_total
+                no order_total
+
     """
     @coroutine
     def post(self):
@@ -44,8 +48,18 @@ class ProcessOrderHandler(tornado.web.RequestHandler):
         col = db["Customers"]
         
         #process arguments
-        orderTotal = float(self.get_arguments("order_total")[0])
+        orderTotal = 0
+        try:
+            orderTotal = float(self.get_arguments("order_total")[0])
+        except:
+            raise tornado.web.HTTPError(400)
+        if orderTotal<0:
+            raise tornado.web.HTTPError(400)
+
         email = self.get_arguments("email")[0]
+        if len(email)==0 or not '@' in email:
+            raise tornado.web.HTTPError(400)
+        
 
         print('orderArg: {}'.format(orderTotal))
         print('emailArg: {}'.format(email))

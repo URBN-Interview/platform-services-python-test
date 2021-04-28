@@ -6,6 +6,16 @@ from tornado.gen import coroutine
 
 
 class CustomersHandler(tornado.web.RequestHandler):
+    """ CustomersHandler
+    POST:
+        summary: returns all customers in DB
+        url: /customers/
+        parameters:
+            - No parameters
+        responses:
+            500:
+                Internal Server Error (default)
+    """
     @coroutine
     def get(self):
         client = MongoClient("mongodb", 27017)
