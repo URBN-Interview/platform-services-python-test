@@ -27,24 +27,3 @@ class RewardsView(TemplateView):
             self.template_name,
             context
         )
-
-    def getCustomer(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        print("*****************")
-        print("inside getCustomer views.py")
-        print("*****************")
-        if(request.method == 'GET'):
-            form = userRewardsFilterForm(request.GET)
-            
-            email = form.cleaned_data['email']
-            customer_data = self.customers_service_client.getCustomer(email)
-        #overwrite customer data
-        rewards_data = self.rewards_service_client.get_rewards()
-        context['rewards_data'] = rewards_data
-        context['customer_data'] = customer_data
-        context['customer_data'] = customer_data
-        return TemplateResponse(
-            request,
-            self.template_name,
-            context
-        )

@@ -8,6 +8,5 @@ class RewardsServiceClient:
 
     def get_rewards(self):
         response = requests.get(self.rewards_url)
-        print('here RewardsServiceClient')
         print(response)
         return response.json()
