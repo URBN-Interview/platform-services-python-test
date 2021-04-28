@@ -61,8 +61,12 @@ class ProcessOrderHandler(tornado.web.RequestHandler):
         else:
             newvalues = { "$set": resultArr }
             col.update_one(matches[0], newvalues)
-        self.write(resultArr if len(matches)!=0 else "Saved!")
+        self.write(resultArr if len(matches)!=0 else self.encode(resultArr))
 
+    def encode(self, o):
+            if '_id' in o:
+                o['_id'] = str(o['_id'])
+            return o
 
 """
 Accepts matches, email/total of a user then returns updated list to feed in db
@@ -97,3 +101,4 @@ def getTierInformation(points):
     nextTierProgress = (100-points%100) if tierIndex<10 else 0
 
     return rewardTier,tierName,nextTier,nextTierName,nextTierProgress
+
