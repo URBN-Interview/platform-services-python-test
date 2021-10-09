@@ -41,3 +41,40 @@ Create RESTful endpoint(s) to calculate, store, and retrieve customer rewards da
 * $ docker-compose build
 * $ docker-compose up -d
 * Services are accessible at http://localhost:7050/
+
+# Solution Details
+# -----------------
+# Endpoint 1
+* POST http://localhost:7050/customerrewards
+* request body - {"email": "customer01@gmail.com","orderTotal":445.8}
+# Endpoint 2
+* GET http://localhost:7050/customerrewards?email=jdoe1@example.com
+# Endpoint 3
+* GET http://localhost:7050/customerrewards
+
+# For Error handling
+* Created used Try/catch and created a util class ErrorThrow 
+* which can be extended for custom exception management.
+
+# For Unit Testing
+* Created TestrewardsService class
+
+# Approach taken
+# --------------
+# Creation of base class (new)
+* **base.py, consisting a BaseHandler class which is created to pull some common behaviours together which 
+* can be reused across the application as practice.
+
+# Creation of utility classes for error handling and other utilities
+* to reduce the redundancy and inprovig the re-usability of the methods which are most common in different 
+* functions
+* **error_thow.py : Custom Exceptions behaviour
+* **jsonencoder.py : to encode json having objectId
+
+# Added Handler Class for new end points
+* **customer_rewards_handler.py : This handled all the requests related to customer rewards points.
+*    **** If customer record is new then based on the order value we will assigned the rewards
+*    **** If the customer exists we will update the old reward values with new one which ll be and addition to old
+*   **** After customer reach to max reward point no more earning ll happen.
+
+
