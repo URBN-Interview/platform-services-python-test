@@ -44,7 +44,7 @@ class CustomerRewardsHandler(BaseHandler):
                 cust_reward['next_tier'] = next_reward_tier.get('tier')
                 cust_reward['next_rewardName'] = next_reward_tier.get('rewardName')
                 need_more_to_get_next = (next_reward_tier.get('points') - customers_total_points)*100/(next_reward_tier.get('points') - qualified_rewards_tier_points)
-                cust_reward['need_more_to_get_next'] = need_more_to_get_next
+                cust_reward['need_more_to_get_next'] = int(need_more_to_get_next)
         else:
             cust_reward['need_more_to_get_next'] = 0
             if (qualified_rewards_tier) is not None:
@@ -82,7 +82,11 @@ class CustomerRewardsHandler(BaseHandler):
             customer_rewards_data = list(db.customerrewards.find({'email': customer_email}, {"_id": 0}))
         else:
             customer_rewards_data = list(db.customerrewards.find({}, {"_id": 0}))
-        self.write_response(status_code=HTTPStatus.OK.value,
+        if not customer_rewards_data:
+            self.write_response(status_code=HTTPStatus.NO_CONTENT.value,
+                                    result=customer_rewards_data)
+        else:
+            self.write_response(status_code=HTTPStatus.OK.value,
                                     result=customer_rewards_data)
 
     # creating or updating customer rewards data

@@ -1,63 +1,108 @@
+{% load static from staticfiles %}
 <html>
 <head>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <h1>Welcome to the Rewards Dashboard</h1>
-    <div>
+    <h1 class="page-banner">Welcome to the Rewards Dashboard</h1>
+    <div class="limiter">
+        <div class="container-table100">
+        <div class="rewards-msg">{{rewards_added}}</div>
         <h2>Reward Tiers</h2>
-        <table border="1">
-            <tr>
-                <th>Rewards Tier<th>
-                <th>Reward Points</th>
-                <th>Rewards Tier Name</th>
+        {% if rewards_not_found %}
+            {{rewards_not_found}}
+        {% else %}
+        <div class="wrap-table100">
+        <div class="table100 ver1 m-b-110">
+        <div class="table100-head">
+        <table>
+            <thead>
+            <tr class="row100 head">
+                <th class="cell100 column1">Rewards Tier</th>
+                <th class="cell100 column1">Reward Points</th>
+                <th class="cell100 column1">Rewards Tier Name</th>
             </tr>
+        </thead>
+        </table>
+        </div>
+        <div class="table100-body js-pscroll ps ps--active-y">
+        <table><tbody>
             {% for reward in rewards_data %}
-                <tr>
-                    <td>{{ reward.tier }}<td>
-                    <td>{{ reward.points }}</td>
-                    <td>{{ reward.rewardName }}</td>
+            
+                <tr class="row100 body">
+                    <td class="cell100 column1">{{ reward.tier }}</td>
+                    <td class="cell100 column1">{{ reward.points }}</td>
+                    <td class="cell100 column1">{{ reward.rewardName }}</td>
                 </tr>
             {% endfor %}
+        </tbody>
         </table>
+        {% endif %}
         <hr>
-    </div>
-    <div>
-        <h2>Add orders</h2>
-        <form>
-            <label>Enter email address: </label><input type="text"/><br>
-            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order"/>
+</div>
+</div></div></div></div>
+    <div class="limiter">
+        <h2 class="center">User Rewards</h2>
+        <div class="container-table100">
+            <form action="/rewards/" method ="GET">
+            {{search_reward_form}}
+            <input class="search_reward_btn" type="submit" value="Click to know your rewards"/>
         </form>
-        <hr>
-    </div>
-    <div>
-        <h2>User Rewards</h2>
-        <form>
-            <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
-        </form>
-        <table border="1">
+        {% if customers_not_found %}
+            {{customers_not_found}}
+        {% elif customer_email_not_found %}
+            {{customer_email_not_found}}
+        {% else %}
+            <div class="wrap-table100">
+                <div class="table100 ver1 m-b-110">
+                <div class="table100-head">
+        <table>
             <thead>
-            <tr>
-                <th>Email Address</th>
-                <th>Reward Points</th>
-                <th>Reward Tier</th>
-                <th>Reward Tier Name</th>
-                <th>Next Reward Tier</th>
-                <th>Next Reward Tier Name</th>
-                <th>Next Reward Tier Progress</th>
-            </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>customer01@gmail.com</td>
-                    <td>100</td>
-                    <td>A</td>
-                    <td>5% off purchase</td>
-                    <td>B</td>
-                    <td>10% off purchase</td>
-                    <td>50%</td>
+                <tr class="row100 head">
+                    <th class="cell100 column1">Email Address</th>
+                    <th class="cell100 column1">Reward Points</th>
+                    <th class="cell100 column1">Reward Tier</th>
+                    <th class="cell100 column1">Reward Tier Name</th>
+                    <th class="cell100 column1">Next Reward Tier</th>
+                    <th class="cell100 column1">Next Reward Tier Name</th>
+                    <th class="cell100 column1">Next Reward Tier Progress</th>
                 </tr>
+            </thead>
+        </table>
+    </div>
+    <div class="table100-body js-pscroll ps ps--active-y">
+        <table>
+            <tbody>
+                {% for customer_reward in customer_rewards_data %}
+                <tr class="row100 body">
+                    <td class="cell100 column1">{{ customer_reward.email }}</td>
+                    <td class="cell100 column1">{{ customer_reward.points }}</td>
+                    <td class="cell100 column1">{{ customer_reward.current_tier }}</td>
+                    <td class="cell100 column1">{{ customer_reward.current_rewardName }}</td>
+                    <td class="cell100 column1">{{ customer_reward.next_tier }}</td>
+                    <td class="cell100 column1">{{ customer_reward.next_rewardName }}</td>
+                    <td class="cell100 column1">{{ customer_reward.need_more_to_get_next }}%</td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
+        </div>
+    </div></div>
+        {% endif %}
+    </div></div>
+
+    <div class="limiter">
+        <h2 class="center">Add orders</h2>
+        <div class="container-table100">
+        <form action="/rewards/" method ="POST" style="width: 1170px;">
+            <fieldset class="order-field-set">
+            {{add_customer_rewards}}<br>
+            <input class="add_customer_reward_btn" type="submit" value="Submit Order"/>
+            </fieldset>
+        </form>
+        <hr>
+        </div>
     </div>
+
 </body>
 </html>
