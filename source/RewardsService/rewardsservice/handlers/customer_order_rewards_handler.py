@@ -1,20 +1,23 @@
 import json
 import tornado.web
-
+from tornado import escape
 from pymongo import MongoClient
 from tornado.gen import coroutine
-
+from helpers.validator import validator
 
 class CustomerOrderRewardsHandler(tornado.web.RequestHandler):
     
     @coroutine
     def post(self): 
         try:                                              
-            data = json.loads(self.request.body)
-            emailAddress = data['email']
-            orderTotal = int(float(str(data['order_total']))      )   
+            request_data = escape.json_decode(self.request.body)
+            emailAddress = request_data['email']
+            orderTotal = int(float(str(request_data['order_total'])))   
             print("Request: email {} and order_total: {} ".format(emailAddress, orderTotal))                                            
-
+            
+            if (self.validateRequest(request_data) is False) :
+                return
+        
             #find if the customer_rewards collection exist        
             #find if the customer_reward exist based on email_address
             customer_reward = self.customer_reward(emailAddress)            
@@ -32,11 +35,23 @@ class CustomerOrderRewardsHandler(tornado.web.RequestHandler):
                 customer_reward = self.update_customer_reward(customer_reward, orderTotal)                                                            
                 record_inserted = self.rewards_db().customer_rewards.insert_one(customer_reward)
                 print("number of records inserted: {}".format(record_inserted))                
-        
+            
+            self.set_status(200)       
         except Exception as ex:
             print (ex)
 
         self.write(json.dumps({"Message":"Success"}))
+    
+    #validate all request parameter which are required
+    def validateRequest(self, data):
+        if (data['email'] == ''):
+            self.set_status(400, "Email Address is empty")              
+            return False
+        else: 
+            if (validator.validateEmail(self, data['email']) is False): 
+                self.set_status(400, "Email Address is invalid.")
+                return False
+        return True   
     
     
     #customer_reward will return the row for the provided email address or None   
