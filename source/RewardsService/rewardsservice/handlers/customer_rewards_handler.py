@@ -12,7 +12,7 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
     @coroutine
     def get(self):  
         logging.getLogger().info('CustomerRewardsHandler.get()')     
-        customer_rewards = list(self.rewards_db().customer_rewards.find({}, {"_id": 0}))
+        customer_rewards = list(self.rewards_db().customer_rewards.find({}, {"_id": 0}).sort("email_address", +1))
         self.write(tornado.escape.json_encode(customer_rewards))
 
     #post method for getting rewards based on email. Best Practice to not use PII in the get

@@ -15,7 +15,9 @@ class CustomerOrderRewardsHandler(tornado.web.RequestHandler):
             orderTotal = int(float(str(request_data['order_total'])))   
             print("Request: email {} and order_total: {} ".format(emailAddress, orderTotal))                                            
             
-            if (self.validateRequest(request_data) is False) :
+            validateMessage = self.validateRequest(request_data)
+            if (validateMessage['validate'] == 'Fail') :
+                self.finish(validateMessage)  
                 return
         
             #find if the customer_rewards collection exist        
@@ -44,14 +46,22 @@ class CustomerOrderRewardsHandler(tornado.web.RequestHandler):
     
     #validate all request parameter which are required
     def validateRequest(self, data):
+        response = {
+                    "validate": "Pass",
+                    "message":  ""
+                } 
         if (data['email'] == ''):
-            self.set_status(400, "Email Address is empty")              
-            return False
+            self.set_status(400)            
+            response['validate']= "Fail"
+            response['message']= "Email Address is empty"                
+            return response
         else: 
             if (validator.validateEmail(self, data['email']) is False): 
-                self.set_status(400, "Email Address is invalid.")
-                return False
-        return True   
+                self.set_status(400)            
+                response['validate']= "Fail"
+                response['message']= "Email Address is invalid."                
+                return response
+        return response   
     
     
     #customer_reward will return the row for the provided email address or None   
