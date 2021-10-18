@@ -101,30 +101,31 @@ class CustomerOrderRewardsHandler(tornado.web.RequestHandler):
         print(customer_reward)
         return customer_reward 
 
-    #implement better search algo to find the right range
-    #
+    #implemented better algorithm to find the range in O(logn) time
     def get_curr_next_tier(self, total_points):
         print("              get_curr_next_tier()            ")         
         rewards = list(self.rewards_db().rewards.find().sort("points", +1))
         reward_tiers = {}
         if rewards: 
-            prev_reward_tier = None   
-            curr_reward_tier = None       
-            for i in range(0, len(rewards)):
-                curr_reward_tier = rewards[i]                
-                if (prev_reward_tier) is None:
-                    if (curr_reward_tier['points'] > total_points):
-                        reward_tiers['next_reward_tier'] = curr_reward_tier                
-                        reward_tiers['curr_reward_tier'] = { "tier":"", "rewardName":"" }
-                        return reward_tiers
-                elif (curr_reward_tier['points'] > total_points and prev_reward_tier['points'] <= total_points):                    
-                    reward_tiers['next_reward_tier'] = curr_reward_tier
-                    reward_tiers['curr_reward_tier'] = prev_reward_tier
-                    return reward_tiers
-                prev_reward_tier = curr_reward_tier
-                
-            #if the current reward doesn't match with any of the combinations then it's above the last reward tier
-            reward_tiers['curr_reward_tier'] = curr_reward_tier
-            reward_tiers['next_reward_tier'] = curr_reward_tier       
-        return reward_tiers
-            
+            Left = 0
+            Right = (len(rewards))
+
+            if total_points < rewards[0]['points']:
+                reward_tiers['next_reward_tier'] = rewards[0]                
+                reward_tiers['curr_reward_tier'] = { "tier":"", "rewardName":"" }
+            elif total_points > rewards[Right-1]['points']:
+                print("current_tier: " , ['points']) 
+                print("next_tier: " , rewards[Right-1]['points'])
+                reward_tiers['curr_reward_tier'] = rewards[Right-1]
+                reward_tiers['next_reward_tier'] = rewards[Right-1] 
+            else: 
+                while ((Left+1)<Right):
+                    mid = int((Left+Right)/2)                    
+                    if rewards[mid]['points'] > total_points:
+                        Right = mid
+                    else:
+                        Left = mid
+                reward_tiers['curr_reward_tier'] = rewards[Left]['points']
+                reward_tiers['next_reward_tier'] = rewards[Right]['points']
+                   
+        return reward_tiers        
