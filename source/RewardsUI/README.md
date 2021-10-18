@@ -9,6 +9,7 @@
         * Display a table of the rewards data of all customers
         * Filter the table for a specific customer
 * For bonus points, add CSS and error handling.
+        * **for CSS added bootstap for better look and feel**
 
 # Setup
 * Install docker and docker-compose dependencies.
