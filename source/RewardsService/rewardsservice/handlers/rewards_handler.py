@@ -1,5 +1,6 @@
 import json
 import logging
+import math
 import re
 
 import tornado.web
@@ -66,7 +67,7 @@ class RewardsHandler(MongoMixin):
 
     def get_rewards_for_customer(self, customer):
         reward_points = customer.get('reward_points', 0)
-        rounded_points = round(reward_points / 100) * 100
+        rounded_points = reward_points - (reward_points % 100)
         reward = self.db.rewards.find_one({'points': rounded_points})
         next_reward = self.db.rewards.find_one({'points': rounded_points + 100})
         return customer, reward, next_reward
