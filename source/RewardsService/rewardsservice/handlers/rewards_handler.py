@@ -38,6 +38,8 @@ class RewardsHandler(MongoMixin):
         if customer:  # existing customer making request, update rewards
             id_ = customer.get('_id')
             reward_points = customer.get('reward_points', 0) + self.order_total
+            if reward_points > 1000:
+                reward_points = 1000
         else:  # new customer, create
             reward_points = float(self.order_total)
             customer = self.db.rewards.insert_one({'email': email}, {'reward_points': reward_points})
@@ -75,7 +77,8 @@ class RewardsHandler(MongoMixin):
     @staticmethod
     def response_serializer(customer, current_reward, next_reward):
         next_reward_json = json.loads(dumps(next_reward))
-        next_reward_json['progress'] = (next_reward.get('points') - customer.get('reward_points', 0)) / 100
+        if next_reward:
+            next_reward_json['progress'] = (next_reward.get('points') - customer.get('reward_points', 0)) / 100
         return {
             "customer": json.loads(dumps(customer, sort_keys=True)),
             "current_reward": json.loads(dumps(current_reward, sort_keys=True)),
