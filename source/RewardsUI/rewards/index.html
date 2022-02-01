@@ -23,16 +23,16 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <form>
-            <label>Enter email address: </label><input type="text"/><br>
-            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order"/>
+        <form method="post" action="">
+            <label>Enter email address: </label><input type="email" name="email" required/><br>
+            <label>Enter order total: </label><input type="number" name="total" required/><input type="submit" class="btn" value="Submit Order"/>
         </form>
         <hr>
     </div>
     <div>
         <h2>User Rewards</h2>
-        <form>
-            <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
+        <form method="post" action="">
+            <label>Email address: </label><input type="email" name="user" required/><input type="submit" class="btn" value="Search"/>
         </form>
         <table border="1">
             <thead>
@@ -47,15 +47,17 @@
             </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>customer01@gmail.com</td>
-                    <td>100</td>
-                    <td>A</td>
-                    <td>5% off purchase</td>
-                    <td>B</td>
-                    <td>10% off purchase</td>
-                    <td>50%</td>
-                </tr>
+                {% for customer in all_customers %}
+                    <tr>
+                        <td>{{ customer.email }}</td>
+                        <td>{{ customer.points }}</td>
+                        <td>{{ customer.currTier }}</td>
+                        <td>{{ customer.currReward }}</td>
+                        <td>{{ customer.nextTier }}</td>
+                        <td>{{ customer.nextReward }}</td>
+                        <td>{{ customer.progress }}</td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>

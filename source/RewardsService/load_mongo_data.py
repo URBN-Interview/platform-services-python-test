@@ -18,6 +18,7 @@ def main():
     db.rewards.insert({"points": 800, "rewardName": "40% off purchase", "tier": "H"})
     db.rewards.insert({"points": 900, "rewardName": "45% off purchase", "tier": "I"})
     db.rewards.insert({"points": 1000, "rewardName": "50% off purchase", "tier": "J"})
+    db.rewards.insert({"points": 1, "rewardName": "Max Reward!", "tier": "Max Tier!"})  #Max tier if points > 1000
     print("Rewards loaded in mongo")
 
 if __name__ == "__main__":
