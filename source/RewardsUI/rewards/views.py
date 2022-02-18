@@ -2,9 +2,12 @@ import logging
 
 from django.template.response import TemplateResponse
 from django.views.generic.base import TemplateView
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
 
 from rewards.clients.rewards_service_client import RewardsServiceClient
 
+from .forms import CustomerOrder
 
 class RewardsView(TemplateView):
     template_name = 'index.html'
@@ -24,3 +27,20 @@ class RewardsView(TemplateView):
             self.template_name,
             context
         )
+    
+    # Customer Order form handler
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        if context['form'].is_valid():
+            print('test')
+        
+        return super(TemplateView, self).render_to_response(context)
+    
+    # expansion on get_context_data
+    # used to add form models to the context of the TemplateView
+    # note - check if CSRF needs to be enabled
+    def get_context_data(self, **kwargs):
+        context = super(RewardsView, self).get_context_data(**kwargs)
+        form = CustomerOrder(self.request.POST or None)
+        context['form'] = form
+        return context 

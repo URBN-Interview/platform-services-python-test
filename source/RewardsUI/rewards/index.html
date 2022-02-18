@@ -23,9 +23,9 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <form>
-            <label>Enter email address: </label><input type="text"/><br>
-            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order"/>
+        <form method="post">
+            {{ form }}
+            <input type="button" value="Submit Order"/>
         </form>
         <hr>
     </div>
