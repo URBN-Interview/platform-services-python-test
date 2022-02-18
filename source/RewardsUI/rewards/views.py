@@ -32,6 +32,18 @@ class RewardsView(TemplateView):
     def post(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         if context['form'].is_valid():
+            form = context['form']
+            user_email = form.cleaned_data['email']
+            user_total = form.cleaned_data['total']
+
+            # send to API
+            self.rewards_service_client.customer_order({
+                "email": user_email,
+                "total": user_total
+            })
+
+            rewards_data = self.rewards_service_client.get_rewards()
+            context['rewards_data'] = rewards_data
             print('test')
         
         return super(TemplateView, self).render_to_response(context)

@@ -23,9 +23,10 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <form method="post">
+        <form action="" method="post">
+            {% csrf_token %}
             {{ form }}
-            <input type="button" value="Submit Order"/>
+            <input type="submit" value="Submit Order"/>
         </form>
         <hr>
     </div>
