@@ -10,13 +10,19 @@ class CustomerServiceClient:
         self.customer_url = "http://rewardsservice:7050/customers"
 
     def get_customers(self):
-        response = requests.get(self.customer_url)
-        return response.json()
+        try:
+            response = requests.get(self.customer_url)
+            return response.json()
+        except Exception as err:
+            raise err
     
     def get_customer(self, email):
-        response = requests.post(
-            self.customer_url,
-            data=json.dumps({"email": email})
-        )
-        
-        return response.json()
+        try:
+            response = requests.post(
+                self.customer_url,
+                data=json.dumps({"email": email})
+            )
+            
+            return response.json()
+        except Exception as err:
+            raise err
