@@ -6,6 +6,7 @@ import json
 import requests
 
 class TestCustomerHandler(unittest.TestCase):
+    # test get of list of customers and see if returns 200 status
     def test_get_customer(self):
         response = requests.get(
             "http://localhost:7050/customers", 
@@ -15,10 +16,9 @@ class TestCustomerHandler(unittest.TestCase):
             }
         )
 
-        print(response.json())
-
         self.assertEqual(200, response.status_code)
 
+    # test post where it is being used to search for customer by email
     def test_post_customer(self):
         query = {"email": "test@test.com"}
         
@@ -32,8 +32,6 @@ class TestCustomerHandler(unittest.TestCase):
                 "Accept": "text/plain"
             }
         )
-
-        print(response)
 
         self.assertEqual(200, response.status_code)
 
