@@ -1,8 +1,8 @@
 import logging
 
 from django.template.response import TemplateResponse
-from django.views.generic.base import TemplateView, View
-from django.http import HttpResponseRedirect, HttpResponse
+from django.views.generic.base import TemplateView
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from rewards.clients.rewards_service_client import RewardsServiceClient
@@ -43,34 +43,43 @@ class RewardsView(TemplateView):
                 user_total = form.cleaned_data['total']
 
                 # send to API
-                resp = self.rewards_service_client.add_order({
-                    'email': user_email,
-                    'total': user_total
-                })
+                try:
+                    self.rewards_service_client.add_order({
+                        'email': user_email,
+                        'total': user_total
+                    })
 
-                if not resp['success']:
-                    context['customer_order_error'] = "\
-                        Error adding customer! Customer not added."
-                else:
                     return HttpResponseRedirect("/rewards/")
+                except Exception as err:
+                    self.logger.exception(err)
+                    context['form_error'] = "\
+                        Error adding customer! Customer not added."
+            else:
+                context['customer_order_form'] = customer_order
+
         elif action == "search":
-            order_search = CustomerEmailSearch(request.POST)
-            if order_search.is_valid():
-                form = order_search
+            customer_search = CustomerEmailSearch(request.POST)
+            if customer_search.is_valid():
+                form = customer_search
                 email = form.cleaned_data['search_email']
 
-                resp = self.customer_service_client.get_customer(email)
-                context['customers_data'] = []
-                if len(resp['customer']) > 0:
-                    context['customers_data'] = resp['customer']
+                try:
+                    resp = self.customer_service_client.get_customer(email)
+                    context['customers_data'] = []
+                    if len(resp['customer']) > 0:
+                        context['customers_data'] = resp['customer']
+                    else:
+                        customers_data = self.customer_service_client.get_customers()
+                        context['customers_data'] = customers_data['customers']
+                        
+                        context['form_error'] = "\
+                            Customer with email {} could not be found".format(email)
                     
+                except Exception as err:
+                    self.logger.exception(err)
+                    context['form_error'] = "API Error! Please try again."   
             else:
-                email_search_form = CustomerEmailSearch()
-                order_search = email_search_form
-        elif action == "reset":
-             # add in get all customers with reward data
-            customers_data = self.customer_service_client.get_customers()
-            context['customers_data'] = customers_data['customers']
+                context['email_search_form'] = customer_search
         
         return super(TemplateView, self).render_to_response(context)
     
@@ -88,7 +97,7 @@ class RewardsView(TemplateView):
         context['customers_data'] = customers_data['customers']
 
         context['selected_customer'] = None
-        context['customer_order_error'] = None
+        context['form_error'] = ""
         
         customer_order_form = CustomerOrder()
         context['customer_order_form'] = customer_order_form

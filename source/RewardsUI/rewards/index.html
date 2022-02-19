@@ -1,5 +1,17 @@
 <html>
 <head>
+    <style>
+        .errors {
+            color: red;
+            font-weight:bolder;
+            font-size: 16pt;
+        }
+    </style>
+    {% if form_error %}
+        <script>
+            alert("{{ form_error }}");
+        </script>
+    {% endif %}
 </head>
 <body>
     <h1>Welcome to the Rewards Dashboard</h1>
@@ -23,7 +35,7 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <b>{{ customer_order_error }}</b>
+        <span class="errors">{{ customer_order_error }}</span>
         <form action="" method="post">
             {% csrf_token %}
             {{ customer_order_form }}
@@ -40,12 +52,6 @@
             <input type="hidden" name="action" value="search">
             <input type="submit" value="Search"/>
         </form>
-        <form action="" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="reset">
-            <input type="submit" value="Reset List"/>
-        </form>
-
         <table border="1">
             <thead>
             <tr>

@@ -18,7 +18,7 @@ from tornado.gen import coroutine
 
 class CustomerHandler(tornado.web.RequestHandler):
 
-    # return all customer
+    # return all customers
     @coroutine
     def get(self):
         json_response = {}
