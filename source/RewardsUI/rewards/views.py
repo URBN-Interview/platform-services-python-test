@@ -20,7 +20,9 @@ class RewardsView(TemplateView):
         context = self.get_context_data(**kwargs)
 
         rewards_data = self.rewards_service_client.get_rewards()
-        context['rewards_data'] = rewards_data
+        context['rewards_data'] = rewards_data["rewards"]
+
+        # add in get all customers with reward data
 
         return TemplateResponse(
             request,

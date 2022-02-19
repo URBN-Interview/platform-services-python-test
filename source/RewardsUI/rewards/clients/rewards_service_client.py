@@ -17,9 +17,3 @@ class RewardsServiceClient:
     def customer_order(self, order):
         response = requests.post(self.customer_order_url, data=order)
         return response.json()
-    
-    # all customers
-    # handlers to grab all customer data from API
-    def all_customer(self):
-        response = requests.get(self.all_customer)
-        return response.json()
