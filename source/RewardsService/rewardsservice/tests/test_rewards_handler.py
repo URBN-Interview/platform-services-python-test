@@ -7,6 +7,17 @@ import json
 import requests
 
 class TestRewardHandler(unittest.TestCase):
+    # test get of reward handler
+    def get_reward_handler(self):
+        response = requests.get(
+            "http://localhost:7050/rewards", 
+            headers={
+                "Content-type": "application/json",
+                "Accept": "text/plain"
+            }
+        )
+
+        self.assertEqual(200, response.status_code)
     
     # test post of reward handler
     def post_reward_handler(self):
@@ -25,8 +36,6 @@ class TestRewardHandler(unittest.TestCase):
                 "Accept": "text/plain"
             }
         )
-
-        print(response)
 
         self.assertEqual(200, response.status_code)
         self.assertEqual({"success": True}, response.json())
