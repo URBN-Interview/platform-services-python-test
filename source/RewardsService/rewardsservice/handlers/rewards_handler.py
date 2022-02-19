@@ -27,12 +27,13 @@ class RewardsHandler(tornado.web.RequestHandler):
     def post(self):
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
+        json_response = {"success": True}
 
         # get post data
         json_request = tornado.escape.json_decode(self.request.body)
 
         # build customer data struct/collection entry
-        points = int(json_request["total"]),
+        points = int(json_request["total"])
         customer = {
             "email": json_request["email"],
             "points": points,
@@ -54,4 +55,12 @@ class RewardsHandler(tornado.web.RequestHandler):
         customer["tier_name"] = rewards[0]["rewardName"]
         customer["next_tier_name"] = rewards[1]["rewardName"]
         customer["next_tier_progress"] = (points / rewards[1]["points"]) * 100
+
+        try:
+            db.customers.insert_one(customer)
+        except Exception as err:
+            print("ERROR: {}".format(err))
+            json_response["success"] = False
         
+        self.write(json.dumps(json_response))
+
