@@ -43,6 +43,7 @@ class RewardsHandler(tornado.web.RequestHandler):
                 "points": points,
                 "tier": None,
                 "tier_name": None,
+                "next_tier": None,
                 "next_tier_name": None,
                 "next_tier_progress": 0
             }
@@ -57,6 +58,7 @@ class RewardsHandler(tornado.web.RequestHandler):
             # add reward data to customer
             customer["tier"] = rewards[0]["tier"]
             customer["tier_name"] = rewards[0]["rewardName"]
+            customer["next_tier"] = rewards[1]["tier"]
             customer["next_tier_name"] = rewards[1]["rewardName"]
             customer["next_tier_progress"] = (points / rewards[1]["points"]) * 100
 
