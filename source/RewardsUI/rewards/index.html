@@ -27,17 +27,25 @@
         <form action="" method="post">
             {% csrf_token %}
             {{ customer_order_form }}
-            <input type="submit" name="add_order" value="Submit Order"/>
+            <input type="hidden" name="action" value="add_orders">
+            <input type="submit" value="Submit Order"/>
         </form>
         <hr>
     </div>
     <div>
         <h2>User Rewards</h2>
-        <form action="" method="post" id="search">
+        <form action="" method="post">
             {% csrf_token %}
             {{ email_search_form }}
-            <input type="submit" name="user_search" form="search" value="Search"/>
+            <input type="hidden" name="action" value="search">
+            <input type="submit" value="Search"/>
         </form>
+        <form action="" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="reset">
+            <input type="submit" value="Reset List"/>
+        </form>
+
         <table border="1">
             <thead>
             <tr>

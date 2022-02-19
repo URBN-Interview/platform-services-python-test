@@ -1,4 +1,5 @@
 import requests
+import json
 
 
 class RewardsServiceClient:
@@ -10,8 +11,8 @@ class RewardsServiceClient:
         response = requests.get(self.rewards_url)
         return response.json()
     
-    # customer_order
+    # add_order
     # handler for submitting customer order info to API
-    def customer_order(self, order):
-        response = requests.post(self.rewards_url, data=order)
+    def add_order(self, order):
+        response = requests.post(self.rewards_url, data=json.dumps(order))
         return response.json()

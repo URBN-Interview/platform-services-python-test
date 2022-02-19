@@ -40,7 +40,8 @@ class CustomerHandler(tornado.web.RequestHandler):
         json_request = tornado.escape.json_decode(self.request.body)
 
         customer = list(db.customers.find(
-            {"email": json_request["email"]}
+            {"email": json_request["email"]},
+            {"_id": 0}
         ))
 
         self.write(json.dumps({"customer": customer}))
