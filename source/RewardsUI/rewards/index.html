@@ -23,17 +23,20 @@
     </div>
     <div>
         <h2>Add orders</h2>
+        <b>{{ customer_order_error }}</b>
         <form action="" method="post">
             {% csrf_token %}
-            {{ form }}
-            <input type="submit" value="Submit Order"/>
+            {{ customer_order_form }}
+            <input type="submit" name="add_order" value="Submit Order"/>
         </form>
         <hr>
     </div>
     <div>
         <h2>User Rewards</h2>
-        <form>
-            <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
+        <form action="" method="post" id="search">
+            {% csrf_token %}
+            {{ email_search_form }}
+            <input type="submit" name="user_search" form="search" value="Search"/>
         </form>
         <table border="1">
             <thead>
@@ -48,15 +51,17 @@
             </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>customer01@gmail.com</td>
-                    <td>100</td>
-                    <td>A</td>
-                    <td>5% off purchase</td>
-                    <td>B</td>
-                    <td>10% off purchase</td>
-                    <td>50%</td>
-                </tr>
+                {% for customer in customers_data %}
+                    <tr>
+                        <td>{{ customer.email }}</td>
+                        <td>{{ customer.points }}</td>
+                        <td>{{ customer.tier }}</td>
+                        <td>{{ customer.tier_name }}</td>
+                        <td>{{ customer.next_tier }}</td>
+                        <td>{{ customer.next_tier_name }}</td>
+                        <td>{{ customer.next_tier_progress }}</td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
