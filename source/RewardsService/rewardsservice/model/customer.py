@@ -3,6 +3,11 @@ class Customer:
         self.email = email
         self.rewardPoints = rewardPoints
         self.tierProgress = 0.0
+        self.email = email
+        self.rewardTier = None
+        self.rewardName = None
+        self.nextRewardTier = None
+        self.nextRewardName = None
 
     def setReward(self, tier, name, points):
         self.rewardTier = tier

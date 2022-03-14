@@ -1,4 +1,6 @@
 import json
+
+import pymongo
 import tornado.web
 
 from pymongo import MongoClient
@@ -11,5 +13,5 @@ class RewardsHandler(tornado.web.RequestHandler):
     def get(self):
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
-        rewards = list(db.rewards.find({}, {"_id": 0}))
+        rewards = list(db.rewards.find({}, {"_id": 0}).sort("points", pymongo.DESCENDING))
         self.write(json.dumps(rewards))
