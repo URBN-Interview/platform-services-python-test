@@ -6,6 +6,6 @@ from handlers.customers_handler import CustomersHandler
 url_patterns = [
     (r'/rewards', RewardsHandler),
     (r'/order', OrderHandler),
-    (r'/customer', CustomerHandler),
+    (r'/customer/(.*)', CustomerHandler),
     (r'/customers', CustomersHandler),
 ]

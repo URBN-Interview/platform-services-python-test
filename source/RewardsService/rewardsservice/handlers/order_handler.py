@@ -3,6 +3,7 @@ import math
 
 import tornado
 from mongo.mongo_manager import MongoManager
+from tornado import web
 from tornado.gen import coroutine
 from model.customer import Customer
 from util.logger_util import loggingUtil
@@ -18,7 +19,6 @@ class OrderHandler(tornado.web.RequestHandler):
     def post(self):
         presentReward = None
         nextReward = None
-
         data = tornado.escape.json_decode(self.request.body)
         email = data['email']
         orderTotal = data['orderTotal']
@@ -29,10 +29,7 @@ class OrderHandler(tornado.web.RequestHandler):
             if customerExist:
                 rewardPoints += customerExist['rewardPoints']
         else:
-            OrderHandler.logger.error("Exception block")
-            self.set_status(503)
-            self.error = SystemError("MongoDB Connection","getCustomerByEmail")
-            raise Exception(self.error.type)
+            raise web.HTTPError(503)
 
         presentRewardList, presentRewardSuccess = MongoManager.getRewardTierByTotalRewardPoints(int(rewardPoints))
         nextRewardList, nextRewardSuccess = MongoManager.getNextRewardTierByTotalRewardPoints(int(rewardPoints))
@@ -67,8 +64,6 @@ class OrderHandler(tornado.web.RequestHandler):
             self.write(json.dumps(result))
 
     def write_error(self, status_code, **kwargs):
-        if not status_code is None:
-            self.set_status(status_code)
         if status_code in [400, 403, 404, 500, 503]:
             if not self.error:
                 self.error = UnknownError()

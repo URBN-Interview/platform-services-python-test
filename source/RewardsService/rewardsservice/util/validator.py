@@ -1,8 +1,7 @@
 import re
 from util.server_error import ValidationError
 
-# emailRegex  = '^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
-emailRegex = r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+'
+emailRegex  = '^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
 currencyRegex = '^\d+(\.|\,)\d{2}$'
 
 
@@ -12,9 +11,11 @@ class Validator:
         self.errors = list()
 
     def _validator(self, regex, email, regrexType, name):
+        isValid = True
         result = re.fullmatch(regex, email)
         if not result:
-            self.errors.append('%s does not match %s format' % (name, regrexType))
+            isValid = False
+        return isValid
 
     def validate(self):
         if len(self.errors) > 0:
