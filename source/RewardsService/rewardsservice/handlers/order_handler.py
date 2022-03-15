@@ -17,7 +17,7 @@ class OrderHandler(tornado.web.RequestHandler):
     error = None
 
     @coroutine
-    def post(self):
+    def put(self):
         presentReward = None
         nextReward = None
 
