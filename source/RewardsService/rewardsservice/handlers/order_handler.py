@@ -9,6 +9,7 @@ from model.customer import Customer
 from util.logger_util import loggingUtil
 from util.server_error import UnknownError
 from util.server_error import ServerError
+from util.validator import Validator
 
 
 class OrderHandler(tornado.web.RequestHandler):
@@ -19,9 +20,22 @@ class OrderHandler(tornado.web.RequestHandler):
     def post(self):
         presentReward = None
         nextReward = None
+
+        # Getting params from request
         data = tornado.escape.json_decode(self.request.body)
         email = data['email']
         orderTotal = data['orderTotal']
+
+        # validating the request parameters
+        isValidEmail = Validator().emailValidation(email, 'email')
+        if not isValidEmail:
+            self.error = ServerError("InvalidRequestParams", "Invalid email address or email Address is missing in request body")
+            raise web.HTTPError(400)
+
+        if orderTotal is None or not orderTotal.isnumeric():
+            self.error = ServerError("InvalidRequestParams", "Order total should be numeric ")
+            raise web.HTTPError(400)
+
         customerExist, isSuccess = MongoManager.getCustomerByEmail(email)
         rewardPoints = math.floor(float(orderTotal))
 
@@ -29,6 +43,7 @@ class OrderHandler(tornado.web.RequestHandler):
             if customerExist:
                 rewardPoints += customerExist['rewardPoints']
         else:
+            self.error = ServerError("ServiceUnavailable", "Please try again after some time")
             raise web.HTTPError(503)
 
         presentRewardList, presentRewardSuccess = MongoManager.getRewardTierByTotalRewardPoints(int(rewardPoints))
@@ -62,6 +77,9 @@ class OrderHandler(tornado.web.RequestHandler):
         result, isSuccess = MongoManager.getCustomerByEmail(email)
         if isSuccess:
             self.write(json.dumps(result))
+        else:
+            self.error = ServerError("ServiceUnavailable", "Please try again after some time")
+            raise web.HTTPError(503)
 
     def write_error(self, status_code, **kwargs):
         if status_code in [400, 403, 404, 500, 503]:

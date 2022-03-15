@@ -2,21 +2,28 @@ import json
 
 import tornado
 from pymongo import MongoClient
+from tornado import web
 from tornado.gen import coroutine
 from mongo.mongo_manager import MongoManager
 from util.server_error import UnknownError
+from util.server_error import ServerError
 
 
 class CustomersHandler(tornado.web.RequestHandler):
-    collectionName = 'Customers'
-
+    error = None
     @coroutine
     def get(self):
-        email = str(self.get_argument('email', ''))
-        client = MongoManager().client
-        db = client[self.collectionName]
-        customers = list(db.customers.find({}, {"_id": 0}))
-        self.write(json.dumps(customers))
+        customersExist, isSuccess = MongoManager.getCustomers()
+
+        if isSuccess:
+            if customersExist:
+                self.write(json.dumps(customersExist))
+            else:
+                self.error = ServerError("NoCustomersPresentInDb", "No customers present in DB")
+                raise web.HTTPError(404)
+        else:
+            self.error = ServerError("ServiceUnavailable", "Please try again after some time")
+            raise web.HTTPError(503)
 
     def write_error(self, status_code, **kwargs):
         if status_code in [400, 403, 404, 500, 503]:

@@ -50,7 +50,8 @@ class MongoManager:
             MongoManager.logger.error("Keeping connection open as using singleton bean")
         return customer, isSuccess
 
-    def getCustomers(self):
+    @staticmethod
+    def getCustomers():
         isSuccess = False
         customers = None
         try:

@@ -11,7 +11,6 @@ from util.server_error import ServerError
 
 
 class CustomerHandler(tornado.web.RequestHandler):
-    collectionName = 'Customers'
     error = None
 
     @coroutine
