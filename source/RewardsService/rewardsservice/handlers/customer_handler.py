@@ -14,11 +14,17 @@ class CustomerHandler(tornado.web.RequestHandler):
     @coroutine
     def get(self):
         email = str(self.get_argument('email', ''))
-        print("email")
-        print(email)
+
+        validateError = Validator().emailValidation(email, 'email').validate()
+        if validateError:
+            self.error = validateError
+            raise Exception(self.error.type)
+
         client = MongoManager().client
         db = client[self.collectionName]
         customers = list(db.customers.find({"email": email}, {"_id": 0}))
+        if customers is None:
+            self.set_status(404)
         self.write(json.dumps(customers))
 
     def write_error(self, status_code, **kwargs):

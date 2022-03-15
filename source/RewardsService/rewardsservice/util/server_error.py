@@ -13,3 +13,7 @@ class ValidationError(ServerError):
 class UnknownError(ServerError):
     def __init__(self):
         super().__init__('UnkownError', 'An error have occur during your request')
+
+class UnknownError(ServerError):
+    def __init__(self):
+        super().__init__('Mongo db', 'An error have occur during your request')

@@ -1,11 +1,16 @@
+import logging
+
 import pymongo
 
 from pymongo import MongoClient
+
+from util.logger_util import loggingUtil
 
 
 class MongoManager:
     customerDb = 'Customers'
     rewardsDb = 'Rewards'
+    logger = loggingUtil.get_module_logger(__name__)
 
     class __MongoManager:
         def __init__(self):
@@ -14,6 +19,19 @@ class MongoManager:
 
     __instance = None
 
+    def get_module_logger(mod_name):
+        """
+        To use this, do logger = get_module_logger(__name__)
+        """
+        logger = logging.getLogger(mod_name)
+        handler = logging.StreamHandler()
+        formatter = logging.Formatter(
+            '%(asctime)s [%(name)-12s] %(levelname)-8s %(message)s')
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        logger.setLevel(logging.DEBUG)
+        return logger
+
     def __init__(self):
         if not MongoManager.__instance:
             MongoManager.__instance = MongoManager.__MongoManager()
@@ -21,101 +39,101 @@ class MongoManager:
     def __getattr__(self, item):
         return getattr(self.__instance, item)
 
-    def getCustomer(email):
-        print(email)
-        isSuccess = False
+    def getCustomerByEmail(email):
+        isSuccess = True
+        customer = None
         try:
             client = MongoManager().client
-            db = client["Customers"]
-            # list(db.customers.find({"email": email}, {"_id": 0}))
+            db = client[MongoManager.customerDb]
             customer = db.customers.find_one({'email': email}, {'_id': 0})
-            isSuccess = True
         except Exception as e:
-            return []
+            isSuccess = False
+            MongoManager.logger.error("Mongo connection Exception in getCustomerByEmail ", e)
         finally:
-            print("Keeping connection open as using singleton bean")
+            MongoManager.logger.error("Keeping connection open as using singleton bean")
         return customer, isSuccess
 
     def getCustomers(self):
         isSuccess = False
+        customers = None
         try:
             client = MongoManager().client
-            db = client["Customers"]
+            db = client[MongoManager.customerDb]
             customers = list(db.customers.find({}, {"_id": 0}))
-            print("len(customers)")
-
-            print(len(customers))
             isSuccess = True
         except Exception as e:
-            return []
+            MongoManager.logger.error("Mongo connection Exception in getCustomers ", e)
         finally:
-            print("Keeping connection open as using singleton bean")
-        return customers
+            MongoManager.logger.error("Keeping connection open as using singleton bean")
+        return customers, isSuccess
 
     @staticmethod
     def getRewardTierByTotalRewardPoints(total):
         isSuccess = False
+        reward = None
         try:
-            print(total)
+            MongoManager.logger.error(total)
             client = MongoManager().client
             db = client["Rewards"]
             reward = list(
                 db.rewards.find({'points': {'$lte': total}}, {"_id": 0}).limit(1).sort("points", pymongo.DESCENDING))
             isSuccess = True
         except Exception as e:
-            print(e)
-            return []
+            MongoManager.logger.error("Mongo connection Exception in getNextRewardTierByTotalRewardPoints ", e)
         finally:
-            print("Keeping connection open as using singleton bean")
+            MongoManager.logger.error("Keeping connection open as using singleton bean")
         return reward, isSuccess
 
     @staticmethod
     def getNextRewardTierByTotalRewardPoints(total):
         isSuccess = False
+        reward = None
         try:
             client = MongoManager().client
             db = client["Rewards"]
             reward = list(
                 db.rewards.find({'points': {'$gt': total}}, {"_id": 0}).limit(1).sort("points", pymongo.ASCENDING))
-            print(len(reward))
+
             isSuccess = True
         except Exception as e:
-            return []
+            MongoManager.logger.error("Mongo connection Exception in getNextRewardTierByTotalRewardPoints ", e)
         finally:
-            print("Keeping connection open as using singleton bean")
+            MongoManager.logger.info("Keeping connection open as using singleton bean")
         return reward, isSuccess
 
     def updateCustomer(customer):
-            isSuccess = False
-            try:
-                client = MongoManager().client
-                customerDb = client["Customers"]
-                response = customerDb.customers.update({'email': customer.email},
-                                            {'email': customer.email, 'rewardPoints': customer.rewardPoints,
-                                             'rewardTier': customer.rewardTier,
-                                             'rewardName': customer.rewardName,
-                                             'nextRewardTier': customer.nextRewardTier,
-                                             'nextRewardName': customer.nextRewardName,
-                                             'nextRewardProgress': customer.tierProgress})
-                isSuccess = True
-            except Exception as e:
-                return []
-            finally:
-                print("Keeping connection open as using singleton bean")
-            return response, isSuccess
+        isSuccess = False
+        response = None
+        try:
+            client = MongoManager().client
+            customerDb = client[MongoManager.customerDb]
+            response = customerDb.customers.update({'email': customer.email},
+                                                   {'email': customer.email, 'rewardPoints': customer.rewardPoints,
+                                                    'rewardTier': customer.rewardTier,
+                                                    'rewardName': customer.rewardName,
+                                                    'nextRewardTier': customer.nextRewardTier,
+                                                    'nextRewardName': customer.nextRewardName,
+                                                    'nextRewardProgress': customer.tierProgress})
+            isSuccess = True
+        except Exception as e:
+            MongoManager.logger.error("Mongo connection failure updateCustomer", e)
+        finally:
+            MongoManager.logger.error("Keeping connection open as using singleton bean")
+        return response, isSuccess
 
     def insertCustomer(customer):
-            isSuccess = False
-            try:
-                client = MongoManager().client
-                customerDb = client["Customers"]
-                response = customerDb.customers.insert(
-                    {'email': customer.email, 'rewardPoints': customer.rewardPoints, 'rewardTier': customer.rewardTier,
-                     'rewardName': customer.rewardName, 'nextRewardTier': customer.nextRewardTier,
-                     'nextRewardName': customer.nextRewardName, 'nextRewardProgress': customer.tierProgress})
-                isSuccess = True
-            except Exception as e:
-                return []
-            finally:
-                print("Keeping connection open as using singleton bean")
-            return response, isSuccess
+        isSuccess = False
+        response = None
+        try:
+            client = MongoManager().client
+            customerDb = client[MongoManager.customerDb]
+            response = customerDb.customers.insert(
+                {'email': customer.email, 'rewardPoints': customer.rewardPoints, 'rewardTier': customer.rewardTier,
+                 'rewardName': customer.rewardName, 'nextRewardTier': customer.nextRewardTier,
+                 'nextRewardName': customer.nextRewardName, 'nextRewardProgress': customer.tierProgress})
+            isSuccess = True
+        except Exception as e:
+            MongoManager.logger.error("Mongo connection failure getCustomerByEmail", e)
+        finally:
+            MongoManager.logger.error("Keeping connection open as using singleton bean")
+        return response, isSuccess
