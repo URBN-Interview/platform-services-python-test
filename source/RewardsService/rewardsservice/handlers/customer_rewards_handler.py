@@ -9,15 +9,30 @@ MIN_TIER = 100
 MAX_TIER = 1000
 
 
+class SingleCustomerHandler(tornado.web.RequestHandler):
+    @coroutine
+    def get(self, email_address):
+        client = MongoClient("mongodb", 27017)
+        db = client["Rewards"]
+        customer = db.customer_rewards.find_one(
+            {"emailAddress": email_address}, {"_id": 0})
+        if customer is not None:
+            self.write(json.dumps(customer))
+        else:
+            self.set_status(404)
+            self.write(json.dumps(
+                {"message": "rewards not found for {0}".format(email_address)}))
+
+
 class CustomerRewardsHandler(tornado.web.RequestHandler):
 
     # TODO("Implement. if email address provided, then return single, otherwise return all")
     # won't paginate due to time, but in real life should
-    @coroutine
-    def get(self, email_address):
+    @ coroutine
+    def get(self):
         client = MongoClient("mongodb", 27017)
-        db = client["CustomerRewards"]
-        rewards = list(db.rewards.find({}, {"_id": 0}))
+        db = client["Rewards"]
+        rewards = list(db.customer_rewards.find({}, {"_id": 0}))
         self.write(json.dumps(rewards))
 
     # * **Endpoint 1:**
@@ -39,21 +54,21 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
     #     "next_reward_tier_name": "string",
     #     "next_reward_tier_progress": "number"
     # }
-    @coroutine
+    @ coroutine
     def post(self):
-        body = self.request.body
+        body = tornado.escape.json_decode(self.request.body)
+        email_address = body["emailAddress"]
         # check for email and order_total
         # Initialize in `initialize` block
         client = MongoClient("mongodb", 27017)
-        rewards_db = client["Rewards"]
-        customer_db = client["CustomerRewards"]
-        customer_rewards = customer_db.find_one(
-            {"emailAddress": body["email_address"]}
+        db = client["Rewards"]
+        customer_rewards = db.customer_rewards.find_one(
+            {"emailAddress": email_address}, {"_id": 0}
         )
         # if none are found, create one, should move to separate findOrCreate function
         if customer_rewards is None:
             customer_rewards = {
-                "emailAddress": body["email_address"],
+                "emailAddress": email_address,
                 "rewardsPoints": 0,
                 # keep track of total. if someone spends 10.80 then 9.2, should be 20, not 19 points
                 "totalSpent": 0.0,  # best way to store dollar amount in mongo?
@@ -64,37 +79,50 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
                 "nextRewardTierProgress": 0.0
             }
         # based on the new order value, update the rewards data
-        updateRewards(customer_rewards, body["order_total"])
-        # TODO("save to DB")
-        
+        self.updateRewards(customer_rewards, float(body["orderTotal"]))
+        db.customer_rewards.replace_one(
+            {"emailAddress": email_address}, customer_rewards, True)
         self.write(json.dumps(customer_rewards))
 
-    # should probably be a coroutine
-    def updateRewards(customer_rewards, order_total):
+    def updateRewards(self, customer_rewards, order_total):
+        print("order_total", order_total)
         client = MongoClient("mongodb", 27017)
-        rewards_db = client["Rewards"]
+        db = client["Rewards"]
         updated_total = customer_rewards["totalSpent"] + order_total
         updated_points = int(updated_total)
-        point_tier = roundDownToHundreds(updated_points)
+        point_tier = self.roundDownToHundreds(updated_points)
         reward_tier = None
         next_reward_tier = None
         # check if at max tier
-        if point_tier >= MAX_TIER:
-            reward_tier = rewards_db.find_one({"points": MAX_TIER})
-        elif point_tier < MIN_TIER:
-            next_reward_tier = rewards_db.find_one({"points": point_tier})
-        else:
-            reward_tier = rewards_db.find_one({"points": point_tier + 100})
+        reward_tier = db.rewards.find_one({"points": point_tier + 100})
         customer_rewards["rewardsPoints"] = updated_points
         customer_rewards["totalSpent"] = updated_total
-        customer_rewards["rewardTier"] = reward_tier["tier"]
-        customer_rewards["rewardTierName"] = reward_tier["tierNaeme"]
-        customer_rewards["nextRewardTier"] = next_reward_tier["tier"]
-        customer_rewards["nextRewardTierName"] = next_reward_tier["tierName"]
-        customer_rewards["nextRewardTierProgress"] = calcProgress(point_tier)
+        if point_tier >= MAX_TIER:
+            reward_tier = db.rewards.find_one({"points": MAX_TIER})
+            customer_rewards["rewardTier"] = reward_tier["tier"]
+            customer_rewards["rewardTierName"] = reward_tier["rewardName"]
+            customer_rewards["nextRewardTier"] = ""
+            customer_rewards["nextRewardTierName"] = ""
+            customer_rewards["nextRewardTierProgress"] = 0.0
+        elif point_tier < MIN_TIER:
+            next_reward_tier = db.rewards.find_one({"points": MIN_TIER})
+            customer_rewards["rewardTier"] = ""
+            customer_rewards["rewardTierName"] = ""
+            customer_rewards["nextRewardTier"] = next_reward_tier["tier"]
+            customer_rewards["nextRewardTierName"] = next_reward_tier["rewardName"]
+            customer_rewards["nextRewardTierProgress"] = self.calcProgress(
+                updated_points)
+        else:
+            next_reward_tier = db.rewards.find_one({"points": point_tier})
+            customer_rewards["rewardTier"] = reward_tier["tier"]
+            customer_rewards["rewardTierName"] = reward_tier["rewardName"]
+            customer_rewards["nextRewardTier"] = next_reward_tier["tier"]
+            customer_rewards["nextRewardTierName"] = next_reward_tier["rewardName"]
+            customer_rewards["nextRewardTierProgress"] = self.calcProgress(
+                updated_points)
 
-    def roundDownToHundreds(points):
+    def roundDownToHundreds(self, points):
         return math.floor(points / 100) * 100
 
-    def calcProgress(point_tier):
-        return 0.0 if point_tier >= MAX_TIER else point_tier % 100
+    def calcProgress(self, points):
+        return 0.0 if points >= MAX_TIER else points % 100
