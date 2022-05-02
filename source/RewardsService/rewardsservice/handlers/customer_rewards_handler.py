@@ -18,7 +18,7 @@ class SingleCustomerHandler(tornado.web.RequestHandler):
         if customer is not None:
             self.write(json.dumps(customer))
         else:
-            self.set_status(404)
+            self.set_status(404)  # could also raise HTTPError
             self.write(json.dumps(
                 {"message": "rewards not found for {0}".format(email_address)}))
 
