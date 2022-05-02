@@ -12,8 +12,7 @@ MAX_TIER = 1000
 class SingleCustomerHandler(tornado.web.RequestHandler):
     @coroutine
     def get(self, email_address):
-        client = MongoClient("mongodb", 27017)
-        db = client["Rewards"]
+        db = self.settings["db"]
         customer = db.customer_rewards.find_one(
             {"emailAddress": email_address}, {"_id": 0})
         if customer is not None:
@@ -27,8 +26,7 @@ class SingleCustomerHandler(tornado.web.RequestHandler):
 class CustomerRewardsHandler(tornado.web.RequestHandler):
     @ coroutine
     def get(self):
-        client = MongoClient("mongodb", 27017)
-        db = client["Rewards"]
+        db = self.settings["db"]
         rewards = list(db.customer_rewards.find({}, {"_id": 0}))
         self.write(json.dumps(rewards))
 
@@ -48,9 +46,7 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
             self.write(json.dumps(
                 {"message": "Invalid Request. 'emailAddress' must be a string and 'orderTotal' must be a number"}))
             return
-        # Initialize in `initialize` block
-        client = MongoClient("mongodb", 27017)
-        db = client["Rewards"]
+        db = self.settings["db"]
         customer_rewards = db.customer_rewards.find_one(
             {"emailAddress": email_address}, {"_id": 0}
         )
@@ -74,9 +70,7 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
         self.write(json.dumps(customer_rewards))
 
     def updateRewards(self, customer_rewards, order_total):
-        print("order_total", order_total)
-        client = MongoClient("mongodb", 27017)
-        db = client["Rewards"]
+        db = self.settings["db"]
         updated_total = customer_rewards["totalSpent"] + order_total
         updated_points = int(updated_total)
         point_tier = self.roundDownToHundreds(updated_points)
