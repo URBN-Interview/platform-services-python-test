@@ -10,6 +10,7 @@ from tornado.options import options
 from settings import settings
 from url_patterns import url_patterns
 
+from pymongo import MongoClient
 
 class App(tornado.web.Application):
     def __init__(self, urls):
@@ -27,8 +28,9 @@ def main():
     http_server.listen(options.port)
 
     logger.info('Tornado server started on port {}'.format(options.port))
-
+    db = MongoClient("mongodb", 27017)["Rewards"]
     try:
+        app.settings["db"] = db
         tornado.ioloop.IOLoop.instance().start()
     except KeyboardInterrupt:
         logger.info("\nStopping server on port {}".format(options.port))
