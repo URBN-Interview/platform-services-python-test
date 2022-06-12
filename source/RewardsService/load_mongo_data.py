@@ -29,18 +29,6 @@ def main():
     db.rewards.insert_one(
         {"points": 1000, "rewardName": "50% off purchase", "tier": "J"})
     print("Rewards loaded in mongo")
-    print("Removing and reloading customerRewards in mongo")
-    db.customerRewards.remove()
-    db.customerRewards.insert_one({
-        "email": 'parth.patel.r@gmail.com',
-        "rewardPoints": 100,
-        "rewardTier": 'A',
-        "rewardTierName": '5% off purchase',
-        "nextRewardTier": 'B',
-        "nextRewardTierName": '10% off purchase',
-        "nextRewardTierProgress": 0.5,
-    })
-    print("customerRewards loaded in mongo")
 
 
 if __name__ == "__main__":
