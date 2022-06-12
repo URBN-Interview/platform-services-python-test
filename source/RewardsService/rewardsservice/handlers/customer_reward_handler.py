@@ -11,9 +11,8 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
         email = self.get_email(True)
         points = self.get_total()
         customer = self.get_customer_by_email(email, False)
-        if customer:
-            currPoints = customer["rewardPoints"] if customer else 0
-            points += currPoints
+        currPoints = customer["rewardPoints"] if customer else 0
+        points += currPoints
         reward_data = self.get_reward_level(points)
         formatted_object = self.format_customer_upsert_object(
             reward_data, email, points)
@@ -21,6 +20,19 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
         self.set_header('Content-Type', 'application/json')
         self.write(json.dumps(formatted_object))
 
+    @coroutine
+    def put(self):
+        email = self.get_email(True)
+        points = self.get_total()
+        customer = self.get_customer_by_email(email, True)
+        currPoints = customer["rewardPoints"] if customer else 0
+        points += currPoints
+        reward_data = self.get_reward_level(points)
+        formatted_object = self.format_customer_upsert_object(
+            reward_data, email, points)
+        self.replace_customer_data(email, formatted_object)
+        self.set_header('Content-Type', 'application/json')
+        self.write(json.dumps(formatted_object))
     @coroutine
     def get(self):
         email = self.get_email(False)
