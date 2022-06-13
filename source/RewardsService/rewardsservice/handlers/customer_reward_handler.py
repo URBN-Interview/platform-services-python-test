@@ -3,6 +3,7 @@ import tornado.web
 from tornado.gen import coroutine
 import re
 from pymongo import DESCENDING
+import urllib.parse
 
 
 class CustomerRewardsHandler(tornado.web.RequestHandler):
@@ -33,6 +34,7 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
         self.replace_customer_data(email, formatted_object)
         self.set_header('Content-Type', 'application/json')
         self.write(json.dumps(formatted_object))
+
     @coroutine
     def get(self):
         email = self.get_email(False)
@@ -45,6 +47,7 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
 
     def get_email(self, req):
         email = self.get_argument('email', None, True)
+        email = urllib.parse.unquote(email) if email else ''
         if req and not email:
             raise ValueError('Email is required')
         regex = r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}'
@@ -68,7 +71,7 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
     def get_customer_by_email(self, email, req=True):
         customer = self.settings["db"].customerRewards.find_one(
             {"email": email}, {"_id": 0})
-        
+
         return customer
 
     def get_all_customer_reward_data(self):
@@ -82,7 +85,7 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
         return
 
     def get_reward_level(self, points):
-        floor_points = float(points / 100) 
+        floor_points = float(points / 100)
         floor_points *= 100
         if floor_points >= 1000:
             return list([{}, self.settings["db"].rewards.find_one({'points': 1000}, {"_id": 0})])
