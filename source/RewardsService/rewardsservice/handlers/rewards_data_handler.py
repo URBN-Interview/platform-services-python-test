@@ -13,7 +13,8 @@ class RewardsDataHandler(tornado.web.RequestHandler):
         self.db = self.client["Rewards"]
         self.helper = RewardsDataHelper()
 
-    # GET rewards_data document for the specified email, if it exists
+    # GET rewards_data document for the specified email, if it exists.
+    # If no email is provided, it will return all rewards_data.
     # Example: GET /rewards_data?email=test@test.com
     @coroutine
     def get(self):
@@ -28,7 +29,7 @@ class RewardsDataHandler(tornado.web.RequestHandler):
     # It will calculate the customer's current rewards tier, which tier is next,
     # and their progress towards the next rewards tier and either create or update
     # the `rewards_data` for the associated `email_address`
-    # Example: POST /rewards_data with payload { "email_address": "test@test.com", "order_total": 100}
+    # Example: POST /rewards_data, payload: { "email_address": "test@test.com", "order_total": 100}
     @coroutine
     def post(self):
         email = self.get_body_argument("email_address")
