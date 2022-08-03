@@ -17,8 +17,11 @@ class RewardsDataHandler(tornado.web.RequestHandler):
     # Example: GET /rewards_data?email=test@test.com
     @coroutine
     def get(self):
-        query = {"email_address": self.get_argument("email")}
-        rewards_data = self.db.rewards_data.find_one(query)
+        if self.get_argument("email", None):
+            query = {"email_address": self.get_argument("email")}
+            rewards_data = self.db.rewards_data.find_one(query)
+        else:
+            rewards_data = list(self.db.rewards_data.find({}, {"_id": 0}))
         self.write(json.dumps(rewards_data, default=lambda o: '<not serializable>'))
     
     # POST with a payload of a customer's `email_address`` and their `order_total`.
