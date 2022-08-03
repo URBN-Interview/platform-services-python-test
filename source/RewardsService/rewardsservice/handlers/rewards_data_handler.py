@@ -26,12 +26,19 @@ class RewardsDataHandler(tornado.web.RequestHandler):
         rewards_data = self.db.rewards_data.find_one(query)
         if rewards_data == None:
             new_tier = list(self.db.rewards.find({"points": {"$lte": points_earned}}).sort("points", -1).limit(1))
+            next_tier = list(self.db.rewards.find({"points": {"$gt": points_earned}}).sort("points", 1).limit(1))
+            
             if not new_tier:
                 new_tier = {"tier": None, "rewardName": None, "points": 0}
-                next_tier = list(self.db.rewards.find({}, {"_id": 0}))[0]
             else:
                 new_tier = new_tier[0]
-                next_tier = list(self.db.rewards.find({"points": {"$gt": points_earned}}).sort("points", 1).limit(1))[0]
+            
+            if not next_tier:
+                next_tier = {"tier": None, "rewardName": None, "points": None}
+                next_tier_progress = None
+            else:
+                next_tier = next_tier[0]
+                next_tier_progress = (points_earned%(next_tier["points"] - new_tier["points"]))/100.0
 
             self.db.rewards_data.insert({
                 "email_address": email,
@@ -40,17 +47,23 @@ class RewardsDataHandler(tornado.web.RequestHandler):
                 "reward_tier_name": new_tier["rewardName"],
                 "next_reward_tier": next_tier["tier"],
                 "next_reward_tier_name": next_tier["rewardName"],
-                "next_reward_tier_progress": (points_earned%(next_tier["points"] - new_tier["points"]))/100.0
+                "next_reward_tier_progress": next_tier_progress
             })
         else:
             new_points_total = rewards_data["reward_points"] + points_earned
             new_tier = list(self.db.rewards.find({"points": {"$lte": new_points_total}}).sort("points", -1).limit(1))
+            next_tier = list(self.db.rewards.find({"points": {"$gt": new_points_total}}).sort("points", 1).limit(1))
             if not new_tier:
                 new_tier = {"tier": None, "rewardName": None, "points": 0}
-                next_tier = list(self.db.rewards.find({}, {"_id": 0}))[0]
             else:
                 new_tier = new_tier[0]
-                next_tier = list(self.db.rewards.find({"points": {"$gt": new_points_total}}).sort("points", 1).limit(1))[0]
+            
+            if not next_tier:
+                next_tier = {"tier": None, "rewardName": None, "points": None}
+                next_tier_progress = None
+            else:
+                next_tier = next_tier[0]
+                next_tier_progress = (new_points_total%(next_tier["points"] - new_tier["points"]))/100.0
 
             updated_values = { "$set": {
                 "reward_points": new_points_total,
@@ -58,7 +71,7 @@ class RewardsDataHandler(tornado.web.RequestHandler):
                 "reward_tier_name": new_tier["rewardName"],
                 "next_reward_tier": next_tier["tier"],
                 "next_reward_tier_name": next_tier["rewardName"],
-                "next_reward_tier_progress": (new_points_total%(next_tier["points"] - new_tier["points"]))/100.0
+                "next_reward_tier_progress": next_tier_progress
             }}
             self.db.rewards_data.update_one(query, updated_values)
         
