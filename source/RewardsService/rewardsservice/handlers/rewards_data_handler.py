@@ -52,7 +52,5 @@ class RewardsDataHandler(tornado.web.RequestHandler):
             "next_reward_tier_progress": next_tier_progress
         }}
         self.db.rewards_data.update_one(query, new_values, upsert=True)
-        
-        self.write(json.dumps(rewards_data, default=lambda o: '<not serializable>'))
 
 
