@@ -4,12 +4,14 @@ import math
 
 from pymongo import MongoClient
 from tornado.gen import coroutine
+from helpers.rewards_data_helper import RewardsDataHelper
 
 
 class RewardsDataHandler(tornado.web.RequestHandler):
     def initialize(self):
         self.client = MongoClient("mongodb", 27017)
         self.db = self.client["Rewards"]
+        self.helper = RewardsDataHelper()
 
     @coroutine
     def get(self, email):
@@ -25,20 +27,9 @@ class RewardsDataHandler(tornado.web.RequestHandler):
         query = {"email_address": email}
         rewards_data = self.db.rewards_data.find_one(query)
         if rewards_data == None:
-            new_tier = list(self.db.rewards.find({"points": {"$lte": points_earned}}).sort("points", -1).limit(1))
-            next_tier = list(self.db.rewards.find({"points": {"$gt": points_earned}}).sort("points", 1).limit(1))
-            
-            if not new_tier:
-                new_tier = {"tier": None, "rewardName": None, "points": 0}
-            else:
-                new_tier = new_tier[0]
-            
-            if not next_tier:
-                next_tier = {"tier": None, "rewardName": None, "points": None}
-                next_tier_progress = None
-            else:
-                next_tier = next_tier[0]
-                next_tier_progress = (points_earned%(next_tier["points"] - new_tier["points"]))/100.0
+            new_tier = self.helper.find_new_tier(points_earned)
+            next_tier = self.helper.find_next_tier(points_earned)
+            next_tier_progress = self.helper.calculate_next_tier_progress(points_earned, new_tier["points"], next_tier["points"])
 
             self.db.rewards_data.insert({
                 "email_address": email,
@@ -51,19 +42,9 @@ class RewardsDataHandler(tornado.web.RequestHandler):
             })
         else:
             new_points_total = rewards_data["reward_points"] + points_earned
-            new_tier = list(self.db.rewards.find({"points": {"$lte": new_points_total}}).sort("points", -1).limit(1))
-            next_tier = list(self.db.rewards.find({"points": {"$gt": new_points_total}}).sort("points", 1).limit(1))
-            if not new_tier:
-                new_tier = {"tier": None, "rewardName": None, "points": 0}
-            else:
-                new_tier = new_tier[0]
-            
-            if not next_tier:
-                next_tier = {"tier": None, "rewardName": None, "points": None}
-                next_tier_progress = None
-            else:
-                next_tier = next_tier[0]
-                next_tier_progress = (new_points_total%(next_tier["points"] - new_tier["points"]))/100.0
+            new_tier = self.helper.find_new_tier(new_points_total)
+            next_tier = self.helper.find_next_tier(new_points_total)
+            next_tier_progress = self.helper.calculate_next_tier_progress(new_points_total, new_tier["points"], next_tier["points"])
 
             updated_values = { "$set": {
                 "reward_points": new_points_total,
