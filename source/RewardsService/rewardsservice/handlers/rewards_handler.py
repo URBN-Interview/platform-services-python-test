@@ -6,10 +6,11 @@ from tornado.gen import coroutine
 
 
 class RewardsHandler(tornado.web.RequestHandler):
+    def initialize(self):
+        self.client = MongoClient("mongodb", 27017)
+        self.db = self.client["Rewards"]
 
     @coroutine
     def get(self):
-        client = MongoClient("mongodb", 27017)
-        db = client["Rewards"]
-        rewards = list(db.rewards.find({}, {"_id": 0}))
+        rewards = list(self.db.rewards.find({}, {"_id": 0}))
         self.write(json.dumps(rewards))
