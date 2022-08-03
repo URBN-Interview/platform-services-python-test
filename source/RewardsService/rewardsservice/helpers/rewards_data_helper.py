@@ -1,4 +1,5 @@
 import math
+import re
 
 from pymongo import MongoClient
 
@@ -55,3 +56,18 @@ class RewardsDataHelper():
             return None
         else:
             return (points%(next_tier_points - new_tier_points))/100.0
+
+    def validate_input(self, email_address, order_total):
+        email_reg = "^[a-zA-Z0-9-_]+@[a-zA-Z0-9]+\.[a-z]{1,3}$"
+        if not re.match(email_reg, email_address):
+            return False, "invalid email address"
+        
+        try:
+            points = int(order_total)
+            if points < 0:
+                return False, "order total cannot be negative"
+        except ValueError:
+            return False, "order total must be a number"
+
+        return True, None
+        

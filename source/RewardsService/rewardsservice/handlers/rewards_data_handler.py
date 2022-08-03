@@ -23,6 +23,8 @@ class RewardsDataHandler(tornado.web.RequestHandler):
             rewards_data = self.db.rewards_data.find_one(query)
         else:
             rewards_data = list(self.db.rewards_data.find({}, {"_id": 0}))
+        
+        self.set_status(200)
         self.write(json.dumps(rewards_data, default=lambda o: '<not serializable>'))
     
     # POST with a payload of a customer's `email_address`` and their `order_total`.
@@ -33,8 +35,13 @@ class RewardsDataHandler(tornado.web.RequestHandler):
     @coroutine
     def post(self):
         email = self.get_body_argument("email_address")
-        order_total = float(self.get_body_argument("order_total"))
-        points_earned = math.floor(order_total)
+        order_total = self.get_body_argument("order_total")
+        
+        valid, error = self.helper.validate_input(email, order_total)
+        if not valid:
+            raise tornado.web.HTTPError(400, reason=error)
+
+        points_earned = int(order_total)
 
         # Find an existing document in the rewards_data collection for the
         # provided email, if it exists. If the document exists, add the 
@@ -61,4 +68,5 @@ class RewardsDataHandler(tornado.web.RequestHandler):
         }}
         self.db.rewards_data.update_one(query, new_values, upsert=True)
 
-
+        self.set_status(200)
+        self.write("OK")
