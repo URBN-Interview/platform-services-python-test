@@ -41,7 +41,7 @@ class RewardsDataHandler(tornado.web.RequestHandler):
         if not valid:
             raise tornado.web.HTTPError(400, reason=error)
 
-        points_earned = int(order_total)
+        points_earned = int(float(order_total))
 
         # Find an existing document in the rewards_data collection for the
         # provided email, if it exists. If the document exists, add the 

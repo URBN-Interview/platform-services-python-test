@@ -5,7 +5,7 @@ from django.views.generic.base import TemplateView
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 
-from .orders_form import OrdersForm
+from .forms import OrdersForm
 from rewards.clients.rewards_service_client import RewardsServiceClient
 
 

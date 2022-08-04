@@ -63,7 +63,7 @@ class RewardsDataHelper():
             return False, "invalid email address"
         
         try:
-            points = int(order_total)
+            points = int(float(order_total))
             if points < 0:
                 return False, "order total cannot be negative"
         except ValueError:
