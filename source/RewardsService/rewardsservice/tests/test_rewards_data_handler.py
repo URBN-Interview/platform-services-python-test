@@ -10,6 +10,9 @@ class TestRewardsDataHandler(unittest.TestCase):
             "order_total": "100.80"
         })
         self.assertEqual(response.status_code, 200)
+
+        response = requests.get("http://localhost:7050/rewards_data?email=test@test.com")
+        self.assertEqual(response.status_code, 200)
     
     def test_submit_invalid_email(self):
         response = requests.post("http://localhost:7050/rewards_data", {
