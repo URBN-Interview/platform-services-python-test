@@ -30,15 +30,18 @@
             <th>Next Reward Tier Name</th>
             <th>Next Reward Tier Progress</th>
         </tr>
+        {% for user in users %}
         <tr>
-            <td>{{ spot['email'] }}</td>
-            <td>{{ spot['reward_points'] }}</td>
-            <td>{{ spot['reward_tier'] }}</td>
-            <td>{{ spot['reward_tier_name'] }}</td>
-            <td>{{ spot['next_reward_tier'] }}</td>
-            <td>{{ spot['next_reward_tier_name'] }}</td>
-            <td>{{ spot['next_reward_tier_progress'] }}</td>
+            <td>{{ user['email'] }}</td>
+            <td>{{ user['reward_points'] }}</td>
+            <td>{{ user['reward_tier'] }}</td>
+            <td>{{ user['reward_tier_name'] }}</td>
+            <td>{{ user['next_reward_tier'] }}</td>
+            <td>{{ user['next_reward_tier_name'] }}</td>
+            <td>{{ user['next_reward_tier_progress'] }}</td>
+            
         </tr>
+        {% end %}
     </table>
    </body>
  </html>

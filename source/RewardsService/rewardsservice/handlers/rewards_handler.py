@@ -55,7 +55,7 @@ class EndPointOne(tornado.web.RequestHandler):
             "next_reward_tier_progress" : tier_progress
             }
         self.update_user_info(user_info_db, **user_reward_dic)
-        self.render("data_display.html", title="post", spot=user_reward_dic)
+        self.render("data_display.html", title="post", users=[user_reward_dic])
 
     def calculate_points(self,new_points, old_points=0):
         total_points = new_points+old_points
@@ -94,7 +94,7 @@ class EndPointTwo(tornado.web.RequestHandler):
         email = self.get_argument("email")
         user_info = user_info_db.user_info.find_one({"email":email})
         if user_info:
-            self.render("data_display.html", title="post", spot=user_info)
+            self.render("data_display.html", title="post", users=[user_info])
         else:
             self.write("that email does not exist in the database")
 
@@ -102,4 +102,7 @@ class EndPointTwo(tornado.web.RequestHandler):
 class EndPointThree(tornado.web.RequestHandler):
     """Get all user Info"""
     def get(self):
-        self.write(self.__class__.__name__)
+        client = MongoClient("mongodb", 27017)
+        user_info_db = client["user_info"]
+        user_info = list(user_info_db.user_info.find({}))
+        self.render("data_display.html", title="post", users=user_info)
