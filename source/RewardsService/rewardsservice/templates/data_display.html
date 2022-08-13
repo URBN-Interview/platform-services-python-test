@@ -1,47 +1,11 @@
-<html>
-   <head>
-      <title>{{ title }}</title>
-      <style>
-        table {
-          font-family: arial, sans-serif;
-          border-collapse: collapse;
-          width: 100%;
-        }
-        
-        td, th {
-          border: 1px solid #dddddd;
-          text-align: left;
-          padding: 8px;
-        }
-        
-        tr:nth-child(even) {
-          background-color: #dddddd;
-        }
-        </style>
-   </head>
-   <body>
-    <table>
-        <tr>
-            <th>Email Address</th>
-            <th>Reward Points</th>
-            <th>Reward Tier</th>
-            <th>Reward Tier Name</th>
-            <th>Next Reward Tier</th>
-            <th>Next Reward Tier Name</th>
-            <th>Next Reward Tier Progress</th>
-        </tr>
-        {% for user in users %}
-        <tr>
-            <td>{{ user['email'] }}</td>
-            <td>{{ user['reward_points'] }}</td>
-            <td>{{ user['reward_tier'] }}</td>
-            <td>{{ user['reward_tier_name'] }}</td>
-            <td>{{ user['next_reward_tier'] }}</td>
-            <td>{{ user['next_reward_tier_name'] }}</td>
-            <td>{{ user['next_reward_tier_progress'] }}</td>
-            
-        </tr>
-        {% end %}
-    </table>
-   </body>
- </html>
+[{% for i in range(len(users)) %}
+  {
+    "email_address":"{{ users[i]['email'] }}",
+    "reward_points":{{ users[i]['reward_points'] }},
+    "reward_tier":"{{ users[i]['reward_tier'] }}",
+    "reward_tier_name":"{{ users[i]['reward_tier_name'] }}",
+    "next_reward_tier":"{{ users[i]['next_reward_tier'] }}",
+    "next_reward_tier_name":"{{ users[i]['next_reward_tier_name'] }}",
+    "next_reward_tier_progress":{{ users[i]['next_reward_tier_progress'] }}
+  }{% if i != len(users)-1 %},{% end %}{% end %}
+]

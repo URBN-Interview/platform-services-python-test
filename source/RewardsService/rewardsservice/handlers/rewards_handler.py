@@ -12,14 +12,10 @@ class RewardsHandler(tornado.web.RequestHandler):
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
         rewards = list(db.rewards.find({}, {"_id": 0}))
-        rewards = db.rewards.find_one({"points": 200})
-        self.write(str(rewards))
+        self.write(json.dumps(rewards))
         
 
 class EndPointOne(tornado.web.RequestHandler):
-    def get(self):
-        self.render("endpoint_one.html", title="get")
-    
     def post(self):
         client = MongoClient("mongodb", 27017)
         user_info_db = client["user_info"]
@@ -87,8 +83,6 @@ class EndPointOne(tornado.web.RequestHandler):
 class EndPointTwo(tornado.web.RequestHandler):
     """get user info"""
     def get(self):
-        self.render("endpoint_two.html", title="post",)
-    def post(self):
         client = MongoClient("mongodb", 27017)
         user_info_db = client["user_info"]
         email = self.get_argument("email")
