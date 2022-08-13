@@ -1,0 +1,27 @@
+<html>
+   <head>
+      <title>{{ title }}</title>
+   </head>
+   <body>
+    <table>
+        <tr>
+            <th>Email Address</th>
+            <th>Reward Points</th>
+            <th>Reward Tier</th>
+            <th>Reward Tier Name</th>
+            <th>Next Reward Tier</th>
+            <th>Next Reward Tier Name</th>
+            <th>Next Reward Tier Progress</th>
+        </tr>
+        <tr>
+            <td>{{ spot['email_address'] }}</td>
+            <td>{{ spot['reward_points'] }}</td>
+            <td>{{ spot['reward_tier'] }}</td>
+            <td>{{ spot['reward_tier_name'] }}</td>
+            <td>{{ spot['next_reward_tier'] }}</td>
+            <td>{{ spot['next_reward_tier_name'] }}</td>
+            <td>{{ spot['next_reward_tier_progress'] }}</td>
+        </tr>
+    </table>
+   </body>
+ </html>
