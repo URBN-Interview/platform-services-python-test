@@ -20,11 +20,14 @@ class EndPointOne(tornado.web.RequestHandler):
     2. get should show form
     3. post should put data into database"""
     def get(self):
-        items = ["Item 1", "Item 2", "Item 3"]
-        self.render("endpoint_one.html", title="My title", items=items)
+        self.render("endpoint_one.html", title="get")
     
     def post(self):
-        self.write(self.__class__.__name__)
+        email = self.get_argument("email")
+        points = self.get_argument("points")
+        self.write("{} {}".format(email, points))
+        # if email already in database update database
+        # if email not in database create new row
 
 class EndPointTwo(tornado.web.RequestHandler):
     """get user info"""
