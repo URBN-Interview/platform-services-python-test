@@ -1,0 +1,12 @@
+<html>
+   <head>
+      <title>{{ title }}</title>
+   </head>
+   <body>
+    <form action="{{ request.path }}" method="post">
+        <div>{{ _("Email") }} <input type="email" name="email"/></div>
+        <div><input type="submit" value="{{ _("Enter") }}"/></div>
+        {% module xsrf_form_html() %}
+      </form>
+   </body>
+ </html>
