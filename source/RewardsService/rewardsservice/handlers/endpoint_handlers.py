@@ -4,7 +4,20 @@ import tornado.web
 from pymongo import MongoClient
 from tornado.gen import coroutine
 
-class EndPointOne(tornado.web.RequestHandler):
+class BaseEndPoint(tornado.web.RequestHandler):
+    def check_orgin(self, origin: str)-> bool:
+        return True
+
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, PUT, OPTIONS')
+
+    def options(self, *args):
+        self.set_status(204)
+        self.finish()
+
+class EndPointOne(BaseEndPoint):
     def post(self):
         client = MongoClient("mongodb", 27017)
         user_info_db = client["user_info"]
@@ -75,7 +88,7 @@ class EndPointOne(tornado.web.RequestHandler):
             "next_reward_tier_name": next_reward_tier_name, 
             "next_reward_tier_progress": next_reward_tier_progress}})
 
-class EndPointTwo(tornado.web.RequestHandler):
+class EndPointTwo(BaseEndPoint):
     """get user info"""
     def get(self):
         client = MongoClient("mongodb", 27017)
@@ -88,7 +101,7 @@ class EndPointTwo(tornado.web.RequestHandler):
             self.write("that email does not exist in the database")
 
 
-class EndPointThree(tornado.web.RequestHandler):
+class EndPointThree(BaseEndPoint):
     """Get all user Info"""
 
     def check_orgin(self, origin: str)-> bool:

@@ -19,11 +19,12 @@ def main():
     db.rewards.insert({"points": 1000, "rewardName": "50% off purchase", "tier": "J"})
     print("Rewards loaded in mongo")
 
-def userRewards():
+def clean_user_info():
+    print("Removing user info  in mongo")
     db = client["Users_info"]
     db.users_info.remove()
 
 if __name__ == "__main__":
-    userRewards()
+    clean_user_info()
     main()
     
