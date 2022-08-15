@@ -20,8 +20,8 @@ def main():
     print("Rewards loaded in mongo")
 
 def userRewards():
-    db = client["Users"]
-    db.users.remove()
+    db = client["Users_info"]
+    db.users_info.remove()
 
 if __name__ == "__main__":
     userRewards()

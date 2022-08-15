@@ -1,9 +1,11 @@
 #!/usr/bin/env python
+from distutils.log import debug
 import logging
 
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
+import tornado.websocket
 
 from tornado.options import options
 
