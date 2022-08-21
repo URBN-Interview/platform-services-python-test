@@ -13,9 +13,14 @@ class UsersHandler(tornado.web.RequestHandler):
     @coroutine
     def prepare(self):
         if self.request.headers["Content-Type"] in JSON_MIME_TYPES:
-            self.req_body = json.loads(
-                self.decode_argument(self.request.body)
-            )
+            try:
+                self.req_body = json.loads(
+                    self.decode_argument(self.request.body)
+                )
+            except json.decoder.JSONDecodeError as err:
+                # when parsing invalid JSON, inform the user of where to fix the invalid JSON
+                self.set_status(400)
+                self.finish({ "message": str(err) })
 
     @coroutine
     def get(self):
