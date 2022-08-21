@@ -16,3 +16,8 @@ settings = {
     'static_path': STATIC_ROOT,
     'template_loader': tornado.template.Loader(TEMPLATE_ROOT)
 }
+
+JSON_MIME_TYPES = [
+    "application/json",
+    "application/x-json"
+]
