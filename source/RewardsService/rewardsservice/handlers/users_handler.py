@@ -67,8 +67,17 @@ class UsersHandler(tornado.web.RequestHandler):
 
     @coroutine
     def get(self):
-        users = list(self.database.users.find({ "email_address": ""}, {"_id": 0}))
-        self.write(json.dumps(users))
+        data = None
+        if isinstance(self.request.body, str):
+            data = list(self.database.users.find({}, { "_id": 0 }))
+        elif isinstance(self.request.body, dict) and self.request.body["email_address"]:
+            email = self.request.body["email_address"]
+            query_result = self.database.users.find_one({ "email_address": email }, { "_id": 0 })
+            if query_result is not None:
+                data = query_result
+            else:
+                data = []
+        self.write(json.dumps(data))
 
     @coroutine
     def post(self):
@@ -118,7 +127,6 @@ class UsersHandler(tornado.web.RequestHandler):
             self.database.users.replace_one({"_id": current_user_record["_id"]}, new_user_record)
         else:
             self.database.users.insert_one(new_user_record)
-        self.set_status(200)
         self.finish()
 
     @coroutine
