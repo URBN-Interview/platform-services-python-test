@@ -20,7 +20,7 @@ ERROR_MESSAGES = {
     },
 }
 
-VALID_NUMBER = re.compile("^\\d+\\.\\d+$")
+VALID_NUMBER = re.compile("^\\d+(\\.\\d+)?$")
 
 def parse_purchase_total(total):
     dollars, cents = total.split(".")
@@ -60,4 +60,7 @@ class UsersHandler(tornado.web.RequestHandler):
 
     @coroutine
     def post(self):
-        self.write(json.dumps(self.request.body))
+        email = self.request.body["email_address"]
+        purchase_total = self.request.body["purchase_total"]
+        previous_purchases = list(self.database.users.find({ "email_address": email }))
+        self.write(json.dumps(previous_purchases))
