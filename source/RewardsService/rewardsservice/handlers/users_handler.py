@@ -1,4 +1,5 @@
 import json
+import re
 import tornado.web
 
 from pymongo import MongoClient
@@ -6,21 +7,51 @@ from tornado.gen import coroutine
 
 from settings import JSON_MIME_TYPES
 
+# if a REST verb needs to be validated for data being present, add it here
+VALIDATED_VERBS = ["POST", "PUT"]
+
+ERROR_MESSAGES = {
+    "required": {
+        "email_address": "The user's email_address is missing and is a required field",
+        "purchase_total": "The user's purchase_total is missing and is a required field",
+    },
+    "validation": {
+        "purchase_total": "The purchase_total is not a valid number. A valid number is classified as matching the regex '[0-9]+\.[0-9]+'"
+    },
+}
+
+VALID_NUMBER = re.compile("^\\d+\\.\\d+$")
+
+def parse_purchase_total(total):
+    dollars, cents = total.split(".")
+    return (dollars, cents)
+
 class UsersHandler(tornado.web.RequestHandler):
     def initialize(self):
         self.database = MongoClient("mongodb", 27017)["Rewards"]
+    
+    def report_error(self, error_message):
+        self.set_status(400)
+        self.finish({ "message": error_message })
 
     @coroutine
     def prepare(self):
-        if self.request.headers["Content-Type"] in JSON_MIME_TYPES:
+        content_type = self.request.headers.get("Content-Type")
+        if content_type and content_type in JSON_MIME_TYPES:
             try:
-                self.req_body = json.loads(
-                    self.decode_argument(self.request.body)
-                )
+                self.request.body = json.loads(self.decode_argument(self.request.body))
             except json.decoder.JSONDecodeError as err:
                 # when parsing invalid JSON, inform the user of where to fix the invalid JSON
-                self.set_status(400)
-                self.finish({ "message": str(err) })
+                self.report_error(str(err))
+        if self.request.method in VALIDATED_VERBS:
+            # validate that all necessary parameters have been passed in the request body
+            data_keys = list(self.request.body.keys())
+            for field in ["email_address", "purchase_total"]:
+                if field not in data_keys:
+                    self.report_error(ERROR_MESSAGES["missing"][field])
+        # validate that the total is a valid number
+        if not VALID_NUMBER.match(self.request.body["purchase_total"]):
+            self.report_error(ERROR_MESSAGES["validation"]["purchase_total"])
 
     @coroutine
     def get(self):
@@ -29,4 +60,4 @@ class UsersHandler(tornado.web.RequestHandler):
 
     @coroutine
     def post(self):
-        self.write(json.dumps(self.req_body))
+        self.write(json.dumps(self.request.body))
