@@ -41,9 +41,19 @@ class OrdersHandler(tornado.web.RequestHandler):
     def initialize(self):
         self.database = MongoClient("mongodb", 27017)["Rewards"]
 
+    def set_default_headers(self, *args, **kwargs):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
+        self.set_header("Access-Control-Allow-Methods", "POST, GET, DELETE, OPTIONS")
+
     def report_error(self, error_message):
         self.set_status(400)
         self.finish({ "message": error_message })
+
+    @coroutine
+    def options(self, *args):
+        self.set_status(204)
+        self.finish
 
     @coroutine
     def prepare(self):
