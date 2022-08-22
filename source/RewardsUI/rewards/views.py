@@ -18,6 +18,8 @@ class RewardsView(TemplateView):
 
         rewards_data = self.rewards_service_client.get_rewards()
         context['rewards_data'] = rewards_data
+        orders_data = self.rewards_service_client.get_orders()
+        context['orders_data'] = orders_data
 
         return TemplateResponse(
             request,
