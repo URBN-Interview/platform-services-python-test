@@ -68,10 +68,10 @@ class OrdersHandler(tornado.web.RequestHandler):
     @coroutine
     def get(self):
         data = None
-        if isinstance(self.request.body, str):
+        email = self.get_argument("email_address", None)
+        if email is None:
             data = list(self.database.users.find({}, { "_id": 0 }))
-        elif isinstance(self.request.body, dict) and self.request.body["email_address"]:
-            email = self.request.body["email_address"]
+        else:
             query_result = self.database.users.find_one({ "email_address": email }, { "_id": 0 })
             if query_result is not None:
                 data = query_result
