@@ -110,22 +110,27 @@ class OrdersHandler(tornado.web.RequestHandler):
             pass
 
         next_tier = {}
+        next_points = rewards[0]["points"]
         tier_progress = "0%"
         try:
             next_idx = min(current_idx + 1, rewards_len)
             if next_idx == rewards_len:
                 next_tier = {}
+                next_points = rewards[-1]["points"]
                 tier_progress = "100%"
             else:
                 next_tier = rewards[next_idx]
+                next_points = next_tier["points"]
         except IndexError:
             next_tier = rewards[0]
+            next_points = next_tier["points"]
             pass
         except TypeError:
             next_tier = rewards[0]
+            next_points = next_tier["points"]
             pass
-
-        tier_progress = "{:.2f}%".format(points_sum / next_tier["points"] * 100)
+        
+        tier_progress = "{:.2f}%".format(points_sum / next_points * 100)
         new_user_record = {
             "email_address": email,
             "rewards_points": points_sum,
