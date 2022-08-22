@@ -16,11 +16,13 @@ ERROR_MESSAGES = {
         "purchase_total": "The user's purchase_total is missing and is a required field",
     },
     "validation": {
-        "purchase_total": "The purchase_total is not a valid number. A valid number is classified as matching the regex '[0-9]+\.[0-9]+'"
+        "purchase_total": "The purchase_total is not a valid number. A valid number is classified as matching the regex '[0-9]+(\\.[0-9]{2})?'"
     },
 }
 
-VALID_NUMBER = re.compile("^\\d+(\\.\\d+)?$")
+VALIDATORS = {
+    "purchase_total": re.compile("^\\d+(\\.\\d{2})?$"),
+}
 
 def parse_purchase_total(total):
     dollars, cents = total.split(".")
@@ -46,12 +48,13 @@ class UsersHandler(tornado.web.RequestHandler):
         if self.request.method in VALIDATED_VERBS:
             # validate that all necessary parameters have been passed in the request body
             data_keys = list(self.request.body.keys())
-            for field in ["email_address", "purchase_total"]:
+            validated_keys = list(VALIDATORS.keys())
+            for field in list(ERROR_MESSAGES["required"].keys()):
                 if field not in data_keys:
-                    self.report_error(ERROR_MESSAGES["missing"][field])
-        # validate that the total is a valid number
-        if not VALID_NUMBER.match(self.request.body["purchase_total"]):
-            self.report_error(ERROR_MESSAGES["validation"]["purchase_total"])
+                    self.report_error(ERROR_MESSAGES["required"][field])
+                if field in validated_keys:
+                    if not VALIDATORS[field].match(self.request.body[field]):
+                        self.report_error(ERROR_MESSAGES["validation"][field])
 
     @coroutine
     def get(self):
