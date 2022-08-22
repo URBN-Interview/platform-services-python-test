@@ -67,18 +67,17 @@ class UsersHandler(tornado.web.RequestHandler):
 
     @coroutine
     def get(self):
-        users = list(self.database.users.find({}, {"_id": 0}))
+        users = list(self.database.users.find({ "email_address": ""}, {"_id": 0}))
         self.write(json.dumps(users))
 
     @coroutine
     def post(self):
         email = self.request.body["email_address"]
         [dollars, _] = parse_purchase_total(self.request.body["purchase_total"])
-        previous_purchases = list(self.database.users.find({ "email_address": email }))
-        points_sum = sum(
-            [int(x["rewards_points"]) for x in list(self.database.users.find({ "email_address": email }))],
-            int(dollars)
-        )
+        current_user_record = self.database.users.find_one({ "email_address": email })
+        points_sum = int(dollars)
+        if current_user_record is not None:
+            points_sum += int(current_user_record["rewards_points"])
         rewards = list(self.database.rewards.find({}, {"_id": 0}))
         rewards_len = len(rewards)
 
@@ -108,13 +107,23 @@ class UsersHandler(tornado.web.RequestHandler):
             pass
 
         tier_progress = "{:.2f}%".format(points_sum / next_tier["points"] * 100)
-
-        self.database.users.insert_one({
+        new_user_record = {
             "email_address": email,
             "rewards_points": points_sum,
             "next_tier_progress": tier_progress,
             "current_tier": current_tier,
             "next_tier": next_tier,
-        })
+        }
+        if current_user_record is not None:
+            self.database.users.replace_one({"_id": current_user_record["_id"]}, new_user_record)
+        else:
+            self.database.users.insert_one(new_user_record)
         self.set_status(200)
         self.finish()
+
+    @coroutine
+    def delete(self):
+        result = self.database.users.delete_many(
+            { "email_address": self.request.body["email_address"] }
+        )
+        self.write({ "message": "Number of rows affected: {0}".format(result.deleted_count) })
