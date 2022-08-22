@@ -16,11 +16,13 @@ ERROR_MESSAGES = {
         "purchase_total": "The user's purchase_total is missing and is a required field",
     },
     "validation": {
-        "purchase_total": "The purchase_total is not a valid number. A valid number is classified as matching the regex '[0-9]+(\\.[0-9]{2})?'"
+        "email_address": "The email_address is not a valid email address",
+        "purchase_total": "The purchase_total is not a valid number. A valid number is classified as matching the regex '[0-9]+(\\.[0-9]{2})?'",
     },
 }
 
 VALIDATORS = {
+    "email_address": re.compile("^.+@.+\\.\\w+$"),
     "purchase_total": re.compile("^\\d+(\\.\\d{2})?$"),
 }
 
@@ -130,7 +132,7 @@ class OrdersHandler(tornado.web.RequestHandler):
             next_points = next_tier["points"]
             pass
         
-        tier_progress = "{:.2f}%".format(points_sum / next_points * 100)
+        tier_progress = "{:.2f}%".format(min(1, points_sum / next_points) * 100)
         new_user_record = {
             "email_address": email,
             "rewards_points": points_sum,
