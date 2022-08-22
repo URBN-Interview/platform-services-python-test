@@ -37,7 +37,7 @@ def get_rewards_tier_idx(total, num_tiers):
         return min(int(dollars[0:dollar_magnitude-2]), num_tiers) - 1
     return None
 
-class UsersHandler(tornado.web.RequestHandler):
+class OrdersHandler(tornado.web.RequestHandler):
     def initialize(self):
         self.database = MongoClient("mongodb", 27017)["Rewards"]
 
