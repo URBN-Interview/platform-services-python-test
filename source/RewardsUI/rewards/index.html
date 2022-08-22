@@ -2,41 +2,142 @@
 <html lang="en">
 <head>
     <title>Rewards Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript">
+        const ordersErrorParent = "ordersContainer";
+        const ordersErrorId = "orderError";
+        const queryErrorParent = "queryContainer";
+        const queryErrorId = "queryError";
+
+        function htmlId(str) {
+            return "#" + str;
+        }
+
+        function deleteNode(child) {
+            const childNode = document.querySelector(child);
+            if (childNode) {
+                document.querySelector(child).parentElement.removeChild(childNode);
+            }
+        }
+
+        function createError(parent, id, message) {
+            const errorText = document.createElement("p");
+            errorText.innerHTML = message;
+            errorText.className = "p-2 text-lg italic text-rose-600";
+            errorText.id = id;
+            document.querySelector(parent).prepend(errorText);
+        }
+
+        function createSuccess(parent, id, message) {
+            const successText = document.createElement("p");
+            successText.innerHTML = message;
+            successText.className = "p-2 text-lg italic text-emerald-600"
+            successText.id = id;
+            document.querySelector(parent).prepend(successText);
+        }
+
+        function submitOrder() {
+            const order = {
+                email_address: document.querySelector("input" + htmlId("orderEmail")).value,
+                purchase_total: document.querySelector("input" + htmlId("orderTotal")).value,
+            };
+            fetch("http://localhost:7050/orders", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(order),
+            }).then(response => {
+                deleteNode(htmlId(ordersErrorId));
+                if (response.status === 200) {
+                    createSuccess(htmlId(ordersErrorParent), ordersErrorId, "Successfully added the order!")
+                } else {
+                    response.json().then(({ message }) => {
+                        // render any validation errors for the user to see
+                        if (!message) {
+                            message = "An unexpected error occurred.";
+                        }
+                        createError(htmlId(ordersErrorParent), ordersErrorId, message);
+                    });
+                }
+            });
+        }
+
+        function findOrder() {
+            const email = document.querySelector(htmlId("queryEmail")).value;
+            if (!email) {
+                // reload the page to rehydrate the page server-side using Django template
+                window.location.assign("/");
+            }
+
+            fetch("http://localhost:7050/orders", {
+                method: "GET",
+                params: {
+                    email_address: document.querySelector(htmlId("queryEmail")).value,
+                },
+            }).then(response => {
+                response.json()
+                    .then(({ data, message }) => {
+                        // render any validation errors for the user to see
+                        if (message) {
+                            createError(htmlId(ordersErrorParent), ordersErrorId, message);
+                        } else {
+                            deleteNode(htmlId(ordersErrorId));
+                            // createSuccess(htmlId(ordersErrorParent), ordersErrorId, "Successfully added the order!")
+                        }
+                    })
+                    .catch(console.log);
+            });
+        }
+    </script>
+    <style type="text/css">
+        html {
+            line-height: 16px;
+        }
+        body {
+            font-size: 1rem;
+        }
+        body * {
+            font-family: 'Times New Roman', Times, serif;
+            padding: 16px 12px 0px;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            padding-bottom: 12px;
+        }
+    </style>
 </head>
-<body>
-    <h1>Welcome to the Rewards Dashboard</h1>
-    <div>
-        <h2>Reward Tiers</h2>
-        <table border="1">
+<body class="bg-slate-100 text-gray-900">
+    <h1 class="text-5xl pt-1">Welcome to the Rewards Dashboard</h1>
+    <h2 class="text-3xl">Reward Tiers</h2>
+    <table border="1">
+        <tr>
+            <th>Rewards Tier<th>
+            <th>Reward Points</th>
+            <th>Rewards Tier Name</th>
+        </tr>
+        {% for reward in rewards_data %}
             <tr>
-                <th>Rewards Tier<th>
-                <th>Reward Points</th>
-                <th>Rewards Tier Name</th>
+                <td>{{ reward.tier }}<td>
+                <td>{{ reward.points }}</td>
+                <td>{{ reward.rewardName }}</td>
             </tr>
-            {% for reward in rewards_data %}
-                <tr>
-                    <td>{{ reward.tier }}<td>
-                    <td>{{ reward.points }}</td>
-                    <td>{{ reward.rewardName }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-        <hr>
+        {% endfor %}
+    </table>
+    <div id="ordersContainer">
+        <h2 class="text-3xl">Add orders</h2>
+        <label>Enter email address: </label>
+        <input type="email" id="orderEmail"/>
+        <br>
+        <label>Enter order total: </label>
+        <input type="text" id="orderTotal"/>
+        <input type="button" value="Submit Order" onclick="submitOrder()" />
     </div>
-    <div>
-        <h2>Add orders</h2>
-        <form>
-            <label>Enter email address: </label><input type="text"/><br>
-            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order"/>
-        </form>
-        <hr>
-    </div>
-    <div>
-        <h2>User Rewards</h2>
-        <form>
-            <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
-        </form>
-        <table border="1">
+    <div id="queryContainer">
+        <h2 class="text-3xl">User Rewards</h2>
+        <label>Email address: </label>
+        <input type="text" id="queryEmail"/>
+        <input type="button" value="Search" onclick="findOrder()"/>
+        <table>
             <thead>
                 <tr>
                     <th>Email Address</th>
