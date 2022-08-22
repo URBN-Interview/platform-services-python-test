@@ -25,13 +25,22 @@ VALIDATORS = {
 }
 
 def parse_purchase_total(total):
-    dollars, cents = total.split(".")
-    return (dollars, cents)
+    split = total.split(".")
+    if len(split) == 1:
+        return [split[0], None]
+    return split
+
+def get_rewards_tier_idx(total, num_tiers):
+    dollars = "{0}".format(parse_purchase_total(total)[0])
+    dollar_magnitude = len(dollars)
+    if dollar_magnitude > 2:
+        return min(int(dollars[0:dollar_magnitude-2]), num_tiers) - 1
+    return None
 
 class UsersHandler(tornado.web.RequestHandler):
     def initialize(self):
         self.database = MongoClient("mongodb", 27017)["Rewards"]
-    
+
     def report_error(self, error_message):
         self.set_status(400)
         self.finish({ "message": error_message })
@@ -64,6 +73,48 @@ class UsersHandler(tornado.web.RequestHandler):
     @coroutine
     def post(self):
         email = self.request.body["email_address"]
-        purchase_total = self.request.body["purchase_total"]
+        [dollars, _] = parse_purchase_total(self.request.body["purchase_total"])
         previous_purchases = list(self.database.users.find({ "email_address": email }))
-        self.write(json.dumps(previous_purchases))
+        points_sum = sum(
+            [int(x["rewards_points"]) for x in list(self.database.users.find({ "email_address": email }))],
+            int(dollars)
+        )
+        rewards = list(self.database.rewards.find({}, {"_id": 0}))
+        rewards_len = len(rewards)
+
+        current_idx = get_rewards_tier_idx("{0}".format(points_sum), rewards_len)
+        current_tier = {}
+        try:
+            current_tier = rewards[current_idx]
+        except IndexError:
+            pass
+        except TypeError:
+            pass
+
+        next_tier = {}
+        tier_progress = "0%"
+        try:
+            next_idx = min(current_idx + 1, rewards_len)
+            if next_idx == rewards_len:
+                next_tier = {}
+                tier_progress = "100%"
+            else:
+                next_tier = rewards[next_idx]
+        except IndexError:
+            next_tier = rewards[0]
+            pass
+        except TypeError:
+            next_tier = rewards[0]
+            pass
+
+        tier_progress = "{:.2f}%".format(points_sum / next_tier["points"] * 100)
+
+        self.database.users.insert_one({
+            "email_address": email,
+            "rewards_points": points_sum,
+            "next_tier_progress": tier_progress,
+            "current_tier": current_tier,
+            "next_tier": next_tier,
+        })
+        self.set_status(200)
+        self.finish()
