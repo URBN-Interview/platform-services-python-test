@@ -1,3 +1,5 @@
+# helper functions and tier data for rewards system
+
 import json 
 from math import floor
 

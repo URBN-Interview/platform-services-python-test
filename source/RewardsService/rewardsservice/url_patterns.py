@@ -5,7 +5,13 @@ from handlers.customer_rewards_handler import CustomerRewardsHandler, SingleCust
 
 url_patterns = [
     (r'/rewards', RewardsHandler),
+
+    # endpoint to create new customer order 
     (r'/customerOrderData', CustomerOrderDataHandler),
+
+    # endpoint to retrieve all customer rewards data
     (r'/customerRewardsData', CustomerRewardsHandler),
+
+    #endpoint to retrieve customer rewards data for user given email address
     (r'/singleCustomerRewardsData', SingleCustomerRewardsDataHandler)
 ]

@@ -4,7 +4,7 @@ from tornado.gen import coroutine
 from pymongo import MongoClient
 
 
-
+# get rewards data for all customers
 class CustomerRewardsHandler(tornado.web.RequestHandler):    
     @coroutine
     def get(self):
@@ -14,7 +14,7 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
         res = list(customer_order_data_collection.find({}, {"_id": 0}))
         self.write(json.dumps(res))
 
-
+# get rewards data for customer matching the given email
 class SingleCustomerRewardsDataHandler(tornado.web.RequestHandler):
     @coroutine
     def get(self):
