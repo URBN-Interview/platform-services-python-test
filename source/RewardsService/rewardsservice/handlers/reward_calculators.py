@@ -29,7 +29,6 @@ class RewardCalculators:
     NO_TIER_NAME = "No Tier"
 
     TIER_MAP = {
-        
         TIER_A: TIER_A_NAME,
         TIER_B: TIER_B_NAME,
         TIER_C: TIER_C_NAME,
@@ -41,9 +40,6 @@ class RewardCalculators:
         TIER_I: TIER_I_NAME,
         TIER_J: TIER_J_NAME,
         NO_TIER: NO_TIER_NAME
-
-    
-    
     }
 
 
@@ -164,3 +160,5 @@ class RewardCalculators:
 
     def parse_json(self, data):
         return json.loads(json.dumps(data))
+
+  
