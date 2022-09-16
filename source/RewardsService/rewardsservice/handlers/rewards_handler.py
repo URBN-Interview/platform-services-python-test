@@ -9,7 +9,6 @@ class RewardsHandler(tornado.web.RequestHandler):
 
     @coroutine
     def get(self):
-        client = DBConnection.get_client()
-        db = client["Rewards"]
+        db = DBConnection.get_client()["Rewards"]
         rewards = list(db.rewards.find({}, {"_id": 0}))
         self.write(json.dumps(rewards))
