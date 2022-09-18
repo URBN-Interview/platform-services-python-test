@@ -1,3 +1,20 @@
+# How to run the unit tests
+Use the following instructions to run API unit tests on local machine
+
+```
+cd RewardsService
+python -m venv venv 
+. venv/bin/activate
+pip install -r requirments.txt
+python ./rewardsservice/test/customer_rewards_test.py
+deactivate
+```
+---
+
+### Original Readme starts here
+
+---
+
 # Objective
 Create RESTful endpoint(s) to calculate, store, and retrieve customer rewards data from MongoDB.
 
