@@ -10,7 +10,8 @@ from source.RewardsService.rewardsservice.handlers.order_handler import OrderHan
 
 class TestOrderHandler(AsyncHTTPTestCase):
     """
-    Created pytest for Order handler. Note, it is Not functional.
+    Created pytest for Order handler. Note, it is docker ps
+    Not functional.
     """
     def get_app(self):
         db = MotorClient()['Rewards']

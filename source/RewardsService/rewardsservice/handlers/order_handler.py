@@ -31,9 +31,9 @@ class OrderHandler(RequestHandler):
             self.store_rewards_data(customer_rewards_data)
 
             # Return customer rewards data as JSON
-            res_data = json.dumps(customer_rewards_data, default=str)
+            response_data = json.dumps(customer_rewards_data, default=str)
             self.set_header("Content-Type", "application/json")
-            self.write(res_data)
+            self.write(response_data)
 
         except ValueError:
             raise HTTPError(400, "Invalid order total")

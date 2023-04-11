@@ -41,3 +41,9 @@ Create RESTful endpoint(s) to calculate, store, and retrieve customer rewards da
 * $ docker-compose build
 * $ docker-compose up -d
 * Services are accessible at http://localhost:7050/
+
+Endpoints created:
+* Endpoint 1: `/addRewards` is a POST method. Accepts a customer's order data: **email adress**  (ex. "customer01@gmail.com") and **order total** (ex. 100.80) in the body. 
+Returns customer's rewards data.
+* Endpoint 2: `/getCustomerRewards` is a GET method. Accepts a customer's **email adress**  (ex. "customer01@gmail.com"). Returns the customer's rewards data.
+* Endpoint 3: `/getCustomers` is a GET method. Returns all customers rewards data.
