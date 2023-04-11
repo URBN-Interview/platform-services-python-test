@@ -15,7 +15,6 @@ class RewardsDataHandler(RequestHandler):
     def get(self):
         try:
             email = self.get_argument('email')
-            print(email)
             customer_data = customer_db.customerdata.find_one({'email': email})
 
             if customer_data is None:

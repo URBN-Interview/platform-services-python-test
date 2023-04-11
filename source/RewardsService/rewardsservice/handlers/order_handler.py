@@ -6,9 +6,8 @@ from pymongo.errors import PyMongoError
 from tornado.web import RequestHandler, HTTPError
 from tornado.gen import coroutine
 
-
 """
-Below code should be in a DAO but having some issue with imports in the project
+Below Mongo client code should be in a DAO but having some issue with imports in the project
 """
 client = pymongo.MongoClient("mongodb", 27017)
 db = client["Rewards"]
@@ -43,7 +42,7 @@ class OrderHandler(RequestHandler):
 
     def calculate_rewards(self, email, order_total):
         """
-        Caculate customer rewards by order total
+        Calculate customer rewards by order total. This method should go into order_service.py
         :param email: customer email ID
         :param order_total: order total
         :return: customer rewards dict
