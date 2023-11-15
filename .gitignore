@@ -1,0 +1,5 @@
+# ignore entire data folder
+source/RewardsService/data/
+
+#ignore pycache
+source/RewardsService/**/__pycache__/
