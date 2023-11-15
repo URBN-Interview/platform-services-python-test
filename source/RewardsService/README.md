@@ -46,7 +46,7 @@ Create RESTful endpoint(s) to calculate, store, and retrieve customer rewards da
 # AC:
 
 ### Endpoint1
-- [] Accept a customer's order data:
+- [X] Accept a customer's order data:
     * **email adress**  (ex. "customer01@gmail.com") 
     * **order total** (ex. 100.80).
 
