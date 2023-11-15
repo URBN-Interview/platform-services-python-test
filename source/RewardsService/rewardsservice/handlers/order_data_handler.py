@@ -1,15 +1,11 @@
 import json
-import tornado.web
+import logging
 
-from pymongo import MongoClient
 from tornado.gen import coroutine
+from .rewards_base import RewardsBaseHandler
 
 
-class OrderDataHandler(tornado.web.RequestHandler):
-    def initialize(self):
-        self.client = MongoClient("mongodb", 27017)
-        self.db = self.client["Rewards"]
-
+class OrderDataHandler(RewardsBaseHandler):
     def create_order_doc(self, email, total) -> dict:
         order_doc = {
             "customerEmail": email,
@@ -21,5 +17,16 @@ class OrderDataHandler(tornado.web.RequestHandler):
     def post(self):
         customer_email = self.get_argument("customerEmail")
         customer_order_total = self.get_argument("orderTotal")
-        document = self.create_order_doc(customer_email, customer_order_total)
-        self.write(json.dumps(document))
+
+        try:
+            is_valid = self.validate_email(customer_email)
+            if is_valid:
+                document = self.create_order_doc(customer_email, customer_order_total)
+                self.write(json.dumps(document))
+
+        except ValueError as e:
+            logger = logging.getLogger()
+            err = "Exception caught while validating email: {msg}".format(msg=e)
+            logger.error(err)
+
+            self.write_error(400, msg=err)
