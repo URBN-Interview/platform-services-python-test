@@ -1,5 +1,5 @@
 import json
-import logging
+import tornado.web
 
 from tornado.gen import coroutine
 from .rewards_base import RewardsBaseHandler
@@ -18,15 +18,11 @@ class OrderDataHandler(RewardsBaseHandler):
         customer_email = self.get_argument("customerEmail")
         customer_order_total = self.get_argument("orderTotal")
 
-        try:
-            is_valid = self.validate_email(customer_email)
-            if is_valid:
-                document = self.create_order_doc(customer_email, customer_order_total)
-                self.write(json.dumps(document))
+        is_valid, err = self.validate_email(customer_email)
+        if is_valid:
+            document = self.create_order_doc(customer_email, customer_order_total)
+            self.write(json.dumps(document))
+        else:
+            self.logger.warn(err)
 
-        except ValueError as e:
-            logger = logging.getLogger()
-            err = "Exception caught while validating email: {msg}".format(msg=e)
-            logger.error(err)
-
-            self.write_error(400, msg=err)
+            raise tornado.web.HTTPError(400, reason=err)
