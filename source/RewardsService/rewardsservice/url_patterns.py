@@ -1,7 +1,7 @@
 from handlers.rewards_handler import AllRewardsHandler
-from handlers.order_data_handler import OrderDataHandler
+from handlers.order_data_handler import UserTierHandler
 
 url_patterns = [
     (r"/rewards", AllRewardsHandler),
-    (r"/rewards/order", OrderDataHandler),
+    (r"/rewards/order", UserTierHandler),
 ]
