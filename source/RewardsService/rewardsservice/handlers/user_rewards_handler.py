@@ -24,6 +24,10 @@ class GetUserRewardsHandler(RewardsBaseHandler):
         all users in the users collection
         """
 
+        # much like the reward utils, I assumed there must be a more
+        # elegant way of handling wild logic like this. I was used
+        # to switch statements in Go, but realized Python did not
+        # implement anything similiar until 3.10. Such is life
         customer_email = self.get_query_argument("customerEmail", None)
         if customer_email:
             is_valid, err = self.validate_email(customer_email)

@@ -10,8 +10,7 @@ from utils.reward_utils import RewardTierUtil
 class RewardsBaseHandler(tornado.web.RequestHandler):
     """
     RewardsBaseHandler is used for shared handler init vars
-    as well as a handful of helper functions to keep the
-    more specific handlers targeted and clean.
+    as well as a shared email validation method.
     """
 
     def initialize(self):

@@ -24,6 +24,11 @@ class UserTierHandler(RewardsBaseHandler):
 
         customer_email = self.get_body_argument("customerEmail")
         customer_order_total = self.get_body_argument("orderTotal")
+
+        # I believe this is an incredibly illegible lambda which
+        # probably shouldn't be in a production codebase. However,
+        # I found it as a nice concise way of clamping the
+        # values for user points totals in a pinch here.
         points_clamp = lambda point, min_point, max_point: max(
             min(max_point, point), min_point
         )
@@ -43,7 +48,7 @@ class UserTierHandler(RewardsBaseHandler):
 
             doc = self.util.hydrate_document(total, customer_email)
             self.db.users.update_one(user_query, {"$set": doc}, upsert=True)
-            self.write(json.dumps(doc))
+            self.write("Successfully inserted {user}".format(user=doc["email"]))
 
         else:
             self.logger.warn(err)

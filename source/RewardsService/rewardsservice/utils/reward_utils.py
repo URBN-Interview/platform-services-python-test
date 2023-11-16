@@ -27,6 +27,8 @@ class RewardTierUtil:
         loreal = {"tier": "", "rewardName": "", "points": None}
         max_tier = {"tier": "J", "rewardName": "50% off purchase", "points": 1000}
 
+        # There's a lot of logic in here that probably
+        # has a significantly more elegant alternative.
         check_current_tier = self.db.rewards.find_one(
             {"points": {"$lte": point_total}}, sort=[("points", -1)]
         )
