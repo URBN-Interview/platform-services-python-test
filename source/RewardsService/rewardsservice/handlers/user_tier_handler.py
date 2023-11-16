@@ -3,7 +3,7 @@ import tornado.web
 import math
 
 from tornado.gen import coroutine
-from .rewards_base import RewardsBaseHandler
+from .rewards_base_handler import RewardsBaseHandler
 
 
 class UserTierHandler(RewardsBaseHandler):

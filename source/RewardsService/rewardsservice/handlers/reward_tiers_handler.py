@@ -1,7 +1,7 @@
 import json
 
 from tornado.gen import coroutine
-from .rewards_base_handler import RewardsBaseHandler
+from .rewards_base import RewardsBaseHandler
 
 
 class GetRewardTiersHandler(RewardsBaseHandler):

@@ -1,7 +1,8 @@
-from handlers.rewards_handler import AllRewardsHandler
+from handlers.rewards_handler import GetRewardTiersHandler
 from handlers.order_data_handler import UserTierHandler
 
 url_patterns = [
-    (r"/rewards", AllRewardsHandler),
+    (r"/", GetRewardTiersHandler),
     (r"/rewards/order", UserTierHandler),
+    ("r/rewards/(?:^\S+@\S+\.\S+$)?", GetUserRewardsHandler),
 ]
