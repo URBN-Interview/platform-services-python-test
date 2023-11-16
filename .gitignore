@@ -3,3 +3,6 @@ source/RewardsService/data/
 
 #ignore pycache
 source/RewardsService/**/__pycache__/
+
+# ignore rewardsUI pycache
+source/RewardsUI/**/__pycache__/
