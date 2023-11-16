@@ -41,7 +41,7 @@ class UserTierHandler(RewardsBaseHandler):
             else:
                 total = points_clamp(math.floor(float(customer_order_total)), 0, 1000)
 
-            doc = yield self.util.hydrate_document(total, customer_email)
+            doc = self.util.hydrate_document(total, customer_email)
             self.db.users.update_one(user_query, {"$set": doc}, upsert=True)
             self.write(json.dumps(doc))
 

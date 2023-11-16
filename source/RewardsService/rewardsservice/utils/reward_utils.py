@@ -64,7 +64,6 @@ class RewardTierUtil:
             "nextTierProgress": (100 - (next_tier_points - point_total)) / 100,
         }
 
-    @tornado.gen.coroutine
     def hydrate_document(
         self,
         points: int,
@@ -87,4 +86,4 @@ class RewardTierUtil:
             "nextTierName": tiers["nextTierName"],
             "nextTierProgress": tiers["nextTierProgress"],
         }
-        raise tornado.gen.Return(hydrated_doc)
+        return hydrated_doc
