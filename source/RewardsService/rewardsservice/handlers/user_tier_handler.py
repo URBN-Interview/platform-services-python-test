@@ -48,7 +48,9 @@ class UserTierHandler(RewardsBaseHandler):
 
             doc = self.util.hydrate_document(total, customer_email)
             self.db.users.update_one(user_query, {"$set": doc}, upsert=True)
-            self.write("Successfully inserted {user}".format(user=doc["email"]))
+            self.write(
+                json.dumps("Successfully inserted {user}".format(user=doc["email"]))
+            )
 
         else:
             self.logger.warn(err)
