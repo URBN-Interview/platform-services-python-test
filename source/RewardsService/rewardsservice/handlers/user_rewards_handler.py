@@ -43,9 +43,11 @@ class GetUserRewardsHandler(RewardsBaseHandler):
 
             else:
                 response = {"user": user}
+                self.set_header("Content-Type", "application/json")
                 self.write(json_util.dumps(response))
 
         else:
             all_users = [docs for docs in self.db.users.find({})]
             response = {"allUsers": all_users}
+            self.set_header("Content-Type", "application/json")
             self.write(json_util.dumps(response))

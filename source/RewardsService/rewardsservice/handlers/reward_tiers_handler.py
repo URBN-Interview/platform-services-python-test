@@ -13,4 +13,5 @@ class GetRewardTiersHandler(RewardsBaseHandler):
     @coroutine
     def get(self):
         rewards = list(self.db.rewards.find({}, {"_id": 0}))
+        self.set_header("Content-Type", "application/json")
         self.write(json.dumps(rewards))
