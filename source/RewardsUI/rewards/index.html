@@ -1,3 +1,4 @@
+{% load rewards_extras %}
 <html>
 
 <head>
@@ -66,7 +67,7 @@
             <td>{{ user.tierName }}</td>
             <td>{{ user.nextTier }}</td>
             <td>{{ user.nextTierName }}</td>
-            <td>{{ user.nextTierProgress }}</td>
+            <td>{{ user.nextTierProgress|percent }}</td>
           </tr>
           {% endfor %}
           {% else %}
