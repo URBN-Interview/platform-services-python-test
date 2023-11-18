@@ -71,7 +71,7 @@ class RewardsHandler(tornado.web.RequestHandler):
         # Get the requested URL
         endpoint = self.request.path
         
-        if endpoint == '/rewards/single_customer':
+        if endpoint == '/user/rewards':
             email_to_find = self.get_argument("email")
             # Retrieve customer's rewards data from MongoDB based on the email
             client = MongoClient("mongodb", 27017)
@@ -83,7 +83,7 @@ class RewardsHandler(tornado.web.RequestHandler):
             else:
                 self.write("Customer data not found.")
 
-        elif endpoint == '/rewards/all_customers':
+        elif endpoint == '/allcustomers/rewards':
             client = MongoClient("mongodb", 27017)
             db = client["Rewards"]
             customer_rewards = list(db.customer_rewards.find({}, {"_id": 0}))
