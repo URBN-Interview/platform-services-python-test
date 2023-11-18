@@ -19,7 +19,6 @@ class App(tornado.web.Application):
 
 app = App(url_patterns)
 
-
 def main():
     logger = logging.getLogger()
     tornado.options.parse_command_line()

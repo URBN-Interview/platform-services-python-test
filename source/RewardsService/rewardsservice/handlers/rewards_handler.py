@@ -67,7 +67,38 @@ class RewardsHandler(tornado.web.RequestHandler):
         })
         self.write("Customer rewards data stored successfully.")
 
+    def get(self):
+        # Get the requested URL
+        endpoint = self.request.path
+        
+        if endpoint == '/rewards/single_customer':
+            email_to_find = self.get_argument("email")
+            # Retrieve customer's rewards data from MongoDB based on the email
+            client = MongoClient("mongodb", 27017)
+            db = client["Rewards"]
+            customer_data = list(db.customer_rewards.find({"email": email_to_find}, {"_id": 0}))
+            # Return the customer's rewards data
+            if customer_data:                    
+                self.write(json.dumps(customer_data))
+            else:
+                self.write("Customer data not found.")
 
+        elif endpoint == '/rewards/all_customers':
+            client = MongoClient("mongodb", 27017)
+            db = client["Rewards"]
+            customer_rewards = list(db.customer_rewards.find({}, {"_id": 0}))
+            self.write(json.dumps(customer_rewards))
+            
+            
+            
+
+
+
+    # def get(self):
+    #     client = MongoClient("mongodb", 27017)
+    #     db = client["Rewards"]
+    #     customer_rewards = list(db.customer_rewards.find({}, {"_id": 0}))
+    #     self.write(json.dumps(customer_rewards))
     
 
     # def get(self):
