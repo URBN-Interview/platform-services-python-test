@@ -1,0 +1,6 @@
+#ignore .DS_Store
+.DS_Store
+#ignore data folder
+source/RewardsService/data/
+#ignore pycache
+source/RewardsService/**/__pycache__/
