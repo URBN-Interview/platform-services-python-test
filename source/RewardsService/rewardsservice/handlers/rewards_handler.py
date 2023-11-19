@@ -65,7 +65,8 @@ class RewardsHandler(tornado.web.RequestHandler):
             "next_reward_tier_name": next_reward_tier_name,
             "next_reward_tier_progress": next_reward_tier_progress
         })
-        self.write("Customer rewards data stored successfully.")
+        #self.write("Customer rewards data stored successfully.")
+        self.write(json.dumps("Order data stored succesfully"))
 
     def get(self):
         # Get the requested URL
@@ -88,21 +89,10 @@ class RewardsHandler(tornado.web.RequestHandler):
             db = client["Rewards"]
             customer_rewards = list(db.customer_rewards.find({}, {"_id": 0}))
             self.write(json.dumps(customer_rewards))
-            
-            
-            
 
-
-
-    # def get(self):
-    #     client = MongoClient("mongodb", 27017)
-    #     db = client["Rewards"]
-    #     customer_rewards = list(db.customer_rewards.find({}, {"_id": 0}))
-    #     self.write(json.dumps(customer_rewards))
+        elif endpoint == '/rewards':
+            client = MongoClient("mongodb", 27017)
+            db = client["Rewards"]
+            rewards = list(db.rewards.find({}, {"_id": 0}))
+            self.write(json.dumps(rewards))
     
-
-    # def get(self):
-    #     client = MongoClient("mongodb", 27017)
-    #     db = client["Rewards"]
-    #     rewards = list(db.rewards.find({}, {"_id": 0}))
-    #     self.write(json.dumps(rewards))
