@@ -7,13 +7,13 @@
         <h2>Reward Tiers</h2>
         <table border="1">
             <tr>
-                <th>Rewards Tier<th>
+                <th>Rewards Tier</th>
                 <th>Reward Points</th>
                 <th>Rewards Tier Name</th>
             </tr>
             {% for reward in rewards_data %}
                 <tr>
-                    <td>{{ reward.tier }}<td>
+                    <td>{{ reward.tier }}</td>
                     <td>{{ reward.points }}</td>
                     <td>{{ reward.rewardName }}</td>
                 </tr>
@@ -23,17 +23,20 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <form>
-            <label>Enter email address: </label><input type="text"/><br>
-            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order"/>
+        <form method="POST" action="{% url 'submit_order' %}">
+            {% csrf_token %}
+            <label>Enter email address: </label><input type="text" name="email"/><br>
+            <label>Enter order total: </label><input type="text" name="order_total"/><input type="submit" value="Submit Order"/>
         </form>
         <hr>
     </div>
     <div>
         <h2>User Rewards</h2>
-        <form>
-            <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
+        <form method="GET" action="{% url 'user_rewards' %}" >
+            <label>Email address: </label><input type="text" name="email" id="emailInput"/><input type="submit" value="Search"/>
+            <span id="email-error" style="color:red;"></span><br> <!-- Error message placeholder -->
         </form>
+        <!--<script src="/Users/jyoshnapriyabuddhi/Desktop/URBN-Interview/platform-services-python-test/source/RewardsUI/rewards/formValidation.js"> </script> -->
         <table border="1">
             <thead>
             <tr>
@@ -47,15 +50,17 @@
             </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>customer01@gmail.com</td>
-                    <td>100</td>
-                    <td>A</td>
-                    <td>5% off purchase</td>
-                    <td>B</td>
-                    <td>10% off purchase</td>
-                    <td>50%</td>
-                </tr>
+                {% for customer in customer_rewards_data %}
+                    <tr>
+                        <td>{{ customer.email }}</td>
+                        <td>{{ customer.reward_points }}</td>
+                        <td>{{ customer.reward_tier }}</td>
+                        <td>{{ customer.reward_tier_name }}</td>
+                        <td>{{ customer.next_reward_tier }}</td>
+                        <td>{{ customer.next_reward_tier_name }}</td>
+                        <td>{{ customer.next_reward_tier_progress }}</td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>

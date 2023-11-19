@@ -4,3 +4,4 @@
 source/RewardsService/data/
 #ignore pycache
 source/RewardsService/**/__pycache__/
+source/RewardsUI/**/__pycache__/
