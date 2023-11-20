@@ -5,18 +5,32 @@ import tornado.web
 from pymongo import MongoClient
 from tornado.gen import coroutine
 
-################## Function to validate email format ####################
 import re
+import pymongo.errors
 
+# Custom exceptions for handling invalid email and order total errors
+class InvalidEmailError(Exception):
+    pass
+
+class InvalidOrderTotalError(Exception):
+    pass
+
+# Function to establish a connection with MongoDB
+def get_mongo_client():
+  try:
+      client = MongoClient("mongodb", 27017)
+      return client["Rewards"]
+  except pymongo.errors.ConnectionFailure as e:
+       # Log the error or handle it accordingly
+      raise e
+
+# Function to validate email format using regex
 def validate_email(email):
     # Regular expression for email validation
     email_pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
     return re.match(email_pattern, email) is not None
 
-
-#########################################################################
-
-
+# Function for calculating reward tier based on points and reward tiers
 def calculate_reward_tier(reward_points, reward_tiers):
     reward_tier = None
     reward_tier_name = None
@@ -50,6 +64,7 @@ def calculate_reward_tier(reward_points, reward_tiers):
         next_reward_tier_progress,
     )
 
+# Function for updating customer rewards in the database
 def update_customer_rewards(db, email, reward_points, reward_tiers):
     existing_customer = db.customer_rewards.find_one({"email": email})
 
@@ -101,30 +116,37 @@ def update_customer_rewards(db, email, reward_points, reward_tiers):
         )
         return "Order data stored successfully."
 
+# Function to validate input, update rewards, and handle exceptions
 def validate_and_update_rewards(self, email, order_total, reward_tiers):
-        if not validate_email(email):
-            return "Invalid email format. Please provide a valid email address."
-        elif not order_total.replace(".", "", 1).isdigit():
-            return "Invalid order total. Please provide a valid number."
+    if not validate_email(email):
+        raise InvalidEmailError("Invalid email format. Please provide a valid email address.")
+    elif not order_total.replace(".", "", 1).isdigit():
+        raise InvalidOrderTotalError("Invalid order total. Please provide a valid number.")
 
-        reward_points = int(float(order_total))
-        client = MongoClient("mongodb", 27017)
-        db = client["Rewards"]
-        return update_customer_rewards(db, email, reward_points, reward_tiers)
-
+    reward_points = int(float(order_total))
+    db = get_mongo_client()
+    return update_customer_rewards(db, email, reward_points, reward_tiers)
 
 
+# Handler for request handling in Tornado
 class RewardsHandler(tornado.web.RequestHandler):
     @coroutine
+    #Endpoint 1
     def post(self):
         email = self.get_argument("email")
         order_total = self.get_argument("order_total")
-        client = MongoClient("mongodb", 27017)
-        db = client["Rewards"]
+        db = get_mongo_client()
         reward_tiers=list(db.rewards.find({}))
         
-        response_message = validate_and_update_rewards(self, email, order_total, reward_tiers)
-        self.write(json.dumps(response_message))
+        try:
+            response_message = validate_and_update_rewards(self, email, order_total, reward_tiers)
+            self.write(json.dumps(response_message))
+        except InvalidEmailError as e:
+            self.set_status(400)  # Set status to indicate a bad request
+            self.write(json.dumps({"error": str(e)}))
+        except InvalidOrderTotalError as e:
+            self.set_status(400)  # Set status to indicate a bad request
+            self.write(json.dumps({"error": str(e)}))
 
     def get(self):
         # Get the requested URL
@@ -134,29 +156,45 @@ class RewardsHandler(tornado.web.RequestHandler):
             email_to_find = self.get_argument("email")
              # Validate email format
             if not validate_email(email_to_find):
+                self.set_status(400)  # Set status to indicate a bad request
                 self.write(json.dumps("Invalid email format. Please provide a valid email address."))
             else:
-                # Retrieve customer's rewards data from MongoDB based on the email
-                client = MongoClient("mongodb", 27017)
-                db = client["Rewards"]
-                customer_data = list(db.customer_rewards.find({"email": email_to_find}, {"_id": 0}))
+                try:
+                    # Retrieve customer's rewards data from MongoDB based on the email
+                    db = get_mongo_client()
+                    customer_data = list(db.customer_rewards.find({"email": email_to_find}, {"_id": 0}))
 
-                # Return the customer's rewards data
-                if customer_data:                    
-                    self.write(json.dumps(customer_data))
-                else:
-                    self.write(json.dumps("Customer data not found."))
-        #Endpoint 3
+                    # Return the customer's rewards data
+                    if customer_data:                    
+                        self.write(json.dumps(customer_data))
+                    else:
+                        self.write(json.dumps("Customer data not found."))
+                except Exception as e:
+                    self.set_status(500)    #Status to indicate internal server error
+                    self.write(json.dumps({"error": str(e)}))
+        
+        
+        # Endpoint 3
         elif endpoint == '/allcustomers/rewards':
-            client = MongoClient("mongodb", 27017)
-            db = client["Rewards"]
-            customer_rewards = list(db.customer_rewards.find({}, {"_id": 0}))
-            self.write(json.dumps(customer_rewards))
-
-        #Rewards Tiers
+            try:
+                db = get_mongo_client()
+                customer_rewards = list(db.customer_rewards.find({}, {"_id": 0}))
+                self.write(json.dumps(customer_rewards))
+            except Exception as e:
+                self.set_status(500)  # Set status to indicate an internal server error
+                self.write(json.dumps({"error": str(e)}))
+        
+        
+        # Rewards Tiers
         elif endpoint == '/rewards':
-            client = MongoClient("mongodb", 27017)
-            db = client["Rewards"]
-            rewards = list(db.rewards.find({}, {"_id": 0}))
-            self.write(json.dumps(rewards))
+            try:
+                db = get_mongo_client()
+                rewards = list(db.rewards.find({}, {"_id": 0}))
+                self.write(json.dumps(rewards))
+            except Exception as e:
+                self.set_status(500)  # Set status to indicate an internal server error
+                self.write(json.dumps({"error": str(e)}))
+
+
+
     
