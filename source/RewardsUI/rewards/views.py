@@ -5,8 +5,7 @@ from django.views.generic.base import TemplateView
 
 from rewards.clients.rewards_service_client import RewardsServiceClient
 
-#imports for messages, redirect and render
-from django.contrib import messages
+#imports for redirect and render
 from django.shortcuts import redirect, render
 
 class RewardsView(TemplateView):
@@ -44,7 +43,7 @@ class CustomerRewardsView(TemplateView):
             #try:
                 customer_rewards_data = self.rewards_service_client.get_customer_rewards(email)
                 print(endpoint)
-                print("Customer")
+                print(customer_rewards_data)
                 ### Get rewards a user can earn ###
                 rewards_data = self.rewards_service_client.get_rewards() 
                 #if rewards_data.status_code == 200:
@@ -53,12 +52,6 @@ class CustomerRewardsView(TemplateView):
                     self.template_name,
                     {'customer_rewards_data': customer_rewards_data,'rewards_data': rewards_data }
                 )
-                #else:
-                #    print("Error. This is not rendered yet.")
-            # except:
-            #     messages.error(request, 'Invalid search. Please try again.')
-            #     return render(request, self.template_name)
-
         else:
             all_customers_rewards_data = self.rewards_service_client.get_all_customers_rewards()
             print(endpoint)
@@ -87,25 +80,20 @@ class CustomerOrderView(TemplateView):
 
         print(email)
         print(order_total)
-
+        
         try:
+            print("try:")
             # Assumes 'submit_order' returns a JSON response
             response = self.rewards_service_client.submit_order(email, order_total)
-        
+            print("try:after response")
             # Check for successful response or handle accordingly
             if response.status_code == 200:
-                # Add a success message
-                messages.success(request, 'Order submitted successfully!')
-                return redirect('rewards')  # Redirect to success page
+
+                return redirect('rewards') 
             else:
-                # If the submission fails, display an error message
-                messages.error(request, 'Failed to submit order. Please try again.')
-                # Render the same page with an error message
-                return render(request, self.template_name)
+                ##need further development
+                return redirect('rewards') 
         except:
-            # If the submission invalidates, display an error message
-            messages.error(request, 'Invalid submit order request. Please try again.')
-            # Render the same page with an error message
-            return render(request, self.template_name)
-            
+            ##need further development
+            return redirect('rewards') 
             
