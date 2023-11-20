@@ -42,8 +42,7 @@ class CustomerRewardsView(TemplateView):
         if email:
             #try:
                 customer_rewards_data = self.rewards_service_client.get_customer_rewards(email)
-                print(endpoint)
-                print(customer_rewards_data)
+
                 ### Get rewards a user can earn ###
                 rewards_data = self.rewards_service_client.get_rewards() 
                 #if rewards_data.status_code == 200:
@@ -73,20 +72,14 @@ class CustomerOrderView(TemplateView):
     def post(self, request):
         #print(request.POST)
         endpoint = self.request.path
-        #testing purpose
-        print(endpoint)
+       
         email = request.POST.get('email')
         order_total = request.POST.get('order_total')
 
-        #testing purpuso
-        #print(email)
-        #print(order_total)
-        
         try:
-            print("try:")
             # Assumes 'submit_order' returns a JSON response
             response = self.rewards_service_client.submit_order(email, order_total)
-            #   testing: print("try:after response")
+        
             # Check for successful response or handle accordingly
             if response.status_code == 200:
 

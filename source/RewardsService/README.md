@@ -41,3 +41,61 @@ Create RESTful endpoint(s) to calculate, store, and retrieve customer rewards da
 * $ docker-compose build
 * $ docker-compose up -d
 * Services are accessible at http://localhost:7050/
+
+# Implemented Endpoints
+* **Endpoint 1:** Accept Customer's Order Data
+    * URL: /order/rewards
+    * Method: POST
+    * Parameters:
+        * **email:** Customer's email address (example: "customer01@gmail.com").
+        * **order_total:** Total order value (example: 100.80).
+    * Functionality:
+        * Calculates and stores the following customer rewards data in MongoDB:
+        * Email Address
+        * Reward Points
+        * Reward Tier
+        * Reward Tier Name
+        * Next Reward Tier
+        * Next Reward Tier Name
+        * Next Reward Tier Progress
+* **Endpoint 2:** Retrieve Customer's Rewards Data
+    * URL: /user/rewards
+    * Method: GET
+    * Parameters:
+        * **email:** Customer's email address.
+    * Functionality:
+        * Retrieves customer's rewards data from MongoDB based on the provided email.
+* **Endpoint 3:** Retrieve Rewards Data for All Customers
+    * URL: /allcustomers/rewards
+    * Method: GET
+    * Functionality:
+        * Retrieves rewards data for all customers stored in the MongoDB.
+* **Endpoint 4:** Retrieve Rewards Tiers Data
+    * URL: /rewards
+    * Method: GET
+    * Functionality:
+        * Retrieves predefined rewards tiers and their respective points needed from MongoDB.
+
+# Functionality Highlights
+* **MongoDB Connection:** Utilized MongoDB for storage and retrieval of customer rewards data.
+* **Input Validation:**
+    * Validated email format using regex.
+    * Checked and handled invalid order total inputs.
+* **Reward Calculation:**
+    * Implemented a function to calculate reward tiers based on points and reward tiers defined.
+* **Exception Handling:**
+    * Custom exceptions created for handling invalid email and order total errors.
+
+# Future Work
+* **Unit Testing:**
+    * Implement various functionalities, such as input validation, reward calculation, and data retrieval.
+
+
+# Access Services
+* Services are accessible at http://localhost:7050/
+* **MongoDB:** Accessible at mongodb://localhost:27017
+* **RewardService API Endpoints:**
+    * Endpoint 1: /order/rewards
+    * Endpoint 2: /user/rewards
+    * Endpoint 3: /allcustomers/rewards
+    * Rewards Tiers: /rewards
