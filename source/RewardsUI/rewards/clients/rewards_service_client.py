@@ -15,10 +15,10 @@ class RewardsServiceClient:
 
     def submit_order(self, email, order_total):
         params = {"email": email, "order_total": order_total}
-        print("inside submit: before response", response.json())
         response = requests.post(self.submit_order_url, params=params)
-        print("inside submit", response.json())
-        print(response)  # testing purpose
+        # testing purpose
+        #print("inside submit", response.json())
+        #print(response)  
         return response
 
     def get_customer_rewards(self, email):
