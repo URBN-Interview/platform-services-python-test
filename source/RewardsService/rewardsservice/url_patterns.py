@@ -6,4 +6,5 @@ from handlers.customer_rewards_data_handler import CustomerRewardsDataHandler
 url_patterns = [
     (r'/rewards', RewardsHandler),
     (r'/get-customers', RewardsDataHandler),
+    (r'/get-customer-data', CustomerRewardsDataHandler)
 ]
