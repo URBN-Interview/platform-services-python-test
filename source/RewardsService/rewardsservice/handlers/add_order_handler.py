@@ -93,6 +93,12 @@ class AddOrderHandler(tornado.web.RequestHandler):
             curr_tier = rewards[rewards_index if rewards_index < 9 else 9]
             next_tier = rewards[rewards_index + 1 if rewards_index < 9 else 9]
 
+            # handle if the customer hasn't reached the first tier of rewards yet
+            if points_earned < 100:
+                curr_tier['tier'] = "None"
+                curr_tier['rewardName'] = "No Reward Tier"
+                next_tier = rewards[0]
+
             # make new customer object and store it to the customers collection
             new_customer = {
                 "email": email,
