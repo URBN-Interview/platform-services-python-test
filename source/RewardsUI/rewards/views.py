@@ -7,6 +7,7 @@ from django.http import HttpResponseRedirect
 from rewards.clients.rewards_service_client import RewardsServiceClient
 from rewards.forms import OrderForm, UserFilterForm
 
+
 class RewardsView(TemplateView):
     template_name = 'index.html'
 
@@ -45,7 +46,6 @@ class RewardsView(TemplateView):
             if order_form.is_valid():
                 order_email = order_form.cleaned_data["email"]
                 order_total = order_form.cleaned_data["order_total"]
-
                 self.rewards_service_client.add_order(order_email, order_total)
 
                 return HttpResponseRedirect('/rewards')
