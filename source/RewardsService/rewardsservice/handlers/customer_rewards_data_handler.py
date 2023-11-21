@@ -19,6 +19,7 @@ class CustomerRewardsDataHandler(tornado.web.RequestHandler):
         db = client["Rewards"]
         customers = list(db.customers.find({}, {"_id": 0}))
 
+        # find the datapoint(s) in the customers collection that contains the email given in the argument
         matching_emails = []
         try:
             email = self.get_argument("email")

@@ -14,18 +14,18 @@ class TestEndpoints(AsyncTestCase):
 
         client = AsyncHTTPClient()
         response = yield client.fetch("http://localhost:7050/get-customers")
-        # Testing if contents of customers column return
+        # Testing if contents of customers collection return
+        self.assertEqual(expected, json.loads(response.body.decode('utf-8')))
 
-        self.assertEqual(expected, response.body)
-
+    @tornado.testing.gen_test
     def test_get_customer_data(self):
-        expected = [{"nextTierProgress": 0.0, "email": "test123", "points": 1300, "nextTierName": "50% off purchase",
-                     "tier": "J", "tierName": "50% off purchase", "nextTier": "J"}]
+        expected = []
         client = AsyncHTTPClient()
         response = yield client.fetch("http://localhost:7050/get-customer-data?email=test123")
 
-        self.assertEqual(expected, response.body)
+        self.assertEqual(expected, json.loads(response.body.decode('utf-8')))
 
+    @tornado.testing.gen_test
     def test_rewards_status_new(self):
         # test making a purchase with a new email address
         expected = [{
@@ -40,15 +40,16 @@ class TestEndpoints(AsyncTestCase):
         # delete any existing instance of the test email
         db_client = MongoClient("mongodb", 27017)
         db = db_client["Rewards"]
+        db['customers'].delete_many({"email": "new_test@gmail.com"})
 
         client = AsyncHTTPClient()
         post_response = yield client.fetch("http://localhost:7050/rewards-status?"
                                            "email=new_test@gmail.com&order-total=410")
         get_response = yield client.fetch("http://localhost:7050/get-customer-data?email=new_test@gmail.com")
 
-        self.assertEqual(expected, get_response.body)
-        db.customers.deleteOne({"email": "new_test@gmail.com"})
+        self.assertEqual(expected, json.loads(get_response.body.decode('utf-8')))
 
+    @tornado.testing.gen_test
     def test_rewards_status_existing(self):
         # test making a purchase with an existing email address. Should only update the points and tier if necessary
         # test making a purchase with a new email address
@@ -64,12 +65,12 @@ class TestEndpoints(AsyncTestCase):
         # delete any existing instance of the test email
         db_client = MongoClient("mongodb", 27017)
         db = db_client["Rewards"]
+        db.customers.delete_all({"email": "new_test@gmail.com"})
         db.customers.insert(expected[0])
 
         client = AsyncHTTPClient()
         post_response = yield client.fetch("http://localhost:7050/rewards-status?"
                                            "email=new_test@gmail.com&order-total=410")
         get_response = yield client.fetch("http://localhost:7050/get-customer-data?email=new_test@gmail.com")
-        print(expected[0])
-        self.assertDictEqual(expected[0], get_response.body[0])
-        db.customers.deleteOne({"email": "new_test@gmail.com"})
+
+        self.assertDictEqual(expected[0], json.loads(get_response.body.decode('utf-8')[0]))

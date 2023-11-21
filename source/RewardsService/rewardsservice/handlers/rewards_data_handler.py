@@ -12,12 +12,14 @@ Endpoint 3:
 
 
 class RewardsDataHandler(tornado.web.RequestHandler):
-
+    # this endpoint returns the entire customers collection
     @coroutine
     def get(self):
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
         customers = list(db.customers.find({}, {"_id": 0}))
+
+        # write the customers collection and if an error occurs write the error code
         try:
             self.write(json.dumps(customers))
         except HTTPError as e:

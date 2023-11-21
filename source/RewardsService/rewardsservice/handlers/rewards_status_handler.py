@@ -38,19 +38,22 @@ customer data format:
 class RewardsStatusHandler(tornado.web.RequestHandler):
 
     @coroutine
-    def get(self):
+    def post(self):
         # get arguments
         try:
             email = self.get_argument('email')
             total = self.get_argument('order-total', 0)
         except MissingArgumentError as e:
             self.write_error(e.status_code)
+            return
 
+        # fetch both the rewards and customers collections
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
         rewards = list(db.rewards.find({}, {"_id": 0}))
         current_customers = list(db.customers.find({}, {"_id": 0}))
 
+        # calculate points earned (1 point / full dollar spent) and see if a customer with the given email exists
         points_earned = math.floor(float(total))
         existing_customer = None
         for customer in current_customers:
@@ -58,14 +61,17 @@ class RewardsStatusHandler(tornado.web.RequestHandler):
                 existing_customer = customer
 
         if existing_customer is not None:
+            # add the points spent to the current customer's total
             new_total = existing_customer['points'] + points_earned
 
             # we can find the proper index of the current reward tier because they are stored in the db in order
+            # example: if a user has 110 points, they would be at index 0 (110 / 100) => (1) - 0 = 0
             rewards_index = int((new_total / 100)) - 1
             progress_amount = (new_total % 100.) / 100.
             curr_tier = rewards[rewards_index if rewards_index < 9 else 9]
             next_tier = rewards[rewards_index + 1 if rewards_index < 9 else 9]
 
+            # the email_query is used to find the object to update with the new_values
             email_query = {
                 "email": email
             }
@@ -81,11 +87,13 @@ class RewardsStatusHandler(tornado.web.RequestHandler):
             }
             db.customers.update_one(email_query, new_values)
         else:
+            # if there is no existing customer with that email, we add a new one to the db with appropriate calcualtions
             rewards_index = int((points_earned / 100)) - 1
             progress_amount = (points_earned % 100.) / 100.
             curr_tier = rewards[rewards_index if rewards_index < 9 else 9]
             next_tier = rewards[rewards_index + 1 if rewards_index < 9 else 9]
 
+            # make new customer object and store it to the customers collection
             new_customer = {
                 "email": email,
                 "points": points_earned,
@@ -96,4 +104,4 @@ class RewardsStatusHandler(tornado.web.RequestHandler):
                 "nextTierProgress": progress_amount
             }
             db.customers.insert(new_customer)
-        self.write(json.dumps(list(db.customers.find({}, {"_id": 0}))))
+    get = post
