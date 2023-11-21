@@ -4,6 +4,7 @@ import math
 
 from pymongo import MongoClient
 from tornado.gen import coroutine
+from tornado.web import HTTPError, MissingArgumentError
 
 """
 Endpoint 1:
@@ -19,9 +20,7 @@ Endpoint 1:
         5. Next Reward Tier: the next rewards tier the customer can reach (ex. "B")
         6. Next Reward Tier Name: the name of next rewards tier (ex. "10% off purchase")
         7. Next Reward Tier Progress: the percentage the customer is away from reaching the next rewards tier (ex. 0.5)
-"""
 
-"""
 customer data format:
 
 {
@@ -41,8 +40,11 @@ class RewardsStatusHandler(tornado.web.RequestHandler):
     @coroutine
     def get(self):
         # get arguments
-        email = self.get_argument('email')
-        total = self.get_argument('order-total', 0)
+        try:
+            email = self.get_argument('email')
+            total = self.get_argument('order-total', 0)
+        except MissingArgumentError as e:
+            self.write_error(e.status_code)
 
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
