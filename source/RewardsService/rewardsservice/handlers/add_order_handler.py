@@ -35,7 +35,7 @@ customer data format:
 """
 
 
-class RewardsStatusHandler(tornado.web.RequestHandler):
+class AddOrderHandler(tornado.web.RequestHandler):
 
     @coroutine
     def post(self):
