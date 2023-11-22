@@ -1,7 +1,111 @@
-* {
-    color: red;
+html, body {
+    box-sizing: border-box;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    display:block;
+}
+
+div {
+    background-size: 100%, 100%;
+}
+
+div:nth-child(odd) {
+    padding-top: 0%;
+}
+
+hr, h1 {
+    margin-bottom: 0%
 }
 
 h1 {
     text-align: center;
+    font-family: "Brush Script MT", cursive;
+    background-color: gold;
+}
+
+h2 {
+    font-family: "Courier New", Monospace;
+    margin-left: 5%;
+    margin-top: 0%;
+    text-decoration: underline;
+}
+
+table {
+    align: center;
+    width: 90%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    margin-left: auto;
+    margin-right: auto;
+    border: 3px solid;
+}
+
+th {
+    background-color: gold;
+}
+
+tr:nth-child(even) {
+    background-color: #AEAEAE;
+}
+
+tr:nth-child(odd) {
+    background-color: white;
+}
+
+tr:hover {
+    background-color: lightblue;
+}
+
+td {
+    text-align: center;
+}
+
+form {
+    margin-left: 5%;
+}
+
+form label {
+    font-family: "Lucida console", Monospace;
+}
+
+form input[type="text"], input[type="number"] {
+    margin: 10px 0px;
+    width: 95%;
+}
+
+#orderButton {
+    background-color: #17E7E5;
+    border: 1px;
+    border-radius: 20px;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    text-align: center;
+    margin: 4px 2px;
+    font-size: 22px;
+    width: 95%;
+    cursor: pointer;
+}
+
+#orderButton:hover {
+    background-color: #14BCBB;
+}
+
+#searchButton {
+    margin-left: 27%;
+    margin-right: 40%;
+    text-align: center;
+    font-size: 18px;
+    width: 40%;
+    background-color: #AB72DE;
+    border: 1px solid black;
+    cursor: pointer;
+}
+
+#searchButton:hover {
+    border: 1px solid black;
+    background-color: lightgray;
 }

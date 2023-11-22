@@ -2,7 +2,7 @@ import logging
 
 from django.template.response import TemplateResponse
 from django.views.generic.base import TemplateView
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseServerError
 
 from rewards.clients.rewards_service_client import RewardsServiceClient
 from rewards.forms import OrderForm, UserFilterForm
@@ -18,8 +18,12 @@ class RewardsView(TemplateView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
 
-        rewards_data = self.rewards_service_client.get_rewards()
-        customers_data = self.rewards_service_client.get_customers()
+        try:
+            rewards_data = self.rewards_service_client.get_rewards()
+            customers_data = self.rewards_service_client.get_customers()
+        except HttpResponseServerError as e:
+            rewards_data = []
+            customers_data = []
 
         context['rewards_data'] = rewards_data
         context['customers_data'] = customers_data
@@ -29,7 +33,12 @@ class RewardsView(TemplateView):
         filter_form = UserFilterForm(request.GET)
         if filter_form.is_valid():
             filter_email = filter_form.cleaned_data["email"]
-            context['customers_data'] = self.rewards_service_client.get_filtered_customer(filter_email)
+            try:
+                customer_filter = self.rewards_service_client.get_filtered_customer(filter_email)
+                if len(customer_filter) > 0:
+                    context['customers_data'] = customer_filter
+            except HttpResponseServerError as e:
+                self.logger.error('No customer found with email: ' + filter_email + ', aborting...')
 
         for customer in context['customers_data']:
             customer['nextTierProgress'] = int(customer['nextTierProgress'] * 100)

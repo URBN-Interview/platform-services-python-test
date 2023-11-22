@@ -9,13 +9,13 @@
         <h2>Reward Tiers</h2>
         <table border="1">
             <tr>
-                <th>Rewards Tier<th>
+                <th>Rewards Tier</th>
                 <th>Reward Points</th>
                 <th>Rewards Tier Name</th>
             </tr>
             {% for reward in rewards_data %}
                 <tr>
-                    <td>{{ reward.tier }}<td>
+                    <td>{{ reward.tier }}</td>
                     <td>{{ reward.points }}</td>
                     <td>{{ reward.rewardName }}</td>
                 </tr>
@@ -28,7 +28,8 @@
         <form action="" method="post">
             {% csrf_token %}
             {{ order_form }}
-            <input type="submit" value="Submit Order"/>
+            <br/><br/>
+            <input type="submit" value="Submit Order" id="orderButton"/>
         </form>
         <hr>
     </div>
@@ -37,7 +38,7 @@
         <form action="" method="get">
             {% csrf_token %}
             {{ filter_form }}
-            <input type="submit" value="Search"/>
+            <input type="submit" value="Search" id="searchButton"/>
         </form>
         <table border="1">
             <thead>
