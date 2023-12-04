@@ -1,7 +1,7 @@
-from handlers.rewards_handler import RewardsHandler, CustomersHandler, CustomerHandler
+from handlers.rewards_handler import RewardsHandler, CustomerListHandler, CustomerHandler
 
 url_patterns = [
     (r'/rewards', RewardsHandler),
-    (r'/customers', CustomersHandler),
+    (r'/customers', CustomerListHandler),
     (r'/customers/([^/]+)', CustomerHandler)
 ]

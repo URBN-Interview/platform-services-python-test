@@ -14,7 +14,7 @@ class RewardsHandler(tornado.web.RequestHandler):
         rewards = list(db.rewards.find({}, {"_id": 0}))
         self.write(json.dumps(rewards))
 
-class CustomersHandler(tornado.web.RequestHandler):
+class CustomerListHandler(tornado.web.RequestHandler):
 
     def get(self):
         client = MongoClient("mongodb", 27017)
@@ -24,8 +24,23 @@ class CustomersHandler(tornado.web.RequestHandler):
 
 class CustomerHandler(tornado.web.RequestHandler):
 
-    def get(self, customerEmail):
+    def get(self, email):
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
-        customer = list(db.customers.find({"email": customerEmail}, {"_id": 0}))
-        self.write(json.dumps(customer[0]))
+        customer = db.customers.find_one({"email": email}, {"_id": 0})
+        if customer:
+            self.write(json.dumps(customer))
+        else:
+            raise tornado.web.HTTPError(404, log_message="Customer does not exist")
+
+    def put(self, email):
+        client = MongoClient("mongodb", 27017)
+        db = client["Rewards"]
+        customer = db.customers.find_one({"email": email}, {"_id": 0})
+        response = tornado.escape.json_decode(self.request.body)
+        total = response["total"]
+        new_points = customer["points"] + total
+        customer["points"] = new_points
+        db.customers.update_one({"email": email}, {"$set": customer})
+        updated_customer = db.customers.find_one({"email": email}, {"_id": 0})
+        self.write(json.dumps(updated_customer))
