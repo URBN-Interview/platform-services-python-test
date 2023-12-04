@@ -38,7 +38,7 @@ class CustomerHandler(tornado.web.RequestHandler):
         db = client["Rewards"]
         customer = db.customers.find_one({"email": email}, {"_id": 0})
         response = tornado.escape.json_decode(self.request.body)
-        total = response["total"]
+        total = int(response["total"])
         new_points = customer["points"] + total
         customer["points"] = new_points
         db.customers.update_one({"email": email}, {"$set": customer})
