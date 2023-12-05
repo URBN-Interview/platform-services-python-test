@@ -48,6 +48,32 @@ def main():
             "rewardName": "15% off purchase",
         },
         "rewardProgress": .6})
+    db.customers.insert({
+        "name": "Felix Mendelssohn",
+        "email": "artthouelijah@gmail.com",
+        "points": 333,
+        "currentReward": {
+            "tier": "C",
+            "rewardName": "15% off purchase",
+        },
+        "nextReward": {
+            "tier": "D",
+            "rewardName": "20% off purchase",
+        },
+        "rewardProgress": .33})
+    db.customers.insert({
+        "name": "Johannes Brahms",
+        "email": "raisinbrahms@gmail.com",
+        "points": 5,
+        "currentReward": {
+            "reward": None,
+            "points": 0
+        },
+        "nextReward": {
+            "tier": "A",
+            "rewardName": "5% off purchase",
+        },
+        "rewardProgress": .05})
     print("Customers loaded in mongo")
 
 if __name__ == "__main__":
