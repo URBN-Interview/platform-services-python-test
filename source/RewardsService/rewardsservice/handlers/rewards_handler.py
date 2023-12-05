@@ -14,7 +14,7 @@ def which_reward(points):
         points = (points // 100) * 100
         reward = db.rewards.find_one({"points": points}, {"_id": 0})
         next_reward = db.rewards.find_one({"points": points + 100}, {"_id": 0})
-        return reward
+        return reward, next_reward
 
 class RewardsHandler(tornado.web.RequestHandler):
 
@@ -53,8 +53,12 @@ class CustomerHandler(tornado.web.RequestHandler):
         points = int(response["order"])
         new_points = customer["points"] + points
         customer["points"] = new_points
-        current_reward = which_reward(new_points)
+        reward = which_reward(new_points)
+        if len(reward) == 2:
+            current_reward = reward[0]
+            next_reward = reward[1]
         customer["currentReward"] = current_reward
+        customer["nextReward"] = next_reward
         db.customers.update_one({"email": email}, {"$set": customer})
 
         updated_customer = db.customers.find_one({"email": email}, {"_id": 0})
