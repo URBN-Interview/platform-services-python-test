@@ -62,6 +62,7 @@ class CustomerHandler(tornado.web.RequestHandler):
             next_reward = reward
         customer["currentReward"] = current_reward
         customer["nextReward"] = next_reward
+        customer["rewardProgress"] = (new_points - customer["currentReward"]["points"]) / 100
         db.customers.update_one({"email": email}, {"$set": customer})
 
         updated_customer = db.customers.find_one({"email": email}, {"_id": 0})
