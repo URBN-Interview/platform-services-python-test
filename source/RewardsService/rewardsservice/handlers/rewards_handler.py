@@ -57,6 +57,9 @@ class CustomerHandler(tornado.web.RequestHandler):
         if len(reward) == 2:
             current_reward = reward[0]
             next_reward = reward[1]
+        else:
+            current_reward = reward
+            next_reward = reward
         customer["currentReward"] = current_reward
         customer["nextReward"] = next_reward
         db.customers.update_one({"email": email}, {"$set": customer})
