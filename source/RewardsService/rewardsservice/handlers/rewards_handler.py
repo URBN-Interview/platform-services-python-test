@@ -4,6 +4,17 @@ import tornado.web
 from pymongo import MongoClient
 from tornado.gen import coroutine
 
+def which_reward(points):
+    client = MongoClient("mongodb", 27017)
+    db = client["Rewards"]
+    if points >= 1000:
+        reward = db.rewards.find_one({"points": 1000}, {"_id": 0})
+        return reward
+    else:
+        points = (points // 100) * 100
+        reward = db.rewards.find_one({"points": points}, {"_id": 0})
+        next_reward = db.rewards.find_one({"points": points + 100}, {"_id": 0})
+        return reward
 
 class RewardsHandler(tornado.web.RequestHandler):
 
@@ -37,10 +48,14 @@ class CustomerHandler(tornado.web.RequestHandler):
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
         customer = db.customers.find_one({"email": email}, {"_id": 0})
+
         response = tornado.escape.json_decode(self.request.body)
-        total = int(response["total"])
-        new_points = customer["points"] + total
+        points = int(response["order"])
+        new_points = customer["points"] + points
         customer["points"] = new_points
+        current_reward = which_reward(new_points)
+        customer["currentReward"] = current_reward
         db.customers.update_one({"email": email}, {"$set": customer})
+
         updated_customer = db.customers.find_one({"email": email}, {"_id": 0})
         self.write(json.dumps(updated_customer))
