@@ -10,6 +10,10 @@ def which_reward(points):
     if points >= 1000:
         reward = db.rewards.find_one({"points": 1000}, {"_id": 0})
         return reward
+    elif points < 100:
+        reward = {"reward": None, "points": 0}
+        next_reward = db.rewards.find_one({"points": 100}, {"_id": 0})
+        return reward, next_reward
     else:
         points = (points // 100) * 100
         reward = db.rewards.find_one({"points": points}, {"_id": 0})
