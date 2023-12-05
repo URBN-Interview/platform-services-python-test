@@ -52,22 +52,27 @@ class CustomerHandler(tornado.web.RequestHandler):
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
         customer = db.customers.find_one({"email": email}, {"_id": 0})
-
-        response = tornado.escape.json_decode(self.request.body)
-        points = int(response["order"])
-        new_points = customer["points"] + points
-        customer["points"] = new_points
-        reward = which_reward(new_points)
-        if len(reward) == 2:
-            current_reward = reward[0]
-            next_reward = reward[1]
+        if customer:
+            response = tornado.escape.json_decode(self.request.body)
+            if not isinstance(response["order"], float):
+                raise TypeError("order total must be a vaild dollar amount")
+            points = int(response["order"])
+            if points < 0:
+                raise ValueError("order total can not be negative")
+            new_points = customer["points"] + points
+            customer["points"] = new_points
+            reward = which_reward(new_points)
+            if len(reward) == 2:
+                current_reward = reward[0]
+                next_reward = reward[1]
+            else:
+                current_reward = reward
+                next_reward = reward
+            customer["currentReward"] = current_reward
+            customer["nextReward"] = next_reward
+            customer["rewardProgress"] = (new_points - customer["currentReward"]["points"]) / 100
+            db.customers.update_one({"email": email}, {"$set": customer})
         else:
-            current_reward = reward
-            next_reward = reward
-        customer["currentReward"] = current_reward
-        customer["nextReward"] = next_reward
-        customer["rewardProgress"] = (new_points - customer["currentReward"]["points"]) / 100
-        db.customers.update_one({"email": email}, {"$set": customer})
-
+            raise tornado.web.HTTPError(404, log_message="Customer does not exist")
         updated_customer = db.customers.find_one({"email": email}, {"_id": 0})
         self.write(json.dumps(updated_customer))
