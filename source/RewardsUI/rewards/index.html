@@ -2,18 +2,47 @@
 
 <html>
 <head>
-  <link rel="stylesheet" href="styles.css" type="text/css">
+    <style>
+        body {font-family: Noto Sans, sans-serif;
+            padding-left: 2rem;
+            color: #3B3B3B;}
+        table {margin-left: 2rem;
+            margin-right: 2rem;
+            font-size: small;
+            box-shadow: 10px 10px 2px 1;
+            border-spacing: 0;}
+        table th {padding-left: 10px;}
+        table td {padding-left: 10px;
+            padding-top: 5px;
+            padding-bottom: 5px;}
+        thead {background-color: gray;
+            color: white;}
+        tbody tr:nth-child(even) {background-color: bisque;}
+        tbody tr:nth-child(odd) {background-color: white;}
+        tbody {border-bottom: 1px solid gray;}
+        button {border-radius: 5px;
+            background-color: blueviolet;
+            color: white;
+            padding: 5px;}
+        button:hover {cursor: pointer;
+            background-color: aquamarine;
+            color: blueviolet;
+            border: 2px solid gray;}
+    </style>
 </head>
 <body>
-    <h1 id="main-header">Welcome to the Rewards Dashboard</h1>
+    <h1 style="margin-top: 2rem; margin-bottom: 3rem;">Welcome to the Rewards Dashboard</h1>
     <div>
         <h2>Reward Tiers</h2>
-        <table border="1">
-            <tr>
-                <th>Rewards Tier<th>
-                <th>Reward Points</th>
-                <th>Rewards Tier Name</th>
-            </tr>
+        <table style="margin-bottom: 4rem;">
+            <thead>
+                <tr>
+                    <th>Rewards Tier<th>
+                    <th>Reward Points</th>
+                    <th>Rewards Tier Name</th>
+                </tr>
+            </thead>
+            <tbody>
             {% for reward in rewards_data %}
                 <tr>
                     <td>{{ reward.tier }}<td>
@@ -21,91 +50,93 @@
                     <td>{{ reward.rewardName }}</td>
                 </tr>
             {% endfor %}
+            </tbody>
         </table>
         <hr>
     </div>
     <div>
         <h2>Add orders</h2>
-        <form method="post">
+        <form method="post" style="margin-bottom: 3rem;">
             {% csrf_token %}
             <label>Enter email address: </label>
-            <input name="email" type="email" value=""/>
+            <input name="email" type="email" value="" placeholder="example@email.com" style="margin-left: 5px; margin-right: 5px;"/>
+            <br>
             <br>
             <label>Enter order total: </label>
-            <input name="order" type="number" step=".01" placeholder="$00.00" value=""/>
+            <input name="order" type="number" step=".01" placeholder="$00.00" value="" style="margin-left: 5px; margin-right: 5px;"/>
             <button type="submit">Submit Order</button>
         </form>
         <hr>
     </div>
     <div>
-        <h2>User Rewards</h2>
+        <h2 style="margin-top: 2rem;">User Rewards</h2>
         <form method="get">
             <label>Email address: </label>
-            <input name="email" type="email" value=""/>
-            <button type="submit">Search</button>
+            <input name="email" type="email" value="" style="margin-left: 5px; margin-right: 5px;" placeholder="example@email.com"/>
+            <button type="submit" style="margin-bottom: 1rem;">Search</button>
         </form>
-        <table border="1">
+        <table style="margin-bottom: 4rem;">
             <thead>
-            <tr>
-                <th>Email Address</th>
-                <th>Reward Points</th>
-                <th>Reward Tier</th>
-                <th>Reward Tier Name</th>
-                <th>Next Reward Tier</th>
-                <th>Next Reward Tier Name</th>
-                <th>Next Reward Tier Progress</th>
-            </tr>
+                <tr>
+                    <th>Email Address</th>
+                    <th>Reward Points</th>
+                    <th>Reward Tier</th>
+                    <th>Reward Tier Name</th>
+                    <th>Next Reward Tier</th>
+                    <th>Next Reward Tier Name</th>
+                    <th>Next Reward Tier Progress</th>
+                </tr>
             </thead>
             <tbody>
                 <tr>
-                  {% if customer_rewards %}
-                    <td>{{customer_rewards.email}}</td>
-                    <td>{{customer_rewards.points}}</td>
-                    <td>{{customer_rewards.currentReward.tier}}</td>
-                    <td>{{customer_rewards.currentReward.rewardName}}</td>
-                    <td>{{customer_rewards.nextReward.tier}}</td>
-                    <td>{{customer_rewards.nextReward.rewardName}}</td>
-                    <td>{{customer_rewards.rewardProgress|mul:100}}%<td>
-                  {% else %}
-                    <td>Use</td>
-                    <td>Search</td>
-                    <td>Function</td>
-                    <td>Above</td>
-                    <td>To</td>
-                    <td>Populate</td>
-                    <td>Me</td>
-                  {% endif %}
+                    {% if customer_rewards %}
+                        <td>{{customer_rewards.email}}</td>
+                        <td>{{customer_rewards.points}}</td>
+                        <td>{{customer_rewards.currentReward.tier}}</td>
+                        <td>{{customer_rewards.currentReward.rewardName}}</td>
+                        <td>{{customer_rewards.nextReward.tier}}</td>
+                        <td>{{customer_rewards.nextReward.rewardName}}</td>
+                        <td>{{customer_rewards.rewardProgress|mul:100}}%<td>
+                    {% else %}
+                        <td>Use</td>
+                        <td>Search</td>
+                        <td>Function</td>
+                        <td>Above</td>
+                        <td>To</td>
+                        <td>Populate</td>
+                        <td>Me</td>
+                    {% endif %}
                 </tr>
             </tbody>
         </table>
         <br>
         <hr>
-        <h2>All User Rewards</h2>
-        <table border="1">
-          <thead>
-            <tr>
-              <th>Email Address</th>
-              <th>Reward Points</th>
-              <th>Reward Tier</th>
-              <th>Reward Tier Name</th>
-              <th>Next Reward Tier</th>
-              <th>Next Reward Tier Name</th>
-              <th>Next Reward Tier Progress</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for customer in customer_data %}
-              <tr>
-                <td>{{customer.email}}</td>
-                <td>{{customer.points}}</td>
-                <td>{{customer.currentReward.tier}}</td>
-                <td>{{customer.currentReward.rewardName}}</td>
-                <td>{{customer.nextReward.tier}}</td>
-                <td>{{customer.nextReward.rewardName}}</td>
-                <td>{{customer.rewardProgress|mul:100}}%</td>
-              </tr>
-            {% endfor %}
-          </tbody>
+        <h2 style="margin-top: 3rem;">All User Rewards</h2>
+        <table style="margin-bottom: 4rem;">
+            <thead>
+                <tr>
+                    <th>Email Address</th>
+                    <th>Reward Points</th>
+                    <th>Reward Tier</th>
+                    <th>Reward Tier Name</th>
+                    <th>Next Reward Tier</th>
+                    <th>Next Reward Tier Name</th>
+                    <th>Next Reward Tier Progress</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customer_data %}
+                    <tr>
+                        <td>{{customer.email}}</td>
+                        <td>{{customer.points}}</td>
+                        <td>{{customer.currentReward.tier}}</td>
+                        <td>{{customer.currentReward.rewardName}}</td>
+                        <td>{{customer.nextReward.tier}}</td>
+                        <td>{{customer.nextReward.rewardName}}</td>
+                        <td>{{customer.rewardProgress|mul:100}}%</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </div>
 </body>
