@@ -2,9 +2,10 @@
 
 <html>
 <head>
+  <link rel="stylesheet" href="styles.css" type="text/css">
 </head>
 <body>
-    <h1>Welcome to the Rewards Dashboard</h1>
+    <h1 id="main-header">Welcome to the Rewards Dashboard</h1>
     <div>
         <h2>Reward Tiers</h2>
         <table border="1">
@@ -31,7 +32,7 @@
             <input name="email" type="email" value=""/>
             <br>
             <label>Enter order total: </label>
-            <input name="order" type="number" value=""/>
+            <input name="order" type="number" step=".01" placeholder="$00.00" value=""/>
             <button type="submit">Submit Order</button>
         </form>
         <hr>
@@ -57,6 +58,7 @@
             </thead>
             <tbody>
                 <tr>
+                  {% if customer_rewards %}
                     <td>{{customer_rewards.email}}</td>
                     <td>{{customer_rewards.points}}</td>
                     <td>{{customer_rewards.currentReward.tier}}</td>
@@ -64,6 +66,15 @@
                     <td>{{customer_rewards.nextReward.tier}}</td>
                     <td>{{customer_rewards.nextReward.rewardName}}</td>
                     <td>{{customer_rewards.rewardProgress|mul:100}}%<td>
+                  {% else %}
+                    <td>Use</td>
+                    <td>Search</td>
+                    <td>Function</td>
+                    <td>Above</td>
+                    <td>To</td>
+                    <td>Populate</td>
+                    <td>Me</td>
+                  {% endif %}
                 </tr>
             </tbody>
         </table>

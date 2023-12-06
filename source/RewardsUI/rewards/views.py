@@ -2,7 +2,7 @@ import logging
 
 from django.template.response import TemplateResponse
 from django.views.generic.base import TemplateView
-from django.http import HttpResponse
+from django.http import HttpResponseServerError, Http404
 
 from rewards.clients.rewards_service_client import RewardsServiceClient
 from rewards.clients.customer_rewards_client import CustomerRewardsClient
@@ -45,7 +45,7 @@ class RewardsView(TemplateView):
                 context['rewards_data'] = rewards_data
                 context['customer_data'] = customer_data
             else:
-                return HttpResponse("PUT was unsuccessful")
+                return HttpResponseServerError("PUT was unsuccessful")
 
         return TemplateResponse(
             request,
