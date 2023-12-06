@@ -33,7 +33,7 @@ class RewardsView(TemplateView):
             context
         )
 
-    def put(self, request, **kwargs):
+    def post(self, request, **kwargs):
         if request.method == "POST":
             email = request.POST.get("email")
             order = request.POST.get("order")
