@@ -7,11 +7,12 @@ from tornado.gen import coroutine
 def which_reward(points):
     client = MongoClient("mongodb", 27017)
     db = client["Rewards"]
+
     if points >= 1000:
         reward = db.rewards.find_one({"points": 1000}, {"_id": 0})
         return reward
     elif points < 100:
-        reward = {"reward": None, "points": 0}
+        reward = {"tier": None, "points": 0, "rewardName": None}
         next_reward = db.rewards.find_one({"points": 100}, {"_id": 0})
         return reward, next_reward
     else:
@@ -52,11 +53,12 @@ class CustomerHandler(tornado.web.RequestHandler):
         client = MongoClient("mongodb", 27017)
         db = client["Rewards"]
         customer = db.customers.find_one({"email": email}, {"_id": 0})
+
         if customer:
             response = tornado.escape.json_decode(self.request.body)
             if not isinstance(response["order"], float):
                 raise TypeError("order total must be a vaild dollar amount")
-            points = int(response["order"])
+            points = int(response["order"] // 1)
             if points < 0:
                 raise ValueError("order total can not be negative")
             new_points = customer["points"] + points
@@ -74,5 +76,6 @@ class CustomerHandler(tornado.web.RequestHandler):
             db.customers.update_one({"email": email}, {"$set": customer})
         else:
             raise tornado.web.HTTPError(404, log_message="Customer does not exist")
+
         updated_customer = db.customers.find_one({"email": email}, {"_id": 0})
         self.write(json.dumps(updated_customer))

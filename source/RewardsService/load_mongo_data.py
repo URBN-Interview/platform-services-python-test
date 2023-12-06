@@ -64,10 +64,23 @@ def main():
     db.customers.insert({
         "name": "Johannes Brahms",
         "email": "raisinbrahms@gmail.com",
+        "points": 250,
+        "currentReward": {
+            "tier": "B",
+            "rewardName": "10% off purchase",
+        },
+        "nextReward": {
+            "tier": "C",
+            "rewardName": "15% off purchase",
+        },
+        "rewardProgress": .50})
+    db.customers.insert({
+        "name": "Anton Bruckner",
+        "email": "biggerthebetter@gmail.com",
         "points": 5,
         "currentReward": {
-            "reward": None,
-            "points": 0
+            "tier": None,
+            "rewardName": None,
         },
         "nextReward": {
             "tier": "A",

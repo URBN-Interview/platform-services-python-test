@@ -2,3 +2,4 @@ fabric==1.10.2
 motor==1.1.0
 tornado==3.2
 pytest==6.1.2
+requests
