@@ -1,4 +1,5 @@
 from decimal import Decimal
+import math
 import json
 from tornado import web, escape
 
@@ -23,4 +24,8 @@ class OrderHandler(web.RequestHandler):
     def rewards_calculation(self, order):
         db = CLIENT["Rewards"]
         order_total = int(Decimal(order["order_total"]))
-        print(db.rewards.find_one({"points": order_total}))
+        print(db.rewards.find_one({"points": self.round_down(order_total)}))
+
+    def round_down(self, num): 
+        rounded_number = math.floor(num/100) * 100 
+        return rounded_number 
