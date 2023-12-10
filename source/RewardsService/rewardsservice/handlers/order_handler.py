@@ -11,6 +11,7 @@ CLIENT = MongoClient("mongodb", 27017)
 class OrderHandler(web.RequestHandler):    
     def post(self):
         db = CLIENT["Rewards"]
+        users = db["users"]
         body = escape.json_decode(self.request.body)
         customer_email = body["data"]["customer_email"]
         order_total = body["data"]["order_total"]
@@ -19,7 +20,7 @@ class OrderHandler(web.RequestHandler):
             "order_total": order_total
         }
         rewards_data = self.rewards_calculation(order)
-        db.rewards.insert_one(rewards_data)
+        users.insert_one(rewards_data)
         self.write("new reward data added")
 
 
@@ -30,6 +31,7 @@ class OrderHandler(web.RequestHandler):
         current_reward_item = db.rewards.find_one({"points": self.round_down(order_total)})
         next_reward_item = db.rewards.find_one({"points": current_reward_item["points"]+100})
         rewards_data = {
+            "_id": len(list(db.users.find())) + 1,
             "email_address": order["email_address"], 
             "reward_points": order_total, 
             "reward_tier": current_reward_item["tier"], 
