@@ -4,6 +4,8 @@ from handlers.users_handler import UsersHandler
 
 url_patterns = [
     (r'/rewards', RewardsHandler),
+    #created order route
     (r'/order', OrderHandler), 
+    #created users route
     (r'/users', UsersHandler), 
 ]

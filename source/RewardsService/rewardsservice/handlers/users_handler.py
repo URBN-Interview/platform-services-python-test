@@ -7,7 +7,7 @@ from tornado.gen import coroutine
 CLIENT = MongoClient("mongodb", 27017)
 
 class UsersHandler(tornado.web.RequestHandler):
-
+    #GET method for finding single user data or all users data
     @coroutine
     def get(self):
         db = CLIENT["Rewards"]
