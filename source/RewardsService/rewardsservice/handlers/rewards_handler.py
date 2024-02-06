@@ -35,6 +35,7 @@ class RewardsHandler(tornado.web.RequestHandler):
         try:
             data = json.loads(self.request.body.decode("utf-8"))
 
+            # input body validation
             try:
                 validate(data, schema=self.schema)
             except ValidationError as ve:
@@ -42,6 +43,9 @@ class RewardsHandler(tornado.web.RequestHandler):
                 self.write(json.dumps({"error_message": ve.message}))
                 self.finish()
 
+            # email validation
+            # tried using external package was getting installation
+            # error in docker so moved to regex
             if re.fullmatch(regex, data.get("email")):
                 pass
             else:
@@ -53,10 +57,11 @@ class RewardsHandler(tornado.web.RequestHandler):
                 "email": data.get("email"),
                 "order_total": data.get("order_total", 0.0)
             }
-
             rewards_data = list(self.db.rewards.find({}, {"_id": 0}))
+            # sort by points descending true
             rewards_data.sort(key=operator.itemgetter("points"), reverse=True)
 
+            # fetch reward match
             order_total = data.get('order_total', 0.0)
             try:
                 matching_reward = next((
@@ -64,8 +69,32 @@ class RewardsHandler(tornado.web.RequestHandler):
                 ))
             except StopIteration:
                 matching_reward = None
-            self.write(json.dumps(matching_reward))
-            # self.write(json.dumps({"status": "Order Created"}))
+
+            # update record
+            if matching_reward:
+                record.update({
+                    "reward_points": matching_reward["points"],
+                    "reward_tier": matching_reward["tier"],
+                    "reward_tier_name": matching_reward["rewardName"]
+                })
+
+                # finding the next tier
+                if matching_reward != rewards_data[0]:
+                    next_tier = rewards_data[rewards_data.index(matching_reward) - 1]
+                    record.update({
+                        "next_reward_tier": next_tier["tier"],
+                        "next_reward_tier_name": next_tier["rewardName"],
+                        "next_reward_tier_progress": (order_total / next_tier["points"]) * 100
+                    })
+
+            # metadata
+            record["created"] = datetime.datetime.now()
+            record["updated"] = datetime.datetime.now()
+
+            self.db.orders.insert(record)
+
+            self.set_status(201)
+            self.write(json.dumps({"status": "Order Created"}))
             self.finish()
         except Exception as e:
             self.set_status(400)
