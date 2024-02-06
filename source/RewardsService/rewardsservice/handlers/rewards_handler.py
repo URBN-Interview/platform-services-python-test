@@ -1,3 +1,5 @@
+import datetime
+import operator
 import re
 import json
 
@@ -13,6 +15,7 @@ regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
 class RewardsHandler(tornado.web.RequestHandler):
 
     client = MongoClient("mongodb", 27017)
+    db = client["Rewards"]
     schema = {
         "type": "object",
         "properties": {
@@ -24,8 +27,7 @@ class RewardsHandler(tornado.web.RequestHandler):
 
     @coroutine
     def get(self):
-        db = self.client["Rewards"]
-        rewards = list(db.rewards.find({}, {"_id": 0}))
+        rewards = list(self.db.rewards.find({}, {"_id": 0}))
         self.write(json.dumps(rewards))
 
     @coroutine
@@ -46,7 +48,25 @@ class RewardsHandler(tornado.web.RequestHandler):
                 self.set_status(422)
                 self.write(json.dumps({"error_message": "Invalid Email ID"}))
                 self.finish()
-            self.write(json.dumps({"status": "success"}))
+
+            record = {
+                "email": data.get("email"),
+                "order_total": data.get("order_total", 0.0)
+            }
+
+            rewards_data = list(self.db.rewards.find({}, {"_id": 0}))
+            rewards_data.sort(key=operator.itemgetter("points"), reverse=True)
+
+            order_total = data.get('order_total', 0.0)
+            try:
+                matching_reward = next((
+                    item for item in rewards_data if order_total >= item["points"]
+                ))
+            except StopIteration:
+                matching_reward = None
+            self.write(json.dumps(matching_reward))
+            # self.write(json.dumps({"status": "Order Created"}))
+            self.finish()
         except Exception as e:
             self.set_status(400)
             self.write(json.dumps({"error_message": f"{str(e)}"}))
