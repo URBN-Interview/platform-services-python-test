@@ -30,7 +30,7 @@ class TestRewardsViewClass(TestCase):
         mock_mongo_client.side_effect = Exception("MongoDB connection error")
         reward_view = RewardsView()
 
-        response = reward_view.post('/^$', {'email': 'sweta@gmail.com', 'order_total': '100'})
+        response = reward_view.post('/^$', {'email': 'sweta@example.com', 'order_total': '2024'})
 
         # Check response status code
         self.assertEqual(response.status_code, 500)
