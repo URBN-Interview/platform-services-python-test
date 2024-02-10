@@ -53,12 +53,12 @@ class RewardPointsHandler(tornado.web.RequestHandler):
         except tornado.web.MissingArgumentError as e:
             # Handle missing argument error
             self.set_status(400)
-            self.write({"error": "Missing argument", "message": str(e)})
+            self.write({"error": "Missing argument.", "message": str(e)})
         except ValueError as e:
             # Handle value conversion error
             self.set_status(400)
-            self.write({"error": "Invalid value", "message": str(e)})
+            self.write({"error": "Invalid value.", "message": str(e)})
         except Exception as e:
             # Handle other exceptions
             self.set_status(500)
-            self.write({"error": "Internal server error", "message": str(e)})
+            self.write({"error": "Internal server error.", "message": str(e)})
