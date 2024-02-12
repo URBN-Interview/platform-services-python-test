@@ -24,3 +24,35 @@ class RewardsView(TemplateView):
             self.template_name,
             context
         )
+    
+   
+    def post(self, request, *args, **kwargs):
+        email = request.POST.get('email')
+        order_total = request.POST.get('order_total')
+
+        data = {
+            'email': email,
+            'order_total': order_total
+        }
+
+        # Making the POST request to the endpoint
+        response = self.rewards_service_client.add_orders(data)
+
+        if response.status_code == 201:
+            print("Customer order data stored successfully.")
+            rewards_data = response.json() 
+            context = self.get_context_data(**kwargs)
+            context['rewards_data'] = rewards_data
+            return TemplateResponse(
+                request,
+                self.template_name,
+                context
+            )
+        else:
+            context = self.get_context_data(**kwargs)
+            context['error_message'] = "Failed to store customer order data."
+            return TemplateResponse(
+                request,
+                self.template_name,
+                context
+            )
