@@ -55,7 +55,7 @@ class ComputationUtils:
                 "reward_tier_name": current.get("rewardName", ""),
                 "next_reward_tier": next.get("tier", ""),
                 "next_reward_tier_name": next.get("rewardName", ""),
-                "next_reward_tier_progress": "{} %".format(round((order_total * 100) / ((points + 1) * 100)))
+                "next_reward_tier_progress": "{} %".format(round((order_total * 100) / ((points + 1) * 100), 2)) if points < 10 else ""
             })
 
         return output
