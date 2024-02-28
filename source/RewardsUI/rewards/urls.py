@@ -1,7 +1,6 @@
-from django.conf.urls import url
-
-from . import views
+from django.urls import include, re_path
+from rewards import views
 
 urlpatterns = [
-    url(r'^$', views.RewardsView.as_view(), name='rewards'),
+    re_path(r'^$', views.RewardsView.as_view(), name='rewards'),
 ]
