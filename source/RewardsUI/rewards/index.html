@@ -32,6 +32,11 @@
           <input id="order_total" type="text" name="order_total"/>
           <input type="submit" value="Submit Order"/>
         </form>
+        {% if response_data %}
+        <div>
+            <h3>{{ response_data.message }}</h3>
+        </div>
+        {% endif %}
         <hr>
 
     </div>

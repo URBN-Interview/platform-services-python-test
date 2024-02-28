@@ -1,12 +1,15 @@
+from urllib.parse import urljoin
+
 import requests
 
 
 class RewardsServiceClient:
 
     def __init__(self):
-        self.rewards_url = "http://localhost:7050/rewards"
-        self.user_url = "http://localhost:7050/rewards/users"
-        self.order_url = "http://localhost:7050/rewards/order"
+        self.base_url = "http://localhost:7050/"
+        self.rewards_url = urljoin(base=self.base_url, url="rewards")
+        self.user_url = urljoin(base=self.base_url, url="rewards/users")
+        self.order_url = urljoin(base=self.base_url, url="rewards/order")
 
     def get_rewards(self):
         response = requests.get(self.rewards_url)

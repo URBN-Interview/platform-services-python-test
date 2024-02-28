@@ -94,8 +94,10 @@ class ComputationUtils:
 
         try:
             order_total = int(order_total)
+            if order_total < 0:
+                return False, "order_total should be positive integer"
         except ValueError:
-            return False, "order_total should be integer"
+            return False, "order_total should be positive integer"
 
         order_total += int(old_order_total)
         if email_address and order_total and not user:

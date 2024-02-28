@@ -43,6 +43,7 @@ class RewardsView(TemplateView):
         users_data = self.rewards_service_client.get_users()
         context['rewards_data'] = rewards_data
         context['users_data'] = users_data
+        context['response_data'] = data
 
         return TemplateResponse(
             request,
