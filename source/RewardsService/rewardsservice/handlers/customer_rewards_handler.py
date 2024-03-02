@@ -21,6 +21,9 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
         customer = self.db.customers.find_one({"email": email})
         return customer.get("points") if customer else 0
 
+    def get_reward(self, points):
+        return
+
     @coroutine
     def post(self):
         customer = json_decode(self.request.body)
@@ -40,3 +43,8 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
         created_customer = self.db.customers.insert_one(customer)
         self.set_status(201)
         self.write(json_encode({"message": "Customer rewards created/updated successfully!"}))
+
+    @coroutine
+    def get(self):
+        customers = list(self.db.customers.find({}, {"_id": 0}))
+        self.write(json.dumps(customers))
