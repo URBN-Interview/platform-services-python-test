@@ -15,3 +15,7 @@ class RewardsServiceClient:
     def add_order(self, payload):
         response = requests.post(self.customer_rewards_url, data=json.dumps(payload))
         return response.json()
+
+    def get_customer_rewards(self):
+        response = requests.get(self.customer_rewards_url)
+        return response.json()
