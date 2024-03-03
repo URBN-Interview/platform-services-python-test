@@ -1,5 +1,6 @@
 import logging
 
+from django.utils.http import urlencode
 from django.urls import reverse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
@@ -20,9 +21,13 @@ class RewardsView(TemplateView):
         context = self.get_context_data(**kwargs)
 
         rewards_data = self.rewards_service_client.get_rewards()
-        customers_data = self.rewards_service_client.get_customer_rewards()
-        context['rewards_data'] = rewards_data
-        context['customers_data'] = customers_data
+        email = request.GET.get("email", "")
+        customers_data = self.rewards_service_client.get_customer_rewards(email=email)
+        context.update({
+            "rewards_data": rewards_data,
+            "customers_data": customers_data,
+            "user_email": email,
+        })
 
         return TemplateResponse(
             request,
@@ -31,6 +36,10 @@ class RewardsView(TemplateView):
         )
 
     def post(self, request, *args, **kwargs):
+        email = request.POST.get("email")
+        if email:
+            parameters = urlencode({"email": email})
+            return redirect("{}?{}".format(reverse("rewards"), parameters))
         form = AddRewardsForm(request.POST)
         if form.is_valid():
             data = {
