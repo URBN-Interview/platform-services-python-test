@@ -65,36 +65,47 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
 
     @coroutine
     def post(self):
-        customer = json_decode(self.request.body)
-        available_points = self.get_customer_available_points(customer.get("emailId"))
-        top_reward_prg = self.get_top_reward()
-        if available_points < top_reward_prg.get("points"):
-            points = self._calculate_points(customer.get("orderTotal"), available_points)
-            curr_reward_prg = self.get_current_reward_program(points)
-            nxt_reward_prg = self.get_next_reward_program(points)
-            customer.update({
-                "_id": str(ObjectId()),
-                "earnedPoints": int(customer.get("orderTotal") or 0),
-                "points": points,
-                "tier": curr_reward_prg.get("tier"),
-                "rewardName": curr_reward_prg.get("rewardName"),
-                "nextTier": nxt_reward_prg.get("tier"),
-                "nextRewardName": nxt_reward_prg.get("rewardName"),
-                "nextRewardTierAwayPercentage": (100 - self._calculate_progress(points)),  # Away from next program
-            })
+        try:
+            customer = json_decode(self.request.body)
+            available_points = self.get_customer_available_points(customer.get("emailId"))
+            top_reward_prg = self.get_top_reward()
+            if available_points < top_reward_prg.get("points"):
+                points = self._calculate_points(customer.get("orderTotal"), available_points)
+                curr_reward_prg = self.get_current_reward_program(points)
+                nxt_reward_prg = self.get_next_reward_program(points)
+                customer.update({
+                    "_id": str(ObjectId()),
+                    "earnedPoints": int(customer.get("orderTotal") or 0),
+                    "points": points,
+                    "tier": curr_reward_prg.get("tier"),
+                    "rewardName": curr_reward_prg.get("rewardName"),
+                    "nextTier": nxt_reward_prg.get("tier"),
+                    "nextRewardName": nxt_reward_prg.get("rewardName"),
+                    "nextRewardTierAwayPercentage": (100 - self._calculate_progress(points)),  # Away from next program
+                })
 
-            del customer["orderTotal"]
-            created_customer = self.db.customers.insert_one(customer)
-            self.set_status(201)
-            self.write(json_encode({"message": "Customer rewards created successfully!"}))
-        else:
-            self.set_status(200)
-            self.write(json_encode({"message": "You cann't earn more rewards as you reach to the top."}))
+                del customer["orderTotal"]
+                created_customer = self.db.customers.insert_one(customer)
+                self.set_status(201)
+                self.write(json_encode({"message": "Customer rewards created successfully!"}))
+            else:
+                self.set_status(200)
+                self.write(json_encode({"message": "You cann't earn more rewards as you reach to the top."}))
+        except Exception as e:
+            err_msg = f'Error while creating customer rewards: {str(e)}'
+            self.set_status(500)
+            self.write(json_encode({"message": err_msg}))
 
     @coroutine
     def get(self):
-        email = self.get_argument("email", None, True)
-        condition = {"emailId": email} if email else {}
-        customers = list(self.db.customers.find(condition).sort([("emailId", ASCENDING), ("points", DESCENDING)]))
-        self.set_status(200)
-        self.write(json.dumps(customers))
+        try:
+            email = self.get_argument("email", None, True)
+            condition = {"emailId": email} if email else {}
+            customers = list(self.db.customers.find(condition).sort([("emailId", ASCENDING), ("points", DESCENDING)]))
+            self.set_status(200)
+            self.write(json.dumps(customers))
+        except Exception as e:
+            err_msg = f'Error while getting customer rewards: {str(e)}'
+            self.set_status(500)
+            self.write(json_encode({"message": err_msg}))
+        
