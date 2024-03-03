@@ -46,6 +46,6 @@ class RewardsView(TemplateView):
                 "emailId": form.cleaned_data["email"],
                 "orderTotal": form.cleaned_data["total"],
             }
-            data = self.rewards_service_client.add_order(data)
+            self.rewards_service_client.add_order(data)
             return redirect(reverse("rewards"))
         return redirect(reverse("rewards"))

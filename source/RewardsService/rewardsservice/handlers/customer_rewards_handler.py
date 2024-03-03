@@ -1,6 +1,6 @@
 import json
 from bson import ObjectId
-from pymongo import ASCENDING, MongoClient
+from pymongo import ASCENDING, DESCENDING, MongoClient
 
 from tornado.escape import json_encode, json_decode
 from tornado.gen import coroutine
@@ -15,9 +15,29 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
 
     @staticmethod
     def _calculate_points(amount, available_points=0):
+        """
+        Method to return calculated points based on user available points and amount i.e. $1 = 1 points.
+
+        Args:
+            amount (float): order total amount.
+            available_points (int): user available points
+
+        Returns:
+            It returns calculated reward points based on user available points and amount.
+        """
         return available_points + int(amount or 0)
 
     def _calculate_progress(self, points):
+        """
+        Method to calculate user reward program progress status. It will return completed percent of user reward program
+        between previous and next reward program.
+
+        Args:
+            points (int): user aggregated rewards points
+
+        Returns:
+            It returns user reward program completed percentage.
+        """
         top_reward_prg = self.get_top_reward()
         if points > top_reward_prg.get("points"):
             return 100
@@ -28,6 +48,15 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
         return round((rem/diff) * 100, 2)
 
     def get_customer_available_points(self, email):
+        """
+        Method to get customer available points. It will do aggregation query to get customer total earned reward points.
+
+        Args:
+            email (char): aggregate customer reward points based on unique email id.
+
+        Returns:
+            It returns customer available reward points.
+        """
         customer = self.db.customers.aggregate([
             {
                 "$group": {
@@ -43,9 +72,21 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
         return customer[0].get("totalPoints") if customer else 0
 
     def get_top_reward(self):
+        """
+        Method to get top reward program from rewards collection based on highest points document.
+
+        Returns:
+            It return reward program document in dict format.
+        """
         return self.db.rewards.find_one({}, sort=[("points", DESCENDING)]) or {}
 
     def get_current_reward_program(self, points):
+        """
+        Method to return current reward program document based on the customer accumulated points.
+
+        Returns:
+            It return reward program document in dict format.
+        """
         top_reward_prg = self.get_top_reward()
         if points > top_reward_prg.get("points"):
             return top_reward_prg
@@ -55,6 +96,12 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
         }) or {}
 
     def get_next_reward_program(self, points):
+        """
+        Method to return next available reward program document based on the customer accumulated points.
+
+        Returns:
+            It return reward program document in dict format.
+        """
         top_reward_prg = self.get_top_reward()
         if points > top_reward_prg.get("points"):
             return top_reward_prg
@@ -69,6 +116,7 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
             customer = json_decode(self.request.body)
             available_points = self.get_customer_available_points(customer.get("emailId"))
             top_reward_prg = self.get_top_reward()
+            # Once customer has reached top rewards tier, there are no more rewards the customer can earn.
             if available_points < top_reward_prg.get("points"):
                 points = self._calculate_points(customer.get("orderTotal"), available_points)
                 curr_reward_prg = self.get_current_reward_program(points)
@@ -85,7 +133,7 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
                 })
 
                 del customer["orderTotal"]
-                created_customer = self.db.customers.insert_one(customer)
+                self.db.customers.insert_one(customer)
                 self.set_status(201)
                 self.write(json_encode({"message": "Customer rewards created successfully!"}))
             else:
