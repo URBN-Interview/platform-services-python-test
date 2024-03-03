@@ -71,9 +71,7 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
         if available_points < top_reward_prg.get("points"):
             points = self._calculate_points(customer.get("orderTotal"), available_points)
             curr_reward_prg = self.get_current_reward_program(points)
-            print("Current ", curr_reward_prg)
             nxt_reward_prg = self.get_next_reward_program(points)
-            print("Next ", nxt_reward_prg)
             customer.update({
                 "_id": str(ObjectId()),
                 "earnedPoints": int(customer.get("orderTotal") or 0),
@@ -86,7 +84,6 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
             })
 
             del customer["orderTotal"]
-            print("customer", customer)
             created_customer = self.db.customers.insert_one(customer)
             self.set_status(201)
             self.write(json_encode({"message": "Customer rewards created successfully!"}))
@@ -96,6 +93,8 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
 
     @coroutine
     def get(self):
-        customers = list(self.db.customers.find())
+        email = self.get_argument("email", None, True)
+        condition = {"emailId": email} if email else {}
+        customers = list(self.db.customers.find(condition).sort([("emailId", ASCENDING), ("points", DESCENDING)]))
         self.set_status(200)
         self.write(json.dumps(customers))
