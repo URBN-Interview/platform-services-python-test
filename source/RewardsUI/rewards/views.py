@@ -36,7 +36,7 @@ class RewardsView(TemplateView):
         )
 
     def post(self, request, *args, **kwargs):
-        email = request.POST.get("email")
+        email = request.POST.get("user_email")
         if email:
             parameters = urlencode({"email": email})
             return redirect("{}?{}".format(reverse("rewards"), parameters))

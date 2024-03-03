@@ -1,6 +1,6 @@
 import json
 from bson import ObjectId
-from pymongo import ASCENDING, DESCENDING, MongoClient
+from pymongo import ASCENDING, MongoClient
 
 from tornado.escape import json_encode, json_decode
 from tornado.gen import coroutine
@@ -101,7 +101,7 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
         try:
             email = self.get_argument("email", None, True)
             condition = {"emailId": email} if email else {}
-            customers = list(self.db.customers.find(condition).sort([("emailId", ASCENDING), ("points", DESCENDING)]))
+            customers = list(self.db.customers.find(condition).sort([("emailId", ASCENDING), ("points", ASCENDING)]))
             self.set_status(200)
             self.write(json.dumps(customers))
         except Exception as e:
