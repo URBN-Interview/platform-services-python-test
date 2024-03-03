@@ -23,16 +23,23 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <form>
-            <label>Enter email address: </label><input type="text"/><br>
-            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order"/>
+        <form method="post" action="{% url 'rewards' %}">
+            {% csrf_token %}
+            <label for="email">Enter email address: </label>
+            <input type="email" name="email" required="required" value="{{order_form.email}}" /><br>
+            <label for="total">Enter order total: </label>
+            <input type="number" step="0.01" name="total" required="required" value="{{order_form.total}}" />
+            <input type="submit" value="Submit Order"/>
         </form>
         <hr>
     </div>
     <div>
         <h2>User Rewards</h2>
-        <form>
-            <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
+        <form method="post" action="{% url 'rewards' %}">
+            {% csrf_token %}
+            <label for="user_email">Email address: </label>
+            <input type="email" name="user_email" value="{{user_email}}"/>
+            <input type="submit" value="Search"/>
         </form>
         <table border="1">
             <thead>
@@ -47,15 +54,17 @@
             </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>customer01@gmail.com</td>
-                    <td>100</td>
-                    <td>A</td>
-                    <td>5% off purchase</td>
-                    <td>B</td>
-                    <td>10% off purchase</td>
-                    <td>50%</td>
-                </tr>
+                {% for customer in customers_data %}
+                    <tr>
+                        <td>{{customer.emailId}}</td>
+                        <td>{{customer.points}}</td>
+                        <td>{{customer.tier}}</td>
+                        <td>{{customer.rewardName}}</td>
+                        <td>{{customer.nextTier}}</td>
+                        <td>{{customer.nextRewardName}}</td>
+                        <td>{{customer.nextRewardTierAwayPercentage}}</td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
