@@ -23,9 +23,13 @@
     </div>
     <div>
         <h2>Add orders</h2>
-        <form>
-            <label>Enter email address: </label><input type="text"/><br>
-            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order"/>
+        <form method="post" action="/rewards/">
+            {% csrf_token %}
+            <label for="email">Enter email address: </label>
+            <input type="email" name="email" required="required" value="{{order_form.email}}" /><br>
+            <label for="total">Enter order total: </label>
+            <input type="number" step="0.01" name="total" required="required" value="{{order_form.total}}" />
+            <input type="submit" value="Submit Order"/>
         </form>
         <hr>
     </div>
