@@ -92,7 +92,7 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
                 self.set_status(200)
                 self.write(json_encode({"message": "You cann't earn more rewards as you reach to the top."}))
         except Exception as e:
-            err_msg = f'Error while creating customer rewards: {str(e)}'
+            err_msg = "Error while creating customer rewards: {}".format(e)
             self.set_status(500)
             self.write(json_encode({"message": err_msg}))
 
@@ -105,6 +105,6 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
             self.set_status(200)
             self.write(json.dumps(customers))
         except Exception as e:
-            err_msg = f'Error while getting customer rewards: {str(e)}'
+            err_msg = "Error while getting customer rewards: {}".format(e)
             self.set_status(500)
             self.write(json_encode({"message": err_msg}))
