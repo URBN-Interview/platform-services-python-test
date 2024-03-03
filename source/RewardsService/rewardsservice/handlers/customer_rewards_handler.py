@@ -15,7 +15,7 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
 
     @staticmethod
     def _calculate_points(amount, available_points=0):
-        return int(amount or 0) + available_points
+        return available_points + int(amount or 0)
 
     def _calculate_progress(self, points):
         top_reward_prg = self.get_top_reward()
@@ -28,8 +28,19 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
         return round((rem/diff) * 100, 2)
 
     def get_customer_available_points(self, email):
-        customer = self.db.customers.find_one({"email": email})
-        return customer.get("points") if customer else 0
+        customer = self.db.customers.aggregate([
+            {
+                "$group": {
+                    "_id": "$emailId",
+                    "totalPoints": {"$sum": "$earnedPoints"},
+                },
+            },
+            {
+                "$match": {"_id": email}
+            }
+        ])
+        customer = list(customer)
+        return customer[0].get("totalPoints") if customer else 0
 
     def get_top_reward(self):
         return self.db.rewards.find_one({}, sort=[("points", DESCENDING)]) or {}
@@ -65,6 +76,7 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
             print("Next ", nxt_reward_prg)
             customer.update({
                 "_id": str(ObjectId()),
+                "earnedPoints": int(customer.get("orderTotal") or 0),
                 "points": points,
                 "tier": curr_reward_prg.get("tier"),
                 "rewardName": curr_reward_prg.get("rewardName"),
@@ -77,13 +89,13 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
             print("customer", customer)
             created_customer = self.db.customers.insert_one(customer)
             self.set_status(201)
-            self.write(json_encode({"message": "Customer rewards created/updated successfully!"}))
+            self.write(json_encode({"message": "Customer rewards created successfully!"}))
         else:
             self.set_status(200)
             self.write(json_encode({"message": "You cann't earn more rewards as you reach to the top."}))
 
     @coroutine
     def get(self):
-        customers = list(self.db.customers.find({}, {"_id": 0}))
+        customers = list(self.db.customers.find())
         self.set_status(200)
         self.write(json.dumps(customers))
