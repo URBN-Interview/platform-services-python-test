@@ -20,7 +20,10 @@ class RewardsView(TemplateView):
         context = self.get_context_data(**kwargs)
 
         rewards_data = self.rewards_service_client.get_rewards()
+        customers_data = self.rewards_service_client.get_customer_rewards()
         context['rewards_data'] = rewards_data
+        context['customers_data'] = customers_data
+
         return TemplateResponse(
             request,
             self.template_name,
@@ -36,5 +39,4 @@ class RewardsView(TemplateView):
             }
             data = self.rewards_service_client.add_order(data)
             return redirect(reverse("rewards"))
-
-        return redirect(reverse("rewards"), order_form=form.cleaned_data)
+        return redirect(reverse("rewards"))
