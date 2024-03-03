@@ -51,15 +51,17 @@
             </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>customer01@gmail.com</td>
-                    <td>100</td>
-                    <td>A</td>
-                    <td>5% off purchase</td>
-                    <td>B</td>
-                    <td>10% off purchase</td>
-                    <td>50%</td>
-                </tr>
+                {% for customer in customers_data %}
+                    <tr>
+                        <td>{{customer.emailId}}</td>
+                        <td>{{customer.points}}</td>
+                        <td>{{customer.tier}}</td>
+                        <td>{{customer.rewardName}}</td>
+                        <td>{{customer.nextTier}}</td>
+                        <td>{{customer.nextRewardName}}</td>
+                        <td>{{customer.nextRewardTierAwayPercentage}}</td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
