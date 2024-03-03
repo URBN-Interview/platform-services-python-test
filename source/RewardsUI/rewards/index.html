@@ -35,8 +35,11 @@
     </div>
     <div>
         <h2>User Rewards</h2>
-        <form>
-            <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
+        <form method="post" action="/rewards/">
+            {% csrf_token %}
+            <label for="email">Email address: </label>
+            <input type="email" name="email" value="{{user_email}}"/>
+            <input type="submit" value="Search"/>
         </form>
         <table border="1">
             <thead>
