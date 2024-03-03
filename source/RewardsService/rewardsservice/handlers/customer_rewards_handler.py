@@ -108,4 +108,3 @@ class CustomerRewardsHandler(tornado.web.RequestHandler):
             err_msg = f'Error while getting customer rewards: {str(e)}'
             self.set_status(500)
             self.write(json_encode({"message": err_msg}))
-        
