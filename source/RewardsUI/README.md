@@ -16,3 +16,5 @@
 * $ docker-compose build
 * $ docker-compose up -d
 * Open http://localhost:8000/rewards/ in your browser.
+
+* update the version python
