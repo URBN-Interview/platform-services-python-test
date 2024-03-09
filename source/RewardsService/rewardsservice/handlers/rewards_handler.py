@@ -90,7 +90,7 @@ class CustomerRewardsHandler(RequestHandler):
         try:
             email = self.get_argument("email", None, True)
             condition = {"emailId": email} if email else {}
-            customers_cursor = self.db.customers.find().sort([("emailId", ASCENDING), ("points", ASCENDING)])
+            customers_cursor = self.db.customers.find(condition).sort([("emailId", ASCENDING), ("points", ASCENDING)])
             customers = await gen.maybe_future(list(customers_cursor))
             self.set_status(200)
             self.write(json.dumps(customers))
