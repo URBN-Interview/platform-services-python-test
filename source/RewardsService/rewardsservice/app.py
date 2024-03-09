@@ -17,6 +17,7 @@ class App(tornado.web.Application):
 
         tornado.web.Application.__init__(self, urls, **settings)
 
+
 app = App(url_patterns)
 
 
