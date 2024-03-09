@@ -40,4 +40,6 @@ Create RESTful endpoint(s) to calculate, store, and retrieve customer rewards da
 * $ cd APP_PATH/platform-services-python-test/source/RewardsService
 * $ docker-compose build
 * $ docker-compose up -d
-* Services are accessible at http://localhost:7050/
+* Services are accessible at http://localhost:7050/i
+
+* change the version for python, tornado
