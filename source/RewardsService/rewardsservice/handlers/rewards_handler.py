@@ -4,7 +4,7 @@ import tornado.web
 from pymongo import MongoClient, ASCENDING
 from tornado.gen import coroutine
 
-mongo_client = MongoClient("localhost", 27017)
+mongo_client = MongoClient("mongodb", 27017)
 
 
 class RewardsHandler(tornado.web.RequestHandler):
