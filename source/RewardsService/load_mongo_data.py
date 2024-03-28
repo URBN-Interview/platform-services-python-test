@@ -3,7 +3,7 @@ from pymongo import MongoClient
 
 
 def main():
-    client = MongoClient("mongodb", 27017)
+    client = MongoClient("localhost", 27017)
     db = client["Rewards"]
 
     print("Removing and reloading rewards in mongo")
