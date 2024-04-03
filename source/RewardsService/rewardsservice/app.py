@@ -10,12 +10,12 @@ from tornado.options import options
 from settings import settings
 from url_patterns import url_patterns
 
-
 class App(tornado.web.Application):
     def __init__(self, urls):
         self.logger = logging.getLogger(self.__class__.__name__)
 
         tornado.web.Application.__init__(self, urls, **settings)
+
 
 app = App(url_patterns)
 
@@ -34,5 +34,9 @@ def main():
         logger.info("\nStopping server on port {}".format(options.port))
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     app = tornado.httpserver.HTTPServer(app, xheaders=True)
+#     port = 7050
+#     app.listen(port)
+#     print('Hello Its running')
+#     tornado.ioloop.IOLoop.current().start()

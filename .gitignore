@@ -1,0 +1,6 @@
+.venv
+source/RewardsService/rewardsservice/__pycache__/
+source/RewardsService/rewardsservice/handlers/__pycache__/
+source/RewardsService/requirements.txt
+source/RewardsService/requirements_bkp.txt
+source/RewardsService/data/
