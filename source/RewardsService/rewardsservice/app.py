@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import logging
-
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web

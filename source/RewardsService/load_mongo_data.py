@@ -5,7 +5,7 @@ from pymongo import MongoClient
 def main():
     client = MongoClient("mongodb", 27017)
     db = client["Rewards"]
-
+    
     print("Removing and reloading rewards in mongo")
     db.rewards.remove()
     db.rewards.insert({"points": 100, "rewardName": "5% off purchase", "tier": "A"})
