@@ -17,5 +17,4 @@
 
 # Dependencies
 ### Docker
-* Install Docker (https://docs.docker.com/engine/installation/)
-* Install Docker Compose (https://docs.docker.com/compose/install/)
+* Install [Rancher Desktop](https://rancherdesktop.io/) 

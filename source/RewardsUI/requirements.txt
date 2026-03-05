@@ -1,2 +1,2 @@
-Django
-requests
+django==3.2.25
+requests==2.32.4
