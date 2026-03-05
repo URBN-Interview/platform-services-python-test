@@ -1,8 +1,8 @@
-FROM python:3.5
+FROM python:3.10.18
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONPATH=$PYTHONPATH:/code/
-RUN mkdir /code
 WORKDIR /code
-ADD requirements.txt /code/
+COPY requirements.txt /code/
 RUN pip install -r requirements.txt
-ADD ./ /code/
+COPY ./ /code/
+EXPOSE 8000
