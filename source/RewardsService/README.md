@@ -33,7 +33,7 @@ Create RESTful endpoint(s) to calculate, store, and retrieve customer rewards da
             * **Next Reward Tier Progress:** the percentage the customer is away from reaching the next rewards tier (ex. 0.5)
     * **Endpoint 2:** Accept a customer's email address, and return the customer's rewards data that was stored in Endpoint 1.
     * **Endpoint 3:** Return the same rewards data as Endpoint 2 but for all customers.
-* For bonus points, add error handling and unit tests.
+* Add error handling and unit tests.
 
 # Setup
 * Install docker and docker-compose dependencies.
