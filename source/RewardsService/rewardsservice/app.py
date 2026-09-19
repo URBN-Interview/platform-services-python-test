@@ -5,6 +5,7 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 
+from motor.motor_asyncio import AsyncIOMotorClient
 from tornado.options import options
 
 from settings import settings
@@ -12,8 +13,11 @@ from url_patterns import url_patterns
 
 
 class App(tornado.web.Application):
-    def __init__(self, urls):
+    def __init__(self, urls, db=None):
         self.logger = logging.getLogger(self.__class__.__name__)
+        self.db = db if db is not None else AsyncIOMotorClient(
+            options.mongo_host, options.mongo_port
+        )[options.mongo_db_name]
 
         tornado.web.Application.__init__(self, urls, **settings)
 

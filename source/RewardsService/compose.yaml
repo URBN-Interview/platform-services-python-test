@@ -11,7 +11,7 @@ services:
   rewardsservice:
     build: .
     container_name: rewardsservice
-    command: python ./rewardsservice/app.py &
+    command: python ./rewardsservice/app.py
     volumes:
       - .:/code
     ports:
