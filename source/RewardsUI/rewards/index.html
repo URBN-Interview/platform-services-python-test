@@ -1,63 +1,131 @@
-<html>
+<!doctype html>
+<html lang="en">
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Customer Rewards Dashboard</title>
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
 </head>
-<body>
-    <h1>Welcome to the Rewards Dashboard</h1>
-    <div>
-        <h2>Reward Tiers</h2>
-        <table border="1">
-            <tr>
-                <th>Rewards Tier<th>
-                <th>Reward Points</th>
-                <th>Rewards Tier Name</th>
-            </tr>
-            {% for reward in rewards_data %}
-                <tr>
-                    <td>{{ reward.tier }}<td>
-                    <td>{{ reward.points }}</td>
-                    <td>{{ reward.rewardName }}</td>
-                </tr>
+<body class="bg-light">
+    <div class="container py-4">
+        <h1 class="mb-4">Customer Rewards Dashboard</h1>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
             {% endfor %}
-        </table>
-        <hr>
+        {% endif %}
+
+        <div class="card mb-4">
+            <div class="card-header">Reward Tiers</div>
+            <div class="card-body p-0">
+                <table class="table table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>Rewards Tier</th>
+                            <th>Reward Points</th>
+                            <th>Rewards Tier Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reward in rewards_data %}
+                            <tr>
+                                <td>{{ reward.tier }}</td>
+                                <td>{{ reward.points }}</td>
+                                <td>{{ reward.rewardName }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-muted">No reward tiers available.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">Add Order</div>
+            <div class="card-body">
+                <form method="post" class="row g-3 align-items-end">
+                    {% csrf_token %}
+                    <div class="col-sm-5">
+                        <label for="order-email" class="form-label">Email address</label>
+                        <input type="email" class="form-control" id="order-email" name="email" required>
+                    </div>
+                    <div class="col-sm-4">
+                        <label for="order-total" class="form-label">Order total</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" step="0.01" min="0.01" class="form-control" id="order-total" name="order_total" required>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="submit" class="btn btn-primary w-100">Submit Order</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">User Rewards</div>
+            <div class="card-body">
+                <form method="get" class="row g-3 align-items-end mb-3">
+                    <div class="col-sm-5">
+                        <label for="email-filter" class="form-label">Email address</label>
+                        <input type="text" class="form-control" id="email-filter" name="email" value="{{ email_filter }}" placeholder="Leave blank to show all customers">
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="submit" class="btn btn-secondary w-100">Search</button>
+                    </div>
+                    {% if email_filter %}
+                        <div class="col-sm-3">
+                            <a href="{% url 'rewards' %}" class="btn btn-outline-secondary w-100">Clear filter</a>
+                        </div>
+                    {% endif %}
+                </form>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>Email Address</th>
+                            <th>Reward Points</th>
+                            <th>Reward Tier</th>
+                            <th>Reward Tier Name</th>
+                            <th>Next Reward Tier</th>
+                            <th>Next Reward Tier Name</th>
+                            <th>Next Reward Tier Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in customer_rewards_data %}
+                            <tr>
+                                <td>{{ customer.email }}</td>
+                                <td>{{ customer.rewardPoints }}</td>
+                                <td>{{ customer.rewardTier|default:"—" }}</td>
+                                <td>{{ customer.rewardTierName|default:"—" }}</td>
+                                <td>{{ customer.nextRewardTier|default:"—" }}</td>
+                                <td>{{ customer.nextRewardTierName|default:"—" }}</td>
+                                <td>{% if customer.nextRewardTierProgress != None %}{% widthratio customer.nextRewardTierProgress 1 100 %}%{% else %}—{% endif %}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-muted">No customer rewards data yet.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    <div>
-        <h2>Add orders</h2>
-        <form>
-            <label>Enter email address: </label><input type="text"/><br>
-            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order"/>
-        </form>
-        <hr>
-    </div>
-    <div>
-        <h2>User Rewards</h2>
-        <form>
-            <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
-        </form>
-        <table border="1">
-            <thead>
-            <tr>
-                <th>Email Address</th>
-                <th>Reward Points</th>
-                <th>Reward Tier</th>
-                <th>Reward Tier Name</th>
-                <th>Next Reward Tier</th>
-                <th>Next Reward Tier Name</th>
-                <th>Next Reward Tier Progress</th>
-            </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>customer01@gmail.com</td>
-                    <td>100</td>
-                    <td>A</td>
-                    <td>5% off purchase</td>
-                    <td>B</td>
-                    <td>10% off purchase</td>
-                    <td>50%</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
