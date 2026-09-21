@@ -31,13 +31,10 @@ class RewardsView(TemplateView):
             context['rewards_data'] = []
 
         try:
-            if email_filter:
-                customer = self.rewards_service_client.get_customer_rewards(email_filter)
-                context['customer_rewards_data'] = [customer] if customer else []
-                if not customer:
-                    messages.warning(request, "No rewards data found for '{}'.".format(email_filter))
-            else:
-                context['customer_rewards_data'] = self.rewards_service_client.get_all_customer_rewards()
+            customers = self.rewards_service_client.get_all_customer_rewards(email_filter or None)
+            context['customer_rewards_data'] = customers
+            if email_filter and not customers:
+                messages.warning(request, "No rewards data found matching '{}'.".format(email_filter))
         except RewardsServiceError as e:
             self.logger.exception("Failed to load customer rewards")
             messages.error(request, "Could not load customer rewards: {}".format(e))

@@ -32,23 +32,37 @@ class RewardsViewGetTests(TestCase):
         self.assertEqual(response.context['customer_rewards_data'], [CUSTOMER])
         self.assertContains(response, "customer01@gmail.com")
 
-    @mock.patch.object(RewardsServiceClient, "get_customer_rewards")
+    @mock.patch.object(RewardsServiceClient, "get_all_customer_rewards")
     @mock.patch.object(RewardsServiceClient, "get_rewards")
-    def test_email_filter_shows_single_customer(self, mock_get_rewards, mock_get_customer):
+    def test_email_filter_shows_single_customer(self, mock_get_rewards, mock_get_all):
         mock_get_rewards.return_value = TIERS
-        mock_get_customer.return_value = CUSTOMER
+        mock_get_all.return_value = [CUSTOMER]
 
         response = self.client.get(reverse('rewards'), {"email": "customer01@gmail.com"})
 
         self.assertEqual(response.status_code, 200)
-        mock_get_customer.assert_called_once_with("customer01@gmail.com")
+        mock_get_all.assert_called_once_with("customer01@gmail.com")
         self.assertEqual(response.context['customer_rewards_data'], [CUSTOMER])
 
-    @mock.patch.object(RewardsServiceClient, "get_customer_rewards")
+    @mock.patch.object(RewardsServiceClient, "get_all_customer_rewards")
     @mock.patch.object(RewardsServiceClient, "get_rewards")
-    def test_email_filter_not_found_shows_warning(self, mock_get_rewards, mock_get_customer):
+    def test_email_filter_matches_by_substring(self, mock_get_rewards, mock_get_all):
         mock_get_rewards.return_value = TIERS
-        mock_get_customer.return_value = None
+        other_customer = dict(CUSTOMER, email="customer04@gmail.com")
+        mock_get_all.return_value = [CUSTOMER, other_customer]
+
+        response = self.client.get(reverse('rewards'), {"email": "customer0"})
+
+        mock_get_all.assert_called_once_with("customer0")
+        self.assertEqual(response.context['customer_rewards_data'], [CUSTOMER, other_customer])
+        self.assertContains(response, "customer01@gmail.com")
+        self.assertContains(response, "customer04@gmail.com")
+
+    @mock.patch.object(RewardsServiceClient, "get_all_customer_rewards")
+    @mock.patch.object(RewardsServiceClient, "get_rewards")
+    def test_email_filter_not_found_shows_warning(self, mock_get_rewards, mock_get_all):
+        mock_get_rewards.return_value = TIERS
+        mock_get_all.return_value = []
 
         response = self.client.get(reverse('rewards'), {"email": "nobody@gmail.com"})
 
@@ -70,15 +84,15 @@ class RewardsViewGetTests(TestCase):
 
 class RewardsViewPostTests(TestCase):
 
-    @mock.patch.object(RewardsServiceClient, "get_customer_rewards")
+    @mock.patch.object(RewardsServiceClient, "get_all_customer_rewards")
     @mock.patch.object(RewardsServiceClient, "get_rewards")
     @mock.patch.object(RewardsServiceClient, "submit_order")
     def test_add_order_success_redirects_with_message(
-        self, mock_submit_order, mock_get_rewards, mock_get_customer
+        self, mock_submit_order, mock_get_rewards, mock_get_all
     ):
         mock_submit_order.return_value = CUSTOMER
         mock_get_rewards.return_value = TIERS
-        mock_get_customer.return_value = CUSTOMER
+        mock_get_all.return_value = [CUSTOMER]
 
         response = self.client.post(
             reverse('rewards'),
@@ -107,15 +121,15 @@ class RewardsViewPostTests(TestCase):
 
         self.assertContains(response, "Order total must be a number")
 
-    @mock.patch.object(RewardsServiceClient, "get_customer_rewards")
+    @mock.patch.object(RewardsServiceClient, "get_all_customer_rewards")
     @mock.patch.object(RewardsServiceClient, "get_rewards")
     @mock.patch.object(RewardsServiceClient, "submit_order")
     def test_add_order_service_error_shows_error(
-        self, mock_submit_order, mock_get_rewards, mock_get_customer
+        self, mock_submit_order, mock_get_rewards, mock_get_all
     ):
         mock_submit_order.side_effect = RewardsServiceError("orderTotal must be greater than 0")
         mock_get_rewards.return_value = TIERS
-        mock_get_customer.return_value = None
+        mock_get_all.return_value = []
 
         response = self.client.post(
             reverse('rewards'), {"email": "customer01@gmail.com", "order_total": "0"}, follow=True

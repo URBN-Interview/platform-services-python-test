@@ -20,8 +20,9 @@ class RewardsServiceClient:
     def get_rewards(self):
         return self._request("get", "/rewards")
 
-    def get_all_customer_rewards(self):
-        return self._request("get", "/rewards/customers")
+    def get_all_customer_rewards(self, email_contains=None):
+        params = {"email": email_contains} if email_contains else None
+        return self._request("get", "/rewards/customers", params=params)
 
     def get_customer_rewards(self, email):
         try:
