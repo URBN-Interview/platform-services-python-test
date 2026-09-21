@@ -59,3 +59,42 @@ class CustomersHandlerTests(tornado.testing.AsyncHTTPTestCase):
 
         self.assertEqual(response.code, 404)
         self.assertIn("error", json.loads(response.body))
+
+    def test_list_customers_filters_by_email_substring(self):
+        self.io_loop.run_sync(lambda: self.db.customerRewards.insert_many([
+            dict(CUSTOMER, email="customer01@gmail.com"),
+            dict(CUSTOMER, email="customer04@gmail.com"),
+            dict(CUSTOMER, email="someoneelse@gmail.com"),
+        ]))
+
+        response = self.fetch("/rewards/customers?email=customer0")
+
+        self.assertEqual(response.code, 200)
+        emails = {c["email"] for c in json.loads(response.body)}
+        self.assertEqual(emails, {"customer01@gmail.com", "customer04@gmail.com"})
+
+    def test_list_customers_filter_is_case_insensitive(self):
+        self.io_loop.run_sync(
+            lambda: self.db.customerRewards.insert_one(dict(CUSTOMER, email="Customer01@gmail.com"))
+        )
+
+        response = self.fetch("/rewards/customers?email=CUSTOMER01")
+
+        self.assertEqual(response.code, 200)
+        self.assertEqual(len(json.loads(response.body)), 1)
+
+    def test_list_customers_filter_no_match_returns_empty_list(self):
+        self.io_loop.run_sync(lambda: self.db.customerRewards.insert_one(dict(CUSTOMER)))
+
+        response = self.fetch("/rewards/customers?email=nobody")
+
+        self.assertEqual(response.code, 200)
+        self.assertEqual(json.loads(response.body), [])
+
+    def test_list_customers_filter_escapes_regex_metacharacters(self):
+        self.io_loop.run_sync(lambda: self.db.customerRewards.insert_one(dict(CUSTOMER)))
+
+        response = self.fetch("/rewards/customers?email=" + "customer01.*")
+
+        self.assertEqual(response.code, 200)
+        self.assertEqual(json.loads(response.body), [])

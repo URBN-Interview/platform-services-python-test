@@ -1,4 +1,5 @@
 import json
+import re
 
 import tornado.web
 
@@ -8,8 +9,13 @@ from handlers.base_handler import BaseHandler
 class CustomersHandler(BaseHandler):
 
     async def get(self):
+        query = {}
+        email_filter = self.get_query_argument("email", default=None)
+        if email_filter:
+            query["email"] = {"$regex": re.escape(email_filter), "$options": "i"}
+
         customers = await self.application.db.customerRewards.find(
-            {}, {"_id": 0}
+            query, {"_id": 0}
         ).to_list(length=None)
         self.write(json.dumps(customers))
 
