@@ -3,3 +3,6 @@
 
 #pycache
 /source/RewardsService/**/__pycache__
+
+#lsp config
+**/pyrightconfig.json
