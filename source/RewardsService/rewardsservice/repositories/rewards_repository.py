@@ -1,3 +1,5 @@
+import pymongo
+
 HIDE_ID = {"_id": 0}
 
 class RewardsRepository:
@@ -21,6 +23,13 @@ class RewardsRepository:
         else:
             return tier
 
+    async def get_all_tiers(self):
+
+        cursor = self.collection.find({}).sort("points", pymongo.ASCENDING)
+
+        tiers = [tier async for tier in cursor]
+        return tiers
+
     async def get_next_tier(self, customer_points):
         query = {"points": {"$gt": customer_points}}
 
@@ -35,9 +44,3 @@ class RewardsRepository:
             return max_tier
         else:
             return next_tier
-    def progress_to_next_tier(self, current_points, current_tier_points, next_tier_points):
-        # if the customer is already at max tier, return nothing
-        if not next_tier_points:
-            return None
-        else:
-            return (current_points%(next_tier_points - current_tier_points)) / 100.0
