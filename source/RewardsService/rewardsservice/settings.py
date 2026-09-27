@@ -14,5 +14,6 @@ define("port", default=7050, help="run on the given port", type=int)
 settings = {
     'debug': True,
     'static_path': STATIC_ROOT,
-    'template_loader': tornado.template.Loader(TEMPLATE_ROOT)
+    'template_loader': tornado.template.Loader(TEMPLATE_ROOT),
+    'mongo_port': 27017
 }
