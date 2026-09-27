@@ -1,2 +1,5 @@
 .run
 .idea
+
+#pycache
+/source/RewardsService/**/__pycache__
