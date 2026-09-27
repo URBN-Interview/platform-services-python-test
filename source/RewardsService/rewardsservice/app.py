@@ -11,19 +11,20 @@ from tornado.options import options
 from pymongo import AsyncMongoClient
 
 from settings import settings
-from url_patterns import url_patterns
+from url_patterns import build_url_patterns
 
 from repositories.rewards_repository import RewardsRepository
 from repositories.customers_repository import CustomersRepository
 
 class App(tornado.web.Application):
-    def __init__(self, urls, db):
+    def __init__(self, db):
         self.logger = logging.getLogger(self.__class__.__name__)
 
         # Initialize the repositories as part of the tornado app
         self.rewards_repo = RewardsRepository(db)
         self.customers_repo = CustomersRepository(db)
 
+        urls = build_url_patterns(self.rewards_repo, self.customers_repo)
 
         tornado.web.Application.__init__(self, urls, **settings)
 
@@ -39,7 +40,7 @@ async def main():
     db = client["Rewards"]
     logger.info("successful connection to mongo")
 
-    app = App(url_patterns, db)
+    app = App(db)
     
     http_server = tornado.httpserver.HTTPServer(app, xheaders=True)
     http_server.listen(options.port)

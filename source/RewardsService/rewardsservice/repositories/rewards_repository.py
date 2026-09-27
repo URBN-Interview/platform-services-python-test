@@ -25,7 +25,7 @@ class RewardsRepository:
 
     async def get_all_tiers(self):
 
-        cursor = self.collection.find({}).sort("points", pymongo.ASCENDING)
+        cursor = self.collection.find({}, HIDE_ID).sort("points", pymongo.ASCENDING)
 
         tiers = [tier async for tier in cursor]
         return tiers

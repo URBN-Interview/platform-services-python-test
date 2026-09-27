@@ -3,6 +3,9 @@ from rewardsservice.repositories.rewards_repository import RewardsRepository
 
 class RewardsHandler(BaseHandler):
 
-    async def get(self, repo: RewardsRepository):
-        rewards = repo.get_all_tiers
+    def initialize(self, repo: RewardsRepository):
+        self.repo = repo
+
+    async def get(self):
+        rewards = await self.repo.get_all_tiers()
         self.write_json(rewards)
