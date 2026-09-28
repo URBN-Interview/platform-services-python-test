@@ -1,6 +1,7 @@
 import logging
 
 from django.contrib import messages
+from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.views.generic.base import TemplateView
 
@@ -33,3 +34,17 @@ class RewardsView(TemplateView):
             self.template_name,
             context
         )
+
+    def post(self, request, *args, **kwargs):
+        email = request.POST.get('email', '').strip()
+
+        try:
+            order_total = float(request.POST.get('order_total', ''))
+            self.rewards_service_client.add_order(email, order_total)
+            messages.success(request, 'Order added for ' + email)
+        except ValueError:
+            messages.error(request, 'Order total must be a number')
+        except RewardsServiceError as exc:
+            messages.error(request, str(exc))
+
+        return redirect('rewards')
