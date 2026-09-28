@@ -6,15 +6,19 @@ from rewardsservice.repositories.rewards_repository import RewardsRepository
 
 class CustomerDataHandler(BaseHandler):
 
-    def initialize(self, customer_repo: CustomersRepository, rewards_repo: RewardsRepository):
+    def initialize(self, customer_repo: CustomersRepository):
         self.customer_repo = customer_repo
-        self.rewards_repo = rewards_repo
 
     async def get(self, email):
         customer = await self.customer_repo.get_customer(email)
         if not customer:
             raise ApiError(404, "customer not found")
         self.write_json(customer)
+
+class CustomerOrderHandler(BaseHandler):
+    def initialize(self, customer_repo: CustomersRepository, rewards_repo: RewardsRepository):
+        self.customer_repo = customer_repo
+        self.rewards_repo = rewards_repo
 
     async def post(self):
         try:
@@ -38,6 +42,7 @@ class CustomerDataHandler(BaseHandler):
                                                                         **rewards_fields,
                                                                     })
         self.write_json(updated_customer, status=201)
+
         
 class CustomersDataHandler(BaseHandler):
     def initialize(self, customer_repo: CustomersRepository):
