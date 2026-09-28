@@ -15,11 +15,12 @@ class CustomersRepository:
         return await self.collection.find_one(query, HIDE_ID)
     
     async def update_customer(self, email, new_values):
-        query = {"email": email},
+        query = {"email_address": email}
 
         return await self.collection.find_one_and_update(
             query,
             {"$set": new_values},
+            projection=HIDE_ID,
             upsert=True,
             return_document=ReturnDocument.AFTER
         )

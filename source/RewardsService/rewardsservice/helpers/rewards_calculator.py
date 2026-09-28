@@ -35,3 +35,4 @@ def get_rewards_points_for_purchase(order_total):
     # use math.floor so an order of $150.45 is 150 points
     points_per_dollar = 1    
     return math.floor(order_total * points_per_dollar)
+
