@@ -1,2 +1,8 @@
 .run
 .idea
+
+#pycache
+/source/**/__pycache__
+
+#lsp config
+**/pyrightconfig.json
