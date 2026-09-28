@@ -16,10 +16,15 @@ class RewardsView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
+        search_email = request.GET.get('email', '').strip()
+        context['search_email'] = search_email
 
         try:
             context['rewards_data'] = self.rewards_service_client.get_rewards()
-            context['customers'] = self.rewards_service_client.get_customers()
+            if search_email:
+                context['customers'] = [self.rewards_service_client.get_customer(search_email)]
+            else:
+                context['customers'] = self.rewards_service_client.get_customers()
         except RewardsServiceError as exc:
             messages.error(request, str(exc))
 

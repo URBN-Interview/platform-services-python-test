@@ -34,8 +34,10 @@
     </div>
     <div>
         <h2>User Rewards</h2>
-        <form>
-            <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
+        <form method="get">
+            <label>Email address: </label><input type="email" name="email" value="{{ search_email }}"/>
+            <input type="submit" value="Search"/>
+            <a href="{% url 'rewards' %}">Show all</a>
         </form>
         <table border="1">
             <thead>
