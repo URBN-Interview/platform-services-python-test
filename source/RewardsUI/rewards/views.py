@@ -1,9 +1,10 @@
 import logging
 
+from django.contrib import messages
 from django.template.response import TemplateResponse
 from django.views.generic.base import TemplateView
 
-from rewards.clients.rewards_service_client import RewardsServiceClient
+from rewards.clients.rewards_service_client import RewardsServiceClient, RewardsServiceError
 
 
 class RewardsView(TemplateView):
@@ -16,8 +17,11 @@ class RewardsView(TemplateView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
 
-        rewards_data = self.rewards_service_client.get_rewards()
-        context['rewards_data'] = rewards_data
+        try:
+            context['rewards_data'] = self.rewards_service_client.get_rewards()
+            context['customers'] = self.rewards_service_client.get_customers()
+        except RewardsServiceError as exc:
+            messages.error(request, str(exc))
 
         return TemplateResponse(
             request,
