@@ -1,11 +1,8 @@
 import math
 
 def progress_to_next_tier(current_points, current_tier_threshold, next_tier_threshold):
-        # if the customer is already at max tier, return nothing
-        if not next_tier_threshold:
-            return None
-        else:
-            return (current_points%(next_tier_threshold - current_tier_threshold)) / 100.0
+    tier_gap = next_tier_threshold - current_tier_threshold
+    return round((current_points - current_tier_threshold) / tier_gap, 2)
 
 def customer_rewards_fields(points, tiers):
     current_tier = None
