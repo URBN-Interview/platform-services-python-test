@@ -17,6 +17,8 @@ from url_patterns import build_url_patterns
 from repositories.rewards_repository import RewardsRepository
 from repositories.customers_repository import CustomersRepository
 
+from rewardsservice.handlers.base_handler import NotFoundHandler
+
 class App(tornado.web.Application):
     def __init__(self, db):
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -27,7 +29,7 @@ class App(tornado.web.Application):
 
         urls = build_url_patterns(self.rewards_repo, self.customers_repo)
 
-        tornado.web.Application.__init__(self, urls, **settings)
+        tornado.web.Application.__init__(self, urls, default_handler_class=NotFoundHandler, **settings)
 
 # Move tornado app creation to the now async main to allow passing
 # the mongo client
