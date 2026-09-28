@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import asyncio
 import logging
+import signal
 
 import tornado.httpserver
 import tornado.ioloop
@@ -46,8 +47,14 @@ async def main():
     http_server.listen(options.port)
     logger.info('Tornado server started on port {}'.format(options.port))
 
+    # add in sigterm catching because the docker container
+    # was taking a little bit to kill with each compose
+    stop_event = asyncio.Event()
+    loop = asyncio.get_running_loop()
+    for sig in (signal.SIGTERM, signal.SIGINT):
+        loop.add_signal_handler(sig, stop_event.set)
     try:
-        await asyncio.Event().wait()
+        await stop_event.wait()
     finally:
         http_server.stop()
         await client.close()
