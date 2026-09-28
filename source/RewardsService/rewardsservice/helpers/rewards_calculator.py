@@ -4,16 +4,19 @@ def progress_to_next_tier(current_points, current_tier_threshold, next_tier_thre
     tier_gap = next_tier_threshold - current_tier_threshold
     return round((current_points - current_tier_threshold) / tier_gap, 2)
 
+# Gather up all the necessary fields to include in the response body
 def customer_rewards_fields(points, tiers):
     current_tier = None
     next_tier = None
 
+    # tiers are sorted in the mongo query, so run down the list
     for tier in tiers:
         if tier["points"] <= points:
             current_tier = tier
         elif next_tier is None:
             next_tier = tier
 
+    # empty next tier means they're maxxed out!
     if not next_tier:
         progress = 1.0
     else:
@@ -27,6 +30,8 @@ def customer_rewards_fields(points, tiers):
         "next_reward_tier_progress": progress,
     }
    
+# this is mainly just to allow for modularity if the point accumulation
+# ever needs to change
 def get_rewards_points_for_purchase(order_total):
     # customers get 1 point per dollar spent, rounded down
     # use math.floor so an order of $150.45 is 150 points
