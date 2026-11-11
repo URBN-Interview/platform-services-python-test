@@ -51,6 +51,11 @@ class FakeCursor:
         return copy.deepcopy(self._docs)
 
 
+class FakeObjectId:
+    """Stands in for Mongo's ObjectId: like the real one, json.dumps can't serialize it,
+    so a handler that forgets to exclude _id fails in tests too."""
+
+
 class FakeCollection:
     """Supports the subset of Motor's collection API the handlers use."""
 
@@ -61,13 +66,20 @@ class FakeCollection:
     def _matches(doc, query):
         return all(doc.get(k) == v for k, v in query.items())
 
-    def find(self, query=None, projection=None):
-        return FakeCursor([d for d in self.docs if self._matches(d, query or {})])
+    @staticmethod
+    def _project(doc, projection):
+        # Only exclusion projections like {"_id": 0} are needed
+        excluded = {k for k, v in (projection or {}).items() if not v}
+        return {k: copy.deepcopy(v) for k, v in doc.items() if k not in excluded}
 
-    async def find_one(self, query):
+    def find(self, query=None, projection=None):
+        return FakeCursor([self._project(d, projection)
+                           for d in self.docs if self._matches(d, query or {})])
+
+    async def find_one(self, query, projection=None):
         for doc in self.docs:
             if self._matches(doc, query):
-                return copy.deepcopy(doc)
+                return self._project(doc, projection)
         return None
 
     async def update_one(self, query, update, upsert=False):
@@ -76,7 +88,9 @@ class FakeCollection:
                 doc.update(copy.deepcopy(update["$set"]))
                 return
         if upsert:
-            new_doc = dict(query)
+            # Like MongoDB, a newly inserted document gets an _id
+            new_doc = {"_id": FakeObjectId()}
+            new_doc.update(query)
             new_doc.update(copy.deepcopy(update["$set"]))
             self.docs.append(new_doc)
 
