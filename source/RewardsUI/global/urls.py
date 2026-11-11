@@ -1,3 +1,6 @@
+# Root URL config for the dashboard: sends everything under /rewards/ to the
+# `rewards` app's urls.py.
+
 """rewards URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
