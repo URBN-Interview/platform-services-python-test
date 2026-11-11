@@ -3,8 +3,6 @@
 
 import json
 
-from pymongo import MongoClient
-
 from handlers.base_handler import BaseHandler
 
 
@@ -16,7 +14,8 @@ class RewardsHandler(BaseHandler):
     """
 
     async def get(self):
-        client = MongoClient("mongodb", 27017)
-        db = client["Rewards"]
-        rewards = list(db.rewards.find({}, {"_id": 0}))
+        # Shared Motor client from App; awaiting keeps the event loop free
+        rewards = await self.application.db.rewards.find({}, {"_id": 0}).to_list(None)
+
+        self.set_header("Content-Type", "application/json")
         self.write(json.dumps(rewards))
