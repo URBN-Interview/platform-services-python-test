@@ -1,5 +1,6 @@
 import json
 import tornado.web
+from rewards_calculator import points_for_order, calculate_rewards
 
 class OrdersHandler(tornado.web.RequestHandler):
 
@@ -18,10 +19,13 @@ class OrdersHandler(tornado.web.RequestHandler):
             raise tornado.web.HTTPError(400, reason="'email' and 'orderTotal' are required")
 
         #3. Calculate and store customer rewards data into MongoDB
+        db = self.application.db
+        tiers = await db.rewards.find({}, {"_id": 0}).to_list(None)
 
-        result = {"email": email, "orderTotal": order_total}
+        points = points_for_order(order_total)
+        result = calculate_rewards(points, tiers)
+        result["emailAddress"] = email
         
-
         #4. Respond
         self.set_status(201)            #201 created
         self.set_header("Content-Type", "application/json")
