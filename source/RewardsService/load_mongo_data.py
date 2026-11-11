@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+# Seed script, run once by the `init_data` container in compose.yaml.
+# Drops and recreates the `rewards` collection in the `Rewards` database with
+# the 10 reward tiers (A = 100 points / 5% off ... J = 1000 points / 50% off).
+
 from pymongo import MongoClient
 
 
