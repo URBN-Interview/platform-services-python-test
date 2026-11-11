@@ -2,12 +2,13 @@
 # definitions (tier letter, reward name, points required) stored in MongoDB.
 
 import json
-import tornado.web
 
 from pymongo import MongoClient
 
+from handlers.base_handler import BaseHandler
 
-class RewardsHandler(tornado.web.RequestHandler):
+
+class RewardsHandler(BaseHandler):
     """Serves /rewards.
 
     GET: returns every reward tier from the Rewards.rewards collection as a
