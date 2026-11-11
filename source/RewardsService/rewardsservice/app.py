@@ -8,6 +8,7 @@ import logging
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
+import motor.motor_tornado
 
 from tornado.options import options
 
@@ -25,7 +26,8 @@ class App(tornado.web.Application):
 
     def __init__(self, urls):
         self.logger = logging.getLogger(self.__class__.__name__)
-
+        self.db = motor.motor_tornado.MotorClient("mongodb", 27017)["Rewards"]
+        
         tornado.web.Application.__init__(self, urls, **settings)
 
 app = App(url_patterns)
