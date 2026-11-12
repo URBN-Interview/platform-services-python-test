@@ -8,6 +8,25 @@ from tornado.web import HTTPError
 from handlers.base_handler import BaseHandler
 
 
+class CustomersHandler(BaseHandler):
+    """Serves /customers.
+
+    GET: returns the stored rewards data for every customer, sorted by email.
+    Returns an empty list (not an error) when no customers exist yet.
+    """
+
+    async def get(self):
+        customers = await (
+            self.application.db.customers
+            .find({}, {"_id": 0})          # {} = no filter (all customers), exclude _id
+            .sort("emailAddress", 1)       # 1 = ascending, for a predictable order
+            .to_list(None)                 # None = no limit
+        )
+
+        self.set_header("Content-Type", "application/json")
+        self.write(json.dumps(customers))
+
+
 class CustomerHandler(BaseHandler):
     """Serves /customers/{email}.
 

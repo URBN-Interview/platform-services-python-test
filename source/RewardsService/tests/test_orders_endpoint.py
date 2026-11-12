@@ -42,10 +42,14 @@ TIERS = [
 # ---------------------------------------------------------------------------
 
 class FakeCursor:
-    """Mimics a Motor cursor: only to_list() is needed."""
+    """Mimics a Motor cursor: supports sort() and to_list()."""
 
     def __init__(self, docs):
         self._docs = docs
+
+    def sort(self, key, direction=1):
+        self._docs = sorted(self._docs, key=lambda d: d.get(key), reverse=direction < 0)
+        return self
 
     async def to_list(self, length):
         return copy.deepcopy(self._docs)

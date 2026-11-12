@@ -1,5 +1,5 @@
-# Unit tests for Endpoint 2: GET /customers/{email}, using the same in-memory
-# FakeDatabase as the orders tests (no MongoDB needed).
+# Unit tests for Endpoint 2 (GET /customers/{email}) and Endpoint 3 (GET /customers),
+# using the same in-memory FakeDatabase as the orders tests (no MongoDB needed).
 #
 # Run from source/RewardsService:
 #   docker compose exec rewardsservice python -m unittest discover -s tests -v
@@ -96,3 +96,73 @@ class CustomerHandlerTest(AsyncHTTPTestCase):
         self.post_order("customer01@gmail.com", 250)
         response = self.fetch("/customers/customer01@gmail.com", method="POST", body="{}")
         self.assertEqual(response.code, 405)
+
+
+class CustomersHandlerTest(AsyncHTTPTestCase):
+    """Endpoint 3: GET /customers"""
+
+    def get_app(self):
+        app = tornado.web.Application(url_patterns)
+        app.db = FakeDatabase()
+        self.db = app.db
+        return app
+
+    def post_order(self, email, order_total):
+        return self.fetch("/orders", method="POST",
+                          body=json.dumps({"email": email, "orderTotal": order_total}))
+
+    def get_customers(self):
+        response = self.fetch("/customers")
+        return response, json.loads(response.body)
+
+    def test_no_customers_returns_empty_list(self):
+        response, body = self.get_customers()
+
+        self.assertEqual(response.code, 200)
+        self.assertIn("application/json", response.headers["Content-Type"])
+        self.assertEqual(body, [])
+
+    def test_returns_customer_rewards_data(self):
+        self.post_order("customer01@gmail.com", 250)
+        response, body = self.get_customers()
+
+        self.assertEqual(response.code, 200)
+        self.assertEqual(body, [CUSTOMER_01])
+
+    def test_items_match_single_customer_endpoint(self):
+        self.post_order("customer01@gmail.com", 250)
+        self.post_order("customer02@gmail.com", 1234.56)
+
+        _, body = self.get_customers()
+        for customer in body:
+            single = json.loads(self.fetch("/customers/" + customer["emailAddress"]).body)
+            self.assertEqual(customer, single)
+
+    def test_returns_all_customers_sorted_by_email(self):
+        for email in ("charlie@gmail.com", "alice@gmail.com", "bob@gmail.com"):
+            self.post_order(email, 100)
+
+        _, body = self.get_customers()
+        self.assertEqual([c["emailAddress"] for c in body],
+                         ["alice@gmail.com", "bob@gmail.com", "charlie@gmail.com"])
+
+    def test_customer_with_multiple_orders_appears_once(self):
+        self.post_order("customer01@gmail.com", 150)
+        self.post_order("customer01@gmail.com", 150)
+
+        _, body = self.get_customers()
+        self.assertEqual(len(body), 1)
+        self.assertEqual(body[0]["rewardPoints"], 300)
+
+    def test_does_not_return_mongo_id(self):
+        self.post_order("customer01@gmail.com", 250)
+        self.post_order("customer02@gmail.com", 500)
+
+        _, body = self.get_customers()
+        for customer in body:
+            self.assertNotIn("_id", customer)
+
+    def test_post_is_not_allowed(self):
+        response = self.fetch("/customers", method="POST", body="{}")
+        self.assertEqual(response.code, 405)
+        self.assertIn("error", json.loads(response.body))
