@@ -1,3 +1,7 @@
+# Configuration for the Tornado app: defines the --port command-line option
+# (default 7050) and the settings dict (debug mode, static/template paths)
+# that is passed into App in app.py.
+
 import os
 import tornado.template
 
