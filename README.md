@@ -12,6 +12,7 @@
 * Follow python best practices, and ensure endpoints are RESTFul
 * Make sure to read up on tornado, mongo db, RESTFul APIs if you are not familiar with the concepts or technologies
 * Use incremental commits on a story branch to show how you arrived at your solutions.
+* Complete [AI_USAGE.md](AI_USAGE.md) at the root of the repo. If you used AI tools, include the tools and models, your prompts (or a conversation export), and how you used them. If you didn't use AI, say so in that file.
 * Push your story branch to your fork.
 * [Issue a pull request](https://help.github.com/articles/using-pull-requests/) against the master branch of this repo.
 
