@@ -1,3 +1,5 @@
+# URL routes for the rewards app: /rewards/ renders the dashboard (RewardsView).
+
 from django.conf.urls import url
 
 from . import views

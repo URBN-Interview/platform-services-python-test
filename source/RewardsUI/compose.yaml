@@ -1,3 +1,7 @@
+# Runs the Django dashboard on http://localhost:8000/rewards/. Joins the external
+# rewardsservice_default network so it can reach the API at http://rewardsservice:7050;
+# start RewardsService first.
+
 services:
 
   web:

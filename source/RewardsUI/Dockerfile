@@ -1,3 +1,5 @@
+# Image for the RewardsUI Django dashboard: Python 3.10 with Django and requests.
+
 FROM python:3.10.18
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONPATH=$PYTHONPATH:/code/

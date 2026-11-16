@@ -1,3 +1,8 @@
+# Local stack for RewardsService:
+#   mongodb        - MongoDB database (data persisted in the `data` volume)
+#   rewardsservice - the Tornado API on http://localhost:7050
+#   init_data      - one-off job that seeds the reward tiers, then exits
+
 services:
 
   mongodb:

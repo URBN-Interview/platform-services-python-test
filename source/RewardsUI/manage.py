@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+# Django's command-line utility for this project (runserver, migrate, test, ...).
+# The container runs `python manage.py runserver 0.0.0.0:8000`.
+
 import os
 import sys
 

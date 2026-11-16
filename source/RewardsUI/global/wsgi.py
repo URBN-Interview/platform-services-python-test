@@ -1,3 +1,6 @@
+# WSGI entry point used to serve the Django project from a production
+# web server (the dev setup uses manage.py runserver instead).
+
 """
 WSGI config for rewards project.
 

@@ -1,3 +1,6 @@
+# Project-wide Django settings for the RewardsUI dashboard. Notably, TEMPLATES
+# DIRS points at the rewards/ folder so that rewards/index.html can be found.
+
 """
 Django settings for rewards project.
 
