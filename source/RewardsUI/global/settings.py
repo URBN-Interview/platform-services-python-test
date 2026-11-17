@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rewards',
 ]
 
 MIDDLEWARE = [
@@ -118,3 +119,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Store flash messages in a signed cookie so the dashboard doesn't need a sessions table.
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+
+REWARDS_SERVICE_URL = os.environ.get('REWARDS_SERVICE_URL', 'http://rewardsservice:7050')
