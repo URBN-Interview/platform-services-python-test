@@ -27,7 +27,7 @@ def parse_order_total(order_total):
     Accepts numbers or numeric strings (e.g. 100.80 or "100.80"). Booleans are
     rejected even though they are ints in Python.
     """
-    if isinstance(order_total, bool) or not isinstance(order_total, (int, float, str)):
+    if isinstance(order_total, bool) or not isinstance(order_total, (int, float, str, Decimal)):
         raise ValidationError("'orderTotal' must be a number")
     try:
         total = Decimal(str(order_total).strip())
