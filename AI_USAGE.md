@@ -5,12 +5,7 @@
 ## Tools and models
 * **Claude Opus 5.5** (`claude-opus-5-5`) via **Claude Code**, Anthropic's agentic coding CLI, which ran with access to this repository and a local shell.
 
-## Prompts
-The full session was driven by the short prompts below (spelling tidied, wording unchanged):
 
-1. > Go through the README.md file, understand the assessment, and complete it for both RewardsService and RewardsUI.
-2. > Docker is up, can you check now?
-3. > How do I run the UI so I can check it?
 
 ## How you used them
 I gave Claude the assessment as a whole and let it plan and implement the solution end to end, then reviewed and verified the result.
