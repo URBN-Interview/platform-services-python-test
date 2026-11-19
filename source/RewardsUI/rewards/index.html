@@ -1,63 +1,199 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Rewards Dashboard</title>
+    <style>
+        :root {
+            --bg: #f6f5f2;
+            --surface: #ffffff;
+            --text: #1f1f1f;
+            --muted: #6b6b6b;
+            --border: #e2e0db;
+            --accent: #2f5d50;
+            --accent-soft: #e3eeea;
+            --error: #a4262c;
+            --error-soft: #fbeaea;
+            --success-soft: #e6f2e9;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+        }
+        header { background: var(--accent); color: #fff; padding: 24px 16px; }
+        header h1 { margin: 0 auto; max-width: 1100px; font-size: 1.6rem; font-weight: 600; }
+        main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+        section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+        }
+        h2 { margin: 0 0 16px; font-size: 1.15rem; }
+        .alert { border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; }
+        .alert-error { background: var(--error-soft); color: var(--error); }
+        .alert-success { background: var(--success-soft); color: var(--accent); }
+        form.inline { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+        .field { display: flex; flex-direction: column; gap: 4px; }
+        .field label { font-size: .85rem; color: var(--muted); }
+        .field-error { color: var(--error); font-size: .8rem; }
+        input[type=email], input[type=number], input[type=text] {
+            padding: 8px 10px;
+            font: inherit;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            min-width: 240px;
+        }
+        input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+        button, .button {
+            padding: 8px 16px;
+            font: inherit;
+            border-radius: 6px;
+            border: 1px solid var(--accent);
+            background: var(--accent);
+            color: #fff;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .button-secondary { background: transparent; color: var(--accent); }
+        .table-wrap { overflow-x: auto; }
+        table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+        th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        th { font-weight: 600; color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .03em; }
+        td.num { font-variant-numeric: tabular-nums; }
+        .tier-badge {
+            display: inline-block; min-width: 1.8em; text-align: center;
+            background: var(--accent-soft); color: var(--accent);
+            border-radius: 4px; font-weight: 600; padding: 0 6px;
+        }
+        .progress { display: flex; align-items: center; gap: 8px; }
+        .progress-bar { width: 100px; height: 8px; background: var(--accent-soft); border-radius: 4px; overflow: hidden; }
+        .progress-bar span { display: block; height: 100%; background: var(--accent); }
+        .empty { color: var(--muted); padding: 16px 0; }
+        .muted { color: var(--muted); }
+        @media (max-width: 600px) {
+            input[type=email], input[type=number], input[type=text] { min-width: 0; width: 100%; }
+            form.inline, .field { width: 100%; }
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Rewards Dashboard</h1>
-    <div>
-        <h2>Reward Tiers</h2>
-        <table border="1">
-            <tr>
-                <th>Rewards Tier<th>
-                <th>Reward Points</th>
-                <th>Rewards Tier Name</th>
-            </tr>
-            {% for reward in rewards_data %}
-                <tr>
-                    <td>{{ reward.tier }}<td>
-                    <td>{{ reward.points }}</td>
-                    <td>{{ reward.rewardName }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-        <hr>
-    </div>
-    <div>
-        <h2>Add orders</h2>
-        <form>
-            <label>Enter email address: </label><input type="text"/><br>
-            <label>Enter order total: </label><input type="text"/><input type="button" value="Submit Order"/>
+<header><h1>Rewards Dashboard</h1></header>
+<main>
+    {% for error in errors %}
+        <div class="alert alert-error" role="alert">{{ error }}</div>
+    {% endfor %}
+    {% for message in messages %}
+        <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}" role="status">{{ message }}</div>
+    {% endfor %}
+
+    <section>
+        <h2>Add Order</h2>
+        {% for error in order_form.non_field_errors %}
+            <div class="alert alert-error" role="alert">{{ error }}</div>
+        {% endfor %}
+        <form class="inline" method="post" action="{% url 'rewards' %}" novalidate>
+            {% csrf_token %}
+            <div class="field">
+                <label for="{{ order_form.email.id_for_label }}">{{ order_form.email.label }}</label>
+                <input type="email" id="{{ order_form.email.id_for_label }}" name="{{ order_form.email.html_name }}"
+                       value="{{ order_form.email.value|default_if_none:'' }}" placeholder="customer01@gmail.com" required>
+                {% for error in order_form.email.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+            </div>
+            <div class="field">
+                <label for="{{ order_form.order_total.id_for_label }}">{{ order_form.order_total.label }}</label>
+                <input type="number" step="0.01" min="0" id="{{ order_form.order_total.id_for_label }}"
+                       name="{{ order_form.order_total.html_name }}"
+                       value="{{ order_form.order_total.value|default_if_none:'' }}" placeholder="100.80" required>
+                {% for error in order_form.order_total.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+            </div>
+            <button type="submit">Submit Order</button>
         </form>
-        <hr>
-    </div>
-    <div>
+    </section>
+
+    <section>
         <h2>User Rewards</h2>
-        <form>
-            <label>Email address: </label><input type="text"/><input type="button" value="Search"/>
+        <form class="inline" method="get" action="{% url 'rewards' %}" style="margin-bottom: 16px;">
+            <div class="field">
+                <label for="{{ search_form.email.id_for_label }}">Filter by email address</label>
+                <input type="email" id="{{ search_form.email.id_for_label }}" name="{{ search_form.email.html_name }}"
+                       value="{{ search_form.email.value|default_if_none:'' }}" placeholder="customer01@gmail.com">
+                {% for error in search_form.email.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+            </div>
+            <button type="submit">Search</button>
+            {% if search_form.email.value %}<a class="button button-secondary" href="{% url 'rewards' %}">Show all</a>{% endif %}
         </form>
-        <table border="1">
-            <thead>
-            <tr>
-                <th>Email Address</th>
-                <th>Reward Points</th>
-                <th>Reward Tier</th>
-                <th>Reward Tier Name</th>
-                <th>Next Reward Tier</th>
-                <th>Next Reward Tier Name</th>
-                <th>Next Reward Tier Progress</th>
-            </tr>
-            </thead>
-            <tbody>
+        <div class="table-wrap">
+            <table>
+                <thead>
                 <tr>
-                    <td>customer01@gmail.com</td>
-                    <td>100</td>
-                    <td>A</td>
-                    <td>5% off purchase</td>
-                    <td>B</td>
-                    <td>10% off purchase</td>
-                    <td>50%</td>
+                    <th>Email Address</th>
+                    <th>Reward Points</th>
+                    <th>Reward Tier</th>
+                    <th>Reward Tier Name</th>
+                    <th>Next Reward Tier</th>
+                    <th>Next Reward Tier Name</th>
+                    <th>Next Reward Tier Progress</th>
                 </tr>
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                {% for customer in customers %}
+                    <tr>
+                        <td>{{ customer.email }}</td>
+                        <td class="num">{{ customer.points }}</td>
+                        <td>{% if customer.tier %}<span class="tier-badge">{{ customer.tier }}</span>{% else %}<span class="muted">&mdash;</span>{% endif %}</td>
+                        <td>{{ customer.tierName|default:"—" }}</td>
+                        <td>{% if customer.nextTier %}<span class="tier-badge">{{ customer.nextTier }}</span>{% else %}<span class="muted">Top tier</span>{% endif %}</td>
+                        <td>{{ customer.nextTierName|default:"—" }}</td>
+                        <td>
+                            {% widthratio customer.nextTierProgress 1 100 as progress_pct %}
+                            <div class="progress">
+                                <div class="progress-bar"><span style="width: {{ progress_pct }}%"></span></div>
+                                <span class="num">{{ progress_pct }}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="7" class="empty">
+                        {% if search_email %}No rewards found for {{ search_email }}.{% else %}No customer rewards yet. Add an order above.{% endif %}
+                    </td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section>
+        <h2>Reward Tiers</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>Rewards Tier</th>
+                    <th>Reward Points</th>
+                    <th>Rewards Tier Name</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for reward in rewards_data %}
+                    <tr>
+                        <td><span class="tier-badge">{{ reward.tier }}</span></td>
+                        <td class="num">{{ reward.points }}</td>
+                        <td>{{ reward.rewardName }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="3" class="empty">No reward tiers available.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
 </body>
 </html>

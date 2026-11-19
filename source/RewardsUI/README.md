@@ -16,3 +16,10 @@
 * $ docker-compose build
 * $ docker-compose up -d
 * Open http://localhost:8000/rewards/ in your browser.
+
+# Running the tests
+```
+$ docker-compose run --rm web python manage.py test rewards
+```
+The dashboard calls the RewardsService at `http://rewardsservice:7050` by default; override it with the
+`REWARDS_SERVICE_URL` environment variable.

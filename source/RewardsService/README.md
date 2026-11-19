@@ -41,3 +41,37 @@ Create RESTful endpoint(s) to calculate, store, and retrieve customer rewards da
 * $ docker-compose build
 * $ docker-compose up -d
 * Services are accessible at http://localhost:7050/
+
+# API
+
+All responses are JSON. Errors use the shape `{"error": {"code": <status>, "message": "<details>"}}`.
+
+| Method | Path | Description | Success | Errors |
+|---|---|---|---|---|
+| `GET` | `/rewards` | List reward tiers | `200` | `503` |
+| `POST` | `/orders` | **Endpoint 1** – record an order and store the customer's recalculated rewards | `201` + `Location` header | `400`, `503` |
+| `GET` | `/customers/{email}` | **Endpoint 2** – one customer's rewards (email may be URL-encoded) | `200` | `400`, `404`, `503` |
+| `GET` | `/customers` | **Endpoint 3** – rewards for all customers | `200` | `503` |
+
+### Examples
+```
+$ curl -X POST http://localhost:7050/orders -d '{"email": "customer01@gmail.com", "orderTotal": 100.80}'
+{"email": "customer01@gmail.com", "points": 100, "tier": "A", "tierName": "5% off purchase",
+ "nextTier": "B", "nextTierName": "10% off purchase", "nextTierProgress": 0.5}
+
+$ curl http://localhost:7050/customers/customer01@gmail.com
+$ curl http://localhost:7050/customers
+```
+
+### Rewards rules
+* 1 point per whole dollar per order (`$100.80` → 100 points). Points accumulate across orders.
+* Emails are trimmed and lower-cased, so `Customer01@Gmail.com` and `customer01@gmail.com` are the same customer.
+* Points are capped at the top tier (1000); once a customer reaches tier J they earn no more rewards.
+* `nextTierProgress` = `points / nextTier.points` (e.g. 100 of 200 → `0.5`). Customers below tier A have
+  `tier`/`tierName` of `null`. At the top tier, `nextTier`/`nextTierName` are `null` and progress is `1.0`.
+* Point updates are atomic in MongoDB, so concurrent orders for the same customer are never lost.
+
+# Running the tests
+```
+$ docker-compose run --rm rewardsservice sh -c "cd rewardsservice && python -m unittest discover -s tests -t ."
+```
