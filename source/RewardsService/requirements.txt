@@ -1,3 +1,4 @@
 motor==3.7.0
 pymongo==4.11.3
 tornado==6.1.0
+pytest==9.2.0
